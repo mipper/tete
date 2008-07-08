@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Tete: Home</title>
+    <!--#include file="inc/header.inc" -->
+  </head>
+  <body>
+    <div id="container">
+      <!--#include file="inc/menu.inc" -->
+      <div id="main">
+      
+        <h1>Background</h1>
+        <p>
+        Tete is an open source ear trainer.  Ear training involves learning to recognise
+        how different combinations of notes sound.  It is useful for musicians to allow them
+        to differentiate between the different combinations of notes that make up music
+        </p>
+        <p>
+        Tete allows you to select intervals, chords, or scales and play
+        examples of the selected sounds in a random order.&nbsp; As each is
+        played it is highlighted in the list.  Once you think you can
+        tell what is playing you can test yourself.  A series of
+        sounds will be played, again at random, and you attempt to identify
+        what has been played.
+        </p>
+        <p>
+        You can control how each sound is played back by changing the midi
+        instrument, the octave range allowable, root note, and whether the
+        sounds are played ascending or descending.  You can also
+        adjust the length of the notes and the extent to arpeggio the playback.
+        </p>
+        <h2>Why call it Tete?</h2>
+        <p>
+        I live in London, and we British have a terrible habit of dropping random letters from
+        words.  It's just 'ow we are, init?  So when I mentioned to a friend that I was training my ear
+        with a computer program she asked which ear trainer I was using.  I replied, pointing
+        to my screen, "This ear trainer 'ere."  It kind of stuck.  I'm planning to use any donations
+        made to the project to hire some management consultants to re-brand it one day.
+        </p>
+
+        <h1>Installation</h1>
+        <h2>Prerequisites</h2>
+        <p>
+        Tete is written in Java and requires the Java Runtime Environment (JRE) version 1.5
+        from <a href="http://java.com/en/download/manual.jsp">Sun's website</a>.  It should run on any
+        PC running Microsoft Windows or Linux and should also run on most Macs.
+        </p>
+        <p>
+        You will also require a midi soundbank file.  This does not come as standard with the JRE due to its size,
+        but should be included with the JDK if you have it.  It can be <a href="http://java.sun.com/products/java-media/sound/soundbanks.html">downloaded</a>
+        seperately.  There are a number of versions of the file.  The larger the soundbank file is
+        the better quality the playback will be.  I personally use the <a href="http://java.sun.com/products/java-media/sound/soundbank-deluxe.gm.zip">soundbank-delux.gm</a>
+        file which has much better sounding instruments than the default file.  To install this file follow the
+        instructions on Sun's site.
+        </p>
+        
+        <h2>The program itself</h2>
+        <p>
+        Installint Tete is simply a matter of unziping the distribution file into a directory of your choice.  On
+        Windows you might use <code>c:\Program Files\Tete</code> assuming your installation of Windows is on your
+        C: drive.
+        </p>
+        <p>
+        If you have associated jar files with the java runtime you will be able to double click on the tete.jar
+        file in the directory you unzipped the Tete files into.
+        </p>
+        <p>
+        Alternatively you can right click on the jar file and select <strong>Open with...</strong>
+        and select the java.exe from the JRE 1.5 bin directory which defaults to something like
+        <code>C:\Program Files\Java\jre1.5.0_XX\bin</code>
+        </p>
+        <p>
+        If none of the above works, you can use the command line: <code>java –jar tete.jar</code>
+        </p>
+
+        <h1>Technical Stuff</h1>
+        <p>
+        When I decided to write an ear training program Sun had just released version 1.5 of
+        the Java language and I had never written a Swing application.  I decided to take the opportunity
+        to kill three birds with one stone, and write Tete using Swing and as many of the new features of
+        JDK 1.5 as I could squeeze in.  There's no technical reason why it couldn't have been done using
+        JDK 1.4.  That would have meant that more people could run it, but I didn't originally expect to
+        release it to the public.  So my appologies to anyone who's inconvenienced, but there you are.  It's
+        free, lighten up.
+        </p>
+      </div>
+      <!--#include file="inc/footer.inc" -->
+    </div>
+  </body>
+</html>

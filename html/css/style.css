@@ -1,0 +1,82 @@
+body
+{
+  color: #0b659e;
+  font-size: 12px;
+  font-family: arial, "Times New Roman", Times, serif;
+  background: #f8f7d5 url(../img/tete_logo3.png) no-repeat left top;
+}
+h1
+{
+  border-bottom: 1px solid #0085da;
+  border-left:   1px solid #8cbbda;
+  padding-left:  4px;
+/*
+  background: url(../img/tele_lh_trans.png) no-repeat left center;
+  height: 47px;
+  line-height: 47px;
+*/
+  letter-spacing: .15em;
+}
+div#container
+{
+  margin: 0;
+  padding: 5px 50px;
+}
+div#menu
+{
+  margin: 0;
+  padding: 70px 0px 0px 185px;
+}
+div#menu ul
+{
+  margin: 0;
+  padding: 0;
+}
+div#menu li 
+{
+  display: inline;
+}
+div#menu li a
+{
+  border-width: 0px;
+  border-style: solid;
+  height: 20px;
+  margin: 0;
+  padding: 5px 3px 1px 3px;
+  color: #f8f6c5;
+  background: url(../img/button_bkgnd.png) bottom repeat-x;
+  text-decoration: none;
+}
+div#menu li a:hover 
+{
+  background: url(../img/button_bkgnd_hglt.png) bottom repeat-x;
+}
+div#main a
+{
+  color: #1b384b;
+  text-decoration: none;
+}
+div#main a:hover 
+{
+  color: #a00;
+}
+li.done
+{
+  font-weight: bold;
+}
+div.liblink
+{
+  clear: both;
+  padding: 15px 0;
+}
+div.liblink img
+{
+  float:  left;
+  padding-right: 20px;
+  border: 0;
+}
+div#footer
+{
+  clear: both;
+  padding-top: 10px;
+}

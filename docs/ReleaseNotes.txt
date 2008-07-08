@@ -1,0 +1,73 @@
+Release Notes for Version 1.1
+
+New Features
+============
+[ 1311864 ] Save configuration
+
+[ 1311735 ] More chords & scales
+    Chord types supported:
+        Major
+        Minor
+        Suspended 2nd
+        Suspended 4th
+        Augmented
+        Diminished
+        Major b5
+        Major 7th
+        Minor 7th
+        Dominant 7th
+        7 Suspended 2nd
+        7 Suspended 4th
+        7 Augmented
+        Minor 7th b5
+        Minor Major 7th
+        Major 7 Augmented
+        Major 9th
+        Dominant 9th
+        Minor 9th
+        9 Suspended 4th
+        Minor Major 9th
+        Dominant 11th
+        Minor 11th
+        Major 13th
+        Dominant 13th
+        Minor 13th
+        13 suspended 4th
+        Diminished 7th
+        Major 6th
+        Minor 6th
+        Major Add 9th
+        Minor Add 9th
+        Major 6th/9th
+        Minor 6th/9th
+        7th Add b9th
+        7th Add Augmented 9th
+        7th 5th/b9th
+        7th 5th/Augmented 9th
+        9th Add Augmented 11th
+        13th Add Augmented 11th
+    Scale types supported
+        Major (Ionian)
+        (Dorian)
+        (Phrygian)
+        (Lydian)
+        (Mixolydian)
+        Natural Minor (Aeolian)
+        (Locrian)
+        Harmonic Minor
+        Melodic Minor
+        Major Pentatonic
+        Minor Pentatonic
+        Blues
+        Augmented
+        Hungarian Major
+        Hungarian Minor
+        Enigmatic
+
+
+Bug Fixes
+=========
+[ 1328536 ] Note order is not used during playback
+[ 1328508 ] Root note is ignored in pattern generation
+[] Fixed arrangement of buttons in test mode when many patterns are selected.
+
