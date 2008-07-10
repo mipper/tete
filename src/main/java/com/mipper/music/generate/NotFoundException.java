@@ -13,13 +13,13 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.generate;
 
 
 /**
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -28,7 +28,7 @@ public class NotFoundException extends Exception
 
   /**
    * Constructor.
-   * 
+   *
    */
   public NotFoundException ()
   {
@@ -38,7 +38,7 @@ public class NotFoundException extends Exception
 
   /**
    * Constructor.
-   * 
+   *
    * @param message
    */
   public NotFoundException ( String message )
@@ -49,7 +49,7 @@ public class NotFoundException extends Exception
 
   /**
    * Constructor.
-   * 
+   *
    * @param message
    * @param cause
    */
@@ -61,7 +61,7 @@ public class NotFoundException extends Exception
 
   /**
    * Constructor.
-   * 
+   *
    * @param cause
    */
   public NotFoundException ( Throwable cause )

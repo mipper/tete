@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.control;
 
@@ -22,16 +22,16 @@ import java.util.EventListener;
 
 /**
  * Event listner for SoundEvents.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
 public interface SoundEventListener extends EventListener
 {
-  
+
   /**
    * A sound is about to be played.
-   * 
+   *
    * @param evt SoundEvent describing the sound about to be played.
    */
   public void soundEventOccurred ( SoundEvent evt );

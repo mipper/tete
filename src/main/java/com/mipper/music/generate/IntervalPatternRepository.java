@@ -13,19 +13,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.generate;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+
 import com.mipper.music.model.IntervalPattern;
 import com.mipper.music.model.SoundCollectionAdaptor;
 
 
 /**
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -36,7 +37,7 @@ public class IntervalPatternRepository
 
   /**
    * Constructor.
-   * 
+   *
    * @param name Name of the pattern collection.
    */
   public IntervalPatternRepository ( String name )
@@ -44,55 +45,8 @@ public class IntervalPatternRepository
     super ();
     _name = name;
   }
-  
-  
-  /**
-   * @return Name of this collection of patterns.
-   */
-  public String getName ()
-  {
-    return _name;
-  }
-  
-  
-  /**
-   * @param chord Chord to add to the repository.
-   */
-  public void registerPattern ( IntervalPattern chord )
-  {
-    _allPatterns.add ( chord );
-  }
-  
-  
-  /**
-   * @param pattern Chord to remove from the repository.
-   */
-  public void unregisterPattern ( IntervalPattern pattern )
-  {
-    _allPatterns.remove ( pattern );
-  }
-  
 
-  /**
-   * @param name Name of the chord to retrieve.
-   * 
-   * @return ChordType with the given name.
-   * 
-   * @throws NotFoundException
-   */
-  public IntervalPattern getPattern ( String name )
-    throws
-      NotFoundException
-  {
-    IntervalPattern p = findPattern ( name );
-    if ( p != null )
-    {
-      return p;
-    }
-    throw new NotFoundException ( "Cannot find Chord type: " + name );
-  }
-  
-  
+
   /**
    * @return The number of ChordTypes in the repository.
    */
@@ -100,22 +54,51 @@ public class IntervalPatternRepository
   {
     return _allPatterns.size ();
   }
-  
-  
+
+
+  /**
+   * @return Name of this collection of patterns.
+   */
+  public String getName ()
+  {
+    return _name;
+  }
+
+
+  /**
+   * @param name Name of the chord to retrieve.
+   *
+   * @return ChordType with the given name.
+   *
+   * @throws NotFoundException
+   */
+  public IntervalPattern getPattern ( String name )
+    throws
+      NotFoundException
+  {
+    final IntervalPattern p = findPattern ( name );
+    if ( p != null )
+    {
+      return p;
+    }
+    throw new NotFoundException ( "Cannot find Chord type: " + name );
+  }
+
+
   /**
    * @return Set of chord type names in the repository.
    */
   public Collection<String> getPatternNames ()
   {
-    ArrayList<String> res = new ArrayList<String> ( count () );
+    final ArrayList<String> res = new ArrayList<String> ( count () );
     for ( int i = 0; i < count (); i++ )
     {
       res.add ( _allPatterns.get ( i ).getName () );
     }
     return res;
   }
-  
-  
+
+
   /**
    * @return Collection of all chord types in the repository.
    */
@@ -123,8 +106,36 @@ public class IntervalPatternRepository
   {
     return new LinkedList<IntervalPattern> ( _allPatterns );
   }
-  
-  
+
+
+  /**
+   * @param chord Chord to add to the repository.
+   */
+  public void registerPattern ( IntervalPattern chord )
+  {
+    _allPatterns.add ( chord );
+  }
+
+
+  /**
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString ()
+  {
+    return getName ();
+  }
+
+
+  /**
+   * @param pattern Chord to remove from the repository.
+   */
+  public void unregisterPattern ( IntervalPattern pattern )
+  {
+    _allPatterns.remove ( pattern );
+  }
+
+
   private IntervalPattern findPattern ( String name )
   {
     for ( int i = 0; i < count (); i++ )
@@ -136,18 +147,9 @@ public class IntervalPatternRepository
     }
     return null;
   }
-  
-  
-  /**
-   * @see java.lang.Object#toString()
-   */
-  public String toString ()
-  {
-    return getName ();
-  }
 
 
-  private String _name;
-  private LinkedList<IntervalPattern> _allPatterns = new LinkedList<IntervalPattern> ();
-  
+  private final String _name;
+  private final LinkedList<IntervalPattern> _allPatterns = new LinkedList<IntervalPattern> ();
+
 }

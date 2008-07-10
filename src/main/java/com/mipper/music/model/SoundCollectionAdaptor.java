@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.model;
 
@@ -24,22 +24,22 @@ import java.util.Collection;
 /**
  * Allow us to add different things to the Sound Type combo and create the
  * entries for the list.
- * 
+ *
  * @author Cliff Evans
  * @version $$Revision: 1.1 $$
  */
 public interface SoundCollectionAdaptor
 {
-  
+
   /**
    * @return Name for this collection of Interval Patterns.
    */
   String getName ();
-  
-  
+
+
   /**
    * @return Collection of all interval patterns in this collection.
    */
   Collection<IntervalPattern> getPatterns ();
-  
+
 }

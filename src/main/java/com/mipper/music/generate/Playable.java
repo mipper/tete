@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.generate;
 
@@ -26,7 +26,7 @@ import com.mipper.music.model.Sound;
 /**
  * A playable object is a combination of an IntervalPattern and a root note.  It
  * is an object which can actually be sounded.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.3 $
  */
@@ -37,7 +37,19 @@ public class Playable
 
   /**
    * Constructor.
-   * 
+   *
+   * @param pattern IntervalPattern describing the playable object.
+   * @param root MIDI value of the root to use to play the pattern.
+   */
+  public Playable ( IntervalPattern pattern, int root )
+  {
+    this ( pattern, root, true );
+  }
+
+
+  /**
+   * Constructor.
+   *
    * @param pattern IntervalPattern describing the playable object.
    * @param root MIDI value of the root to use to play the pattern.
    * @param overlap Indicates whether notes overlap when being played.
@@ -52,14 +64,11 @@ public class Playable
 
 
   /**
-   * Constructor.
-   * 
-   * @param pattern IntervalPattern describing the playable object.
-   * @param root MIDI value of the root to use to play the pattern.
+   * @see com.mipper.music.model.Sound#getName()
    */
-  public Playable ( IntervalPattern pattern, int root )
+  public String getName ()
   {
-    this ( pattern, root, true );
+    return _intervalPattern.getName ();
   }
 
 
@@ -68,9 +77,9 @@ public class Playable
    */
   public int[] getNoteValues ()
   {
-    Interval[] intervals = _intervalPattern.getIntervals ();
+    final Interval[] intervals = _intervalPattern.getIntervals ();
     // If we only have one interval its the unison interval
-    int[] notes = new int[intervals.length + ( intervals.length == 1 ? 1 : 0 )];
+    final int[] notes = new int[intervals.length + ( intervals.length == 1 ? 1 : 0 )];
     for ( int i = 0; i < intervals.length; i++ )
     {
       notes[i] = _root + intervals[i].ordinal ();
@@ -81,8 +90,8 @@ public class Playable
     }
     return notes;
   }
-  
-  
+
+
   /**
    * @see com.mipper.music.model.Sound#getOverlap()
    */
@@ -90,8 +99,9 @@ public class Playable
   {
     return _overlap;
   }
-  
-  
+
+
+
   /**
    * @see com.mipper.music.model.Sound#setOverlap(boolean)
    */
@@ -99,35 +109,26 @@ public class Playable
   {
     _overlap = overlap;
   }
-  
-  
-  
-  /**
-   * @see com.mipper.music.model.Sound#getName()
-   */
-  public String getName ()
-  {
-    return _intervalPattern.getName ();
-  }
-  
-  
+
+
   /**
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString ()
   {
-    StringBuffer buf = new StringBuffer ();
+    final StringBuffer buf = new StringBuffer ();
     buf.append ( Note.values ()[_root % 12] ).append ( " " ).append (  _intervalPattern.getName () );
-    for ( Interval ip : _intervalPattern.getIntervals () )
+    for ( final Interval ip : _intervalPattern.getIntervals () )
     {
       buf.append( " " ).append ( ip.getShortName() );
     }
     return buf.toString ();
   }
 
-  
-  private IntervalPattern _intervalPattern;
-  private int _root;
+
+  private final IntervalPattern _intervalPattern;
+  private final int _root;
   private boolean _overlap;
-  
+
 }

@@ -13,13 +13,13 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.generate;
 
 
 /**
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -37,7 +37,7 @@ public class EmptyException extends Exception
 
   /**
    * Constructor.
-   * 
+   *
    * @param message
    */
   public EmptyException ( String message )
@@ -48,24 +48,24 @@ public class EmptyException extends Exception
 
   /**
    * Constructor.
-   * 
-   * @param cause
-   */
-  public EmptyException ( Throwable cause )
-  {
-    super ( cause );
-  }
-
-
-  /**
-   * Constructor.
-   * 
+   *
    * @param message
    * @param cause
    */
   public EmptyException ( String message, Throwable cause )
   {
     super ( message, cause );
+  }
+
+
+  /**
+   * Constructor.
+   *
+   * @param cause
+   */
+  public EmptyException ( Throwable cause )
+  {
+    super ( cause );
   }
 
 

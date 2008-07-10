@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.control;
 
@@ -22,7 +22,7 @@ import java.util.EventObject;
 
 /**
  * Event fired when a sound is played.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -30,8 +30,14 @@ public class SoundEvent extends EventObject
 {
 
   /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+
+
+  /**
    * Constructor.
-   * 
+   *
    * @param source Source of the event.
    * @param name Name of the sound to be played.
    */
@@ -40,19 +46,19 @@ public class SoundEvent extends EventObject
     super ( source );
     _name = name;
   }
-  
-  
+
+
   /**
    * Returns the name of the sound to be played.
-   * 
+   *
    * @return Name of the sound to be played.
    */
   public String getName ()
   {
     return _name;
   }
-  
-  
-  private String _name;
-  
+
+
+  private final String _name;
+
 }

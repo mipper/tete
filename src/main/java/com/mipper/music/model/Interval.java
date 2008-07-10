@@ -13,20 +13,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.model;
 
 
 /**
  * Enumerated type representing an interval between two notes.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.4 $
  */
 public enum Interval
 {
-  
+
   /** */
   PERFECT_1ST ( "P1", "d2", "Perfect 1st", "Diminished 1st" ),
   /** */
@@ -77,56 +77,9 @@ public enum Interval
   MAJOR_14 ( "M7", null, "Major 7th", null ),
   /** */
   PERFECT_16TH ( "P8", null, "Octave", null );
-  
 
-  
-  /**
-   * @return Returns the alternativeLongName.
-   */
-  public String getAlternativeLongName ()
-  {
-    return _alternativeLongName;
-  }
-  
-  
-  /**
-   * @return Returns the alternativeShortName.
-   */
-  public String getAlternativeShortName ()
-  {
-    return _alternativeShortName;
-  }
-  
-  
-  /**
-   * @return Returns the longName.
-   */
-  public String getLongName ()
-  {
-    return _longName;
-  }
-  
-  
-  /**
-   * @return Returns the shortName.
-   */
-  public String getShortName ()
-  {
-    return _shortName;
-  }
-  
-  
-  /**
-   * @param value Ordinal value of Interval to retrieve.
-   * 
-   * @return The interval with the specified ordinal value.
-   */
-  public static Interval getInterval ( int value )
-  {
-    return Interval.values ()[value];
-  }
-  
-  
+
+
   /**
    * @return The total number of possible Intervals.
    */
@@ -134,11 +87,22 @@ public enum Interval
   {
     return Interval.values ().length;
   }
-  
-  
-  private Interval ( String shortName, 
+
+
+  /**
+   * @param value Ordinal value of Interval to retrieve.
+   *
+   * @return The interval with the specified ordinal value.
+   */
+  public static Interval getInterval ( int value )
+  {
+    return Interval.values ()[value];
+  }
+
+
+  private Interval ( String shortName,
                      String altShortName,
-                     String longName, 
+                     String longName,
                      String altLongName )
   {
     _shortName = shortName;
@@ -146,11 +110,47 @@ public enum Interval
     _longName = longName;
     _alternativeLongName = altLongName;
   }
-  
-  
+
+
+  /**
+   * @return Returns the alternativeLongName.
+   */
+  public String getAlternativeLongName ()
+  {
+    return _alternativeLongName;
+  }
+
+
+  /**
+   * @return Returns the alternativeShortName.
+   */
+  public String getAlternativeShortName ()
+  {
+    return _alternativeShortName;
+  }
+
+
+  /**
+   * @return Returns the longName.
+   */
+  public String getLongName ()
+  {
+    return _longName;
+  }
+
+
+  /**
+   * @return Returns the shortName.
+   */
+  public String getShortName ()
+  {
+    return _shortName;
+  }
+
+
   private String _shortName;
   private String _alternativeShortName;
   private String _longName;
   private String _alternativeLongName;
-  
+
 }

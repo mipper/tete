@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.model;
 
@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 /**
  * Class representing a collection of intervals.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.3 $
  */
@@ -31,7 +31,7 @@ public class IntervalPattern
 
   /**
    * Constructor.  Creates an empty IntervalPattern object.
-   * 
+   *
    * @param name Name given to the pattern.
    */
   public IntervalPattern ( String name )
@@ -40,11 +40,11 @@ public class IntervalPattern
     _name = name;
   }
 
-  
+
   /**
    * Constructor.  Creates an IntervalPattern object which contains exactly the
    * intervals of the Interval array passed in.
-   * 
+   *
    * @param interval Array of intervals to set in the pattern.
    * @param name Name given to the pattern.
    */
@@ -68,49 +68,23 @@ public class IntervalPattern
       _count++;
     }
   }
-  
-  
+
+
   /**
-   * @param interval Interval to remove.  If the intervals does not exist in the
-   *                 pattern then this method does nothing.
-   */
-  public void removeInterval ( Interval interval )
-  {
-    if ( _intervals[interval.ordinal ()] )
-    {
-      _intervals[interval.ordinal ()] = false;
-      _count--;
-    }
-  }
-  
-  
-  /**
-   * Sets the interval pattern for this object to match the array passed in.
-   * 
-   * @param intervals Interval array to set.
-   */
-  public void setIntervals ( Interval[] intervals )
-  {
-    clear ();
-    addIntervals ( intervals );
-  }
-  
-  
-  /**
-   * Adds the intervals contained in the Interval array parameter to those 
+   * Adds the intervals contained in the Interval array parameter to those
    * already contained in this pattern.
-   * 
+   *
    * @param intervals Array of intervals to add.
    */
   public void addIntervals ( Interval[] intervals )
   {
-    for ( int i = 0; i < intervals.length; i++ )
+    for ( final Interval element : intervals )
     {
-      addInterval ( intervals[i] );
+      addInterval ( element );
     }
   }
 
-  
+
   /**
    * Remove all intervals from this pattern.
    */
@@ -119,33 +93,15 @@ public class IntervalPattern
     Arrays.fill ( _intervals, false );
     _count = 0;
   }
-  
-  
-  /**
-   * @return An ordered array of the intervals making up the interal pattern.
-   */
-  public Interval[] getIntervals ()
-  {
-    Interval[] intervals = new Interval[_count];
-    int count = 0;
-    for ( int i = 0; i < _intervals.length; i++ )
-    {
-      if ( _intervals[i] )
-      {
-        intervals[count++] = Interval.getInterval ( i );
-      }
-    }
-    return intervals;
-  }
-  
-  
+
+
   /**
    * Tests whether the specified pattern is contained in this pattern.  This
    * method will return true if all of the intervals in pattern are also present
    * in this IntervalPattern object.
-   * 
+   *
    * @param pattern The pattern to check.
-   * 
+   *
    * @return true if this pattern contains the specified pattern, false otherwise.
    */
   public boolean contains ( IntervalPattern pattern )
@@ -162,14 +118,23 @@ public class IntervalPattern
     }
     return true;
   }
-  
-  
+
+
   /**
-   * @return The name of the pattern.
+   * @return An ordered array of the intervals making up the interal pattern.
    */
-  public String getName ()
+  public Interval[] getIntervals ()
   {
-    return _name;
+    final Interval[] intervals = new Interval[_count];
+    int count = 0;
+    for ( int i = 0; i < _intervals.length; i++ )
+    {
+      if ( _intervals[i] )
+      {
+        intervals[count++] = Interval.getInterval ( i );
+      }
+    }
+    return intervals;
   }
 
 
@@ -183,8 +148,44 @@ public class IntervalPattern
 
 
   /**
+   * @return The name of the pattern.
+   */
+  public String getName ()
+  {
+    return _name;
+  }
+
+
+  /**
+   * @param interval Interval to remove.  If the intervals does not exist in the
+   *                 pattern then this method does nothing.
+   */
+  public void removeInterval ( Interval interval )
+  {
+    if ( _intervals[interval.ordinal ()] )
+    {
+      _intervals[interval.ordinal ()] = false;
+      _count--;
+    }
+  }
+
+
+  /**
+   * Sets the interval pattern for this object to match the array passed in.
+   *
+   * @param intervals Interval array to set.
+   */
+  public void setIntervals ( Interval[] intervals )
+  {
+    clear ();
+    addIntervals ( intervals );
+  }
+
+
+  /**
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString ()
   {
     return _name;
@@ -201,8 +202,8 @@ public class IntervalPattern
   }
 
 
-  private boolean[] _intervals = new boolean[Interval.count ()];
+  private final boolean[] _intervals = new boolean[Interval.count ()];
   private int _count = 0;
-  private String _name;
+  private final String _name;
 
 }

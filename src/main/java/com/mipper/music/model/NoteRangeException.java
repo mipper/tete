@@ -13,13 +13,13 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.model;
 
 
 /**
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -28,10 +28,10 @@ public class NoteRangeException extends RuntimeException
 
   /**
    * Constructor.
-   * 
-   * @param low 
-   * @param high 
-   * 
+   *
+   * @param low
+   * @param high
+   *
    */
   public NoteRangeException ( int low, int high )
   {
@@ -41,10 +41,10 @@ public class NoteRangeException extends RuntimeException
 
   /**
    * Constructor.
-   * 
+   *
    * @param message
-   * @param low 
-   * @param high 
+   * @param low
+   * @param high
    */
   public NoteRangeException ( String message, int low, int high )
   {
@@ -56,7 +56,7 @@ public class NoteRangeException extends RuntimeException
 
   /**
    * Constructor.
-   * 
+   *
    * @param message
    * @param cause
    */
@@ -68,7 +68,7 @@ public class NoteRangeException extends RuntimeException
 
   /**
    * Constructor.
-   * 
+   *
    * @param cause
    */
   public NoteRangeException ( Throwable cause )
@@ -76,15 +76,16 @@ public class NoteRangeException extends RuntimeException
     super ( cause );
   }
 
-  
+
   /**
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString ()
   {
     return ( getMessage () == null ? "" : getMessage () ) + " [" + _low + ", " + _high + "]";
   }
-  
+
 
   private static final long serialVersionUID = 3257005453798945075L;
   private int _low;

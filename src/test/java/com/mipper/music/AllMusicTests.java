@@ -5,12 +5,12 @@
  * <b>Copyright</b> (c) 2004
  * <b>Company</b> Rule Financial
  */
-package test.com.mipper.music;
+package com.mipper.music;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import test.com.mipper.music.model.TestIntervalPattern;
-import test.com.mipper.music.model.TestNoteRange;
+import com.mipper.music.model.TestIntervalPattern;
+import com.mipper.music.model.TestNoteRange;
 
 
 /**

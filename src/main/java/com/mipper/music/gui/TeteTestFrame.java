@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.gui;
 
@@ -25,6 +25,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -37,6 +38,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+
 import com.mipper.music.generate.EmptyException;
 import com.mipper.music.generate.PatternPlayerModel;
 import com.mipper.music.model.IntervalPattern;
@@ -46,16 +48,160 @@ import com.mipper.util.Util;
 
 /**
  * Window used when running a test cycle.
- * 
+ *
  * @author  Cliff Evans
  * @version $$Revision: 1.4 $$
  */
 public class TeteTestFrame extends javax.swing.JDialog
 {
-  
+
+  /**
+   * Class implementing the Model and Controller.
+   *
+   * @author Cliff Evans
+   * @version $Revision: 1.4 $
+   */
+  class Controller
+  {
+
+    /**
+     * Constructor.
+     *
+     * @param config Contains model information to allow generation of the test
+     *               interval patterns.
+     */
+    public Controller ( PatternPlayerModel config )
+    {
+      super ();
+      _config = config;
+    }
+
+
+    /**
+     * @return Array containing all interval patterns that can be generated for
+     *         the test.
+     */
+    public IntervalPattern[] getAllPatterns ()
+    {
+      return _config.getPatterns ();
+    }
+
+
+    /**
+     * @return The total number of correct guesses.
+     */
+    public int getCorrectCount ()
+    {
+      return _correctCount;
+    }
+
+
+    /**
+     * @return The total number of guesses made.
+     */
+    public int getCount ()
+    {
+      return _count;
+    }
+
+
+    /**
+     * @return Integer value of the percentage of correct guesses to incorrect
+     *         guesses.
+     */
+    public int getPercentageCorrect ()
+    {
+      return 0 == _count ? 0 : 100 * _correctCount / _count;
+    }
+
+
+    /**
+     * Play the current Interval pattern.
+     *
+     * @throws InvalidMidiDataException
+     */
+    public void playCurrent ()
+      throws
+        InvalidMidiDataException
+    {
+      _config.play ( _current );
+    }
+
+
+    /**
+     * Generate a random pattern and set it as the current before playing it.
+     *
+     * @throws InvalidMidiDataException
+     * @throws EmptyException
+     */
+    public void playNext ()
+      throws
+        InvalidMidiDataException,
+        EmptyException
+    {
+      _current = _config.generateSound ();
+      playCurrent ();
+    }
+
+
+    /**
+     * @param guess String identifying the pattern the user thinks is the
+     *              current pattern.
+     *
+     * @return true if the guess matches the current pattern, false if not.
+     */
+    public boolean processGuess ( String guess )
+    {
+      boolean result;
+      _count++;
+      if ( guess.equals ( _current.getName () ) )
+      {
+        _correctCount++;
+        result = true;
+      }
+      else
+      {
+        result = false;
+      }
+      Logger.debug ( "Correct: " + _correctCount + " from " + _count );
+      return result;
+    }
+
+
+    /**
+     * Start a test.  Resets the progress tracking variables.
+     *
+     * @throws EmptyException
+     * @throws InvalidMidiDataException
+     */
+    public void startTest ()
+      throws
+        EmptyException,
+        InvalidMidiDataException
+    {
+      reset ();
+      playNext ();
+    }
+
+
+    private void reset ()
+    {
+      _count = 0;
+      _correctCount = 0;
+    }
+
+
+    private final PatternPlayerModel _config;
+    private Sound _current;
+    private int _count = 0;
+    private int _correctCount = 0;
+
+  }
+
+
   /**
    * Constructor.
-   * 
+   *
    * @param parent
    * @param title
    * @param config
@@ -70,18 +216,57 @@ public class TeteTestFrame extends javax.swing.JDialog
     pack ();
     Util.centreInParent ( parent, this );
   }
-  
-  
-  private static final int MAX_COL = 15;
+  private void btnExitActionPerformed (ActionEvent evt)
+  {
+    dispose ();
+  }
+
+
+  private void btnRepeatActionPerformed (ActionEvent evt)
+  {
+    try
+    {
+      _controller.playCurrent ();
+    }
+    catch ( final Exception e )
+    {
+      handleException ( e );
+    }
+  }
+
+
+  private void btnStartActionPerformed (java.awt.event.ActionEvent evt)
+  {
+    if ( isTestRunning () )
+    {
+      try
+      {
+        _controller.startTest ();
+        btnStart.setText ( ResourceBundle.getBundle ( "tete" ).getString ( "label.stop" ) );
+      }
+      catch ( final Exception e )
+      {
+        handleException ( e );
+      }
+    }
+    else
+    {
+      btnStart.setText ( ResourceBundle.getBundle ( "tete" ).getString ( "label.start" ) );
+      icoResult.setIcon ( null );
+    }
+    updateGui ();
+  }
+
+
   private void createComponents ( Container pnlOptions )
   {
-    IntervalPattern[] patterns = _controller.getAllPatterns ();
-    int cols = patterns.length / MAX_COL + ( patterns.length % MAX_COL == 0 ? 0 : 1 );
-    int rows = patterns.length / cols + ( patterns.length % cols == 0 ? 0 : 1 );
+    final IntervalPattern[] patterns = _controller.getAllPatterns ();
+    final int cols = patterns.length / MAX_COL + ( patterns.length % MAX_COL == 0 ? 0 : 1 );
+    final int rows = patterns.length / cols + ( patterns.length % cols == 0 ? 0 : 1 );
     pnlOptions.setLayout( new GridLayout ( rows, cols, 5, 5 ) );
-    for ( IntervalPattern ip: patterns )
+    for ( final IntervalPattern ip: patterns )
     {
-      JButton btn = new JButton ( ip.getName () );
+      final JButton btn = new JButton ( ip.getName () );
       btn.setMaximumSize ( new Dimension ( 32000, 32000 ) );
       btn.addActionListener ( new ActionListener ()
         {
@@ -100,7 +285,7 @@ public class TeteTestFrame extends javax.swing.JDialog
               }
               pgsProgress.setValue ( _controller.getPercentageCorrect () );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
               handleException ( e );
             }
@@ -111,43 +296,12 @@ public class TeteTestFrame extends javax.swing.JDialog
   }
 
 
-  private void updateGui ()
-  {
-    if ( isTestRunning () )
-    {
-      updateOptions ( true );
-      btnRepeat.setEnabled ( true );
-    }
-    else
-    {
-      updateOptions ( false );
-      btnRepeat.setEnabled ( false );
-    }
-    pgsProgress.setValue ( _controller.getPercentageCorrect () );
-  }
-
-
-  private void updateOptions ( boolean value )
-  {
-    for ( int i = 0; i < pnlOptions.getComponentCount (); i++ )
-    {
-      pnlOptions.getComponent ( i ).setEnabled ( value );
-    }
-  }
-
-
   private void handleException ( Exception e )
   {
     Logger.error ( e );
   }
-  
-  
-  private boolean isTestRunning ()
-  {
-    return btnStart.isSelected ();
-  }
-  
-  
+
+
   /** This method is called from within the constructor to
    * initialize the form.
    */
@@ -209,203 +363,51 @@ public class TeteTestFrame extends javax.swing.JDialog
     pack ();
   }
 
-  private void btnRepeatActionPerformed (ActionEvent evt)
+  private boolean isTestRunning ()
   {
-    try
-    {
-      _controller.playCurrent ();
-    }
-    catch ( Exception e )
-    {
-      handleException ( e );
-    }
+    return btnStart.isSelected ();
   }
 
-  private void btnStartActionPerformed (java.awt.event.ActionEvent evt)
+  private void updateGui ()
   {
     if ( isTestRunning () )
     {
-      try
-      {
-        _controller.startTest ();
-        btnStart.setText ( ResourceBundle.getBundle ( "tete" ).getString ( "label.stop" ) );
-      }
-      catch ( Exception e )
-      {
-        handleException ( e );
-      }
+      updateOptions ( true );
+      btnRepeat.setEnabled ( true );
     }
     else
     {
-      btnStart.setText ( ResourceBundle.getBundle ( "tete" ).getString ( "label.start" ) );
-      icoResult.setIcon ( null );
+      updateOptions ( false );
+      btnRepeat.setEnabled ( false );
     }
-    updateGui ();
+    pgsProgress.setValue ( _controller.getPercentageCorrect () );
   }
 
-  private void btnExitActionPerformed (ActionEvent evt)
+  private void updateOptions ( boolean value )
   {
-    dispose ();
+    for ( int i = 0; i < pnlOptions.getComponentCount (); i++ )
+    {
+      pnlOptions.getComponent ( i ).setEnabled ( value );
+    }
   }
 
 
+  private static final int MAX_COL = 15;
+  private static final long serialVersionUID = 3761693372708237873L;
   private javax.swing.JButton btnExit;
   private javax.swing.JButton btnRepeat;
   private javax.swing.JToggleButton btnStart;
   private javax.swing.JLabel icoResult;
   private javax.swing.JProgressBar pgsProgress;
   private javax.swing.JPanel pnlControl;
+
   private javax.swing.JPanel pnlOptions;
+
   private javax.swing.JPanel pnlProgress;
-  
-  private static final long serialVersionUID = 3761693372708237873L;
-
-  private Controller _controller;
+  private final Controller _controller;
   private final ImageIcon _right = new ImageIcon ( getClass ().getResource ( "/img/right.gif" ) );
+
+
   private final ImageIcon _wrong = new ImageIcon ( getClass ().getResource ( "/img/wrong.gif" ) );
-  
-  
-  /**
-   * Class implementing the Model and Controller.
-   * 
-   * @author Cliff Evans
-   * @version $Revision: 1.4 $
-   */
-  class Controller
-  {
-    
-    /**
-     * Constructor.
-     * 
-     * @param config Contains model information to allow generation of the test
-     *               interval patterns.
-     */
-    public Controller ( PatternPlayerModel config )
-    {
-      super ();
-      _config = config;
-    }
-    
 
-    /**
-     * @return Array containing all interval patterns that can be generated for
-     *         the test.
-     */
-    public IntervalPattern[] getAllPatterns ()
-    {
-      return _config.getPatterns ();
-    }
-    
-    
-    /**
-     * Start a test.  Resets the progress tracking variables.
-     * 
-     * @throws EmptyException
-     * @throws InvalidMidiDataException
-     */
-    public void startTest ()
-      throws
-        EmptyException,
-        InvalidMidiDataException
-    {
-      reset ();
-      playNext ();
-    }
-    
-    
-    /**
-     * Play the current Interval pattern.
-     * 
-     * @throws InvalidMidiDataException
-     */
-    public void playCurrent ()
-      throws
-        InvalidMidiDataException
-    {
-      _config.play ( _current );
-    }
-    
-    
-    /**
-     * Generate a random pattern and set it as the current before playing it.
-     * 
-     * @throws InvalidMidiDataException
-     * @throws EmptyException
-     */
-    public void playNext ()
-      throws
-        InvalidMidiDataException,
-        EmptyException
-    {
-      _current = _config.generateSound ();
-      playCurrent ();
-    }
-    
-
-    /**
-     * @param guess String identifying the pattern the user thinks is the
-     *              current pattern.
-     *              
-     * @return true if the guess matches the current pattern, false if not.
-     */
-    public boolean processGuess ( String guess )
-    {
-      boolean result;
-      _count++;
-      if ( guess.equals ( _current.getName () ) )
-      {
-        _correctCount++;
-        result = true;
-      }
-      else
-      {
-        result = false;
-      }
-      Logger.debug ( "Correct: " + _correctCount + " from " + _count );
-      return result;
-    }
-
-    
-    /**
-     * @return The total number of guesses made.
-     */
-    public int getCount ()
-    {
-      return _count;
-    }
-    
-    
-    /**
-     * @return The total number of correct guesses.
-     */
-    public int getCorrectCount ()
-    {
-      return _correctCount;
-    }
-    
-    
-    /**
-     * @return Integer value of the percentage of correct guesses to incorrect
-     *         guesses.
-     */
-    public int getPercentageCorrect ()
-    {
-      return 0 == _count ? 0 : 100 * _correctCount / _count;
-    }
-    
-    
-    private void reset ()
-    {
-      _count = 0;
-      _correctCount = 0;
-    }
-    
-    
-    private PatternPlayerModel _config;
-    private Sound _current;
-    private int _count = 0;
-    private int _correctCount = 0;
-    
-  }
-  
 }

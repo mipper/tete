@@ -13,20 +13,20 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.model;
 
 
 /**
  * Enum representing a named musical note.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.2 $
  */
 public enum Note
 {
-  
+
   /** */
   C ( "C", "C" ),
   /** */
@@ -52,7 +52,14 @@ public enum Note
   /** */
   B ( "B", "B" );
 
-  
+
+  private Note ( String sharpName, String flatName )
+  {
+    _sharpName = sharpName;
+    _flatName = flatName;
+  }
+
+
   /**
    * @return Note name in sharp keys.
    */
@@ -61,7 +68,7 @@ public enum Note
     return _flatName;
   }
 
-  
+
   /**
    * @return Note name in flat keys.
    */
@@ -69,25 +76,19 @@ public enum Note
   {
     return _sharpName;
   }
-  
+
 
   /**
    * @see java.lang.Object#toString()
    */
+  @Override
   public String toString ()
   {
     return _sharpName;
   }
-  
-  
-  private Note ( String sharpName, String flatName )
-  {
-    _sharpName = sharpName;
-    _flatName = flatName;
-  }
-  
-  
+
+
   private String _sharpName;
   private String _flatName;
-  
+
 }

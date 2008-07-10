@@ -13,17 +13,19 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.generate;
 
 
 import java.util.Random;
+
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
 import javax.sound.midi.Soundbank;
+
 import com.mipper.music.control.Player;
 import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.IntervalPattern;
@@ -40,10 +42,24 @@ import com.mipper.util.Logger;
  */
 public class PatternPlayerModel
 {
-  
+
+  /**
+   * @param notes
+   */
+  private static void reverse ( int[] notes )
+  {
+    for ( int left = 0, right = notes.length - 1; left < right; left++, right-- )
+    {
+      final int temp = notes[left];
+      notes[left] = notes[right];
+      notes[right] = temp;
+    }
+  }
+
+
   /**
    * Constructor.
-   * 
+   *
    * @throws MidiUnavailableException
    * @throws MidiException
    */
@@ -58,34 +74,11 @@ public class PatternPlayerModel
     _range = new NoteRange ();
     _direction = new Boolean ( true );
   }
-  
-  
-  /**
-   * @param patterns Sets the list of available patterns for generation.
-   */
-  public void setPatterns ( Object[] patterns )
-  {
-    _factory.clear ();
-    for ( Object ct: patterns )
-    {
-      _factory.addPattern ( ( IntervalPattern ) ct );
-    }
-    
-  }
-  
-  
-  /**
-   * @return Array of all IntervalPatterns that can be created.
-   */
-  public IntervalPattern[] getPatterns ()
-  {
-    return _factory.getPatterns ();
-  }
-  
-  
+
+
   /**
    * @return A randomly generated Playable object.
-   * 
+   *
    * @throws EmptyException
    */
   public Sound generateSound ()
@@ -95,79 +88,10 @@ public class PatternPlayerModel
     return _factory.generateSound ( _range );
   }
 
-  
-  /**
-   * @param snd int array of notes to sound.
-   * 
-   * @throws InvalidMidiDataException
-   */
-  public void play ( Sound snd )
-    throws
-      InvalidMidiDataException
-  {
-    Logger.debug ( "Playing: " + snd );
-    int[] notes = snd.getNoteValues ();
-    if ( !calcDirection () )
-    {
-      reverse ( notes );
-    }
-    _player.play ( notes );
-  }
-  
 
-  /**
-   * @return The factory.
-   */
-  public SoundFactory getFactory ()
-  {
-    return _factory;
-  }
-  
-  
-  /**
-   * Sets the range of notes available for play back.
-   * 
-   * @param lowest Midi value of the lowest note to use.
-   * @param highest Midi value of the highest note to use.
-   * @param root The Note to use as the root or null if the root is random.
-   */
-  public void setNoteRange ( int lowest, int highest, Note root )
-  {
-    _range.setNoteRange ( lowest, highest, root );
-  }
-
-  
-  /**
-   * @return The NoteRange.
-   */
-  public NoteRange getRange ()
-  {
-    return _range;
-  }
-  
-  
-  /**
-   * @param direction Direction to play the notes.  True is ascending, False is
-   *                  decending, and null is random.
-   */
-  public void setDirection ( Boolean direction )
-  {
-    _direction = direction;
-  }
-  
-  
-  /**
-   * @return The direction to play the notes.
-   */
-  public Boolean getDirection ()
-  {
-    return _direction;
-  }
-  
-  
   /**
    * @return Array of Instruments available for playback.
-   * 
+   *
    * @throws MidiUnavailableException
    * @throws MidiException
    */
@@ -176,13 +100,58 @@ public class PatternPlayerModel
       MidiUnavailableException,
       MidiException
   {
-    return _player.getAvailableInstruments ();
+    return _player.getAvailableInstruments ().toArray ();
   }
 
-  
+
+  /**
+   * @return The direction to play the notes.
+   */
+  public Boolean getDirection ()
+  {
+    return _direction;
+  }
+
+
+  /**
+   * @return The factory.
+   */
+  public SoundFactory getFactory ()
+  {
+    return _factory;
+  }
+
+
+  /**
+   * @return Array of all IntervalPatterns that can be created.
+   */
+  public IntervalPattern[] getPatterns ()
+  {
+    return _factory.getPatterns ();
+  }
+
+
+  /**
+   * @return The Player.
+   */
+  public Player getPlayer ()
+  {
+    return _player;
+  }
+
+
+  /**
+   * @return The NoteRange.
+   */
+  public NoteRange getRange ()
+  {
+    return _range;
+  }
+
+
   /**
    * @return Current Soundbank.
-   * 
+   *
    * @throws MidiUnavailableException
    */
   public Soundbank getSoundbank ()
@@ -191,16 +160,16 @@ public class PatternPlayerModel
   {
     return _player.getSoundbank ();
   }
-  
-  
+
+
   /**
    * Looks up the instrument in the current soundbank that has the specified
    * patch.
-   * 
+   *
    * @param patch Patch to lookup
-   * 
+   *
    * @return The instrument that matches the patch.
-   * 
+   *
    * @throws MidiUnavailableException
    */
   public Instrument lookupInstrument ( Patch patch )
@@ -209,17 +178,27 @@ public class PatternPlayerModel
   {
     return getSoundbank ().getInstrument ( patch );
   }
-  
-  
+
+
   /**
-   * @param instrument Instrument to use the play the pattern.
+   * @param snd int array of notes to sound.
+   *
+   * @throws InvalidMidiDataException
    */
-  public void setInstrument ( Instrument instrument )
+  public void play ( Sound snd )
+    throws
+      InvalidMidiDataException
   {
-    _player.setInstrument ( instrument );
+    Logger.debug ( "Playing: " + snd );
+    final int[] notes = snd.getNoteValues ();
+    if ( !calcDirection () )
+    {
+      reverse ( notes );
+    }
+    _player.play ( notes );
   }
 
-  
+
   /**
    * @param value deley between each note of the pattern.  If this is 0 the
    *              pattern will be played as a chord.
@@ -238,8 +217,27 @@ public class PatternPlayerModel
   {
     _player.setCascade ( value );
   }
-  
-  
+
+
+  /**
+   * @param direction Direction to play the notes.  True is ascending, False is
+   *                  decending, and null is random.
+   */
+  public void setDirection ( Boolean direction )
+  {
+    _direction = direction;
+  }
+
+
+  /**
+   * @param instrument Instrument to use the play the pattern.
+   */
+  public void setInstrument ( Instrument instrument )
+  {
+    _player.setInstrument ( instrument );
+  }
+
+
   /**
    * @param value length to hold each note.
    */
@@ -248,16 +246,34 @@ public class PatternPlayerModel
     _player.setNoteLength ( value );
   }
 
-  
+
   /**
-   * @return The Player.
+   * Sets the range of notes available for play back.
+   *
+   * @param lowest Midi value of the lowest note to use.
+   * @param highest Midi value of the highest note to use.
+   * @param root The Note to use as the root or null if the root is random.
    */
-  public Player getPlayer ()
+  public void setNoteRange ( int lowest, int highest, Note root )
   {
-    return _player;
+    _range.setNoteRange ( lowest, highest, root );
   }
-  
-  
+
+
+  /**
+   * @param patterns Sets the list of available patterns for generation.
+   */
+  public void setPatterns ( Object[] patterns )
+  {
+    _factory.clear ();
+    for ( final Object ct: patterns )
+    {
+      _factory.addPattern ( ( IntervalPattern ) ct );
+    }
+
+  }
+
+
   private boolean calcDirection ()
   {
     if ( null == _direction )
@@ -266,26 +282,12 @@ public class PatternPlayerModel
     }
     return _direction.booleanValue ();
   }
-  
-  
-  /**
-   * @param notes
-   */
-  private static void reverse ( int[] notes )
-  {
-    for ( int left = 0, right = notes.length - 1; left < right; left++, right-- )
-    {
-      int temp = notes[left];
-      notes[left] = notes[right];
-      notes[right] = temp;
-    }
-  }
 
-  
-  private SoundFactory _factory;
-  private NoteRange _range;
+
+  private final SoundFactory _factory;
+  private final NoteRange _range;
   private Boolean _direction;
-  private Player _player;
-  private Random _random = new Random ();
-  
+  private final Player _player;
+  private final Random _random = new Random ();
+
 }

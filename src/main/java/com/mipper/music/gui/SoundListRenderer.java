@@ -13,11 +13,12 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.gui;
 
 import java.awt.Component;
+
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -27,7 +28,7 @@ import javax.swing.ListCellRenderer;
 /**
  * ListCellRenderer which renders a specified cell in a different colour than
  * the selected or unselected cells.
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -38,7 +39,50 @@ public class SoundListRenderer extends JLabel
 
   /**
    * Constructor.
-   * 
+   */
+  public SoundListRenderer ()
+  {
+    super ();
+  }
+
+
+  /**
+   * Constructor.
+   *
+   * @param image
+   */
+  public SoundListRenderer ( Icon image )
+  {
+    super ( image );
+  }
+
+
+  /**
+   * Constructor.
+   *
+   * @param image
+   * @param horizontalAlignment
+   */
+  public SoundListRenderer ( Icon image, int horizontalAlignment )
+  {
+    super ( image, horizontalAlignment );
+  }
+
+
+  /**
+   * Constructor.
+   *
+   * @param text
+   */
+  public SoundListRenderer ( String text )
+  {
+    super ( text );
+  }
+
+
+  /**
+   * Constructor.
+   *
    * @param text
    * @param icon
    * @param horizontalAlignment
@@ -51,56 +95,13 @@ public class SoundListRenderer extends JLabel
 
   /**
    * Constructor.
-   * 
+   *
    * @param text
    * @param horizontalAlignment
    */
   public SoundListRenderer ( String text, int horizontalAlignment )
   {
     super ( text, horizontalAlignment );
-  }
-
-
-  /**
-   * Constructor.
-   * 
-   * @param text
-   */
-  public SoundListRenderer ( String text )
-  {
-    super ( text );
-  }
-
-
-  /**
-   * Constructor.
-   * 
-   * @param image
-   * @param horizontalAlignment
-   */
-  public SoundListRenderer ( Icon image, int horizontalAlignment )
-  {
-    super ( image, horizontalAlignment );
-  }
-
-
-  /**
-   * Constructor.
-   * 
-   * @param image
-   */
-  public SoundListRenderer ( Icon image )
-  {
-    super ( image );
-  }
-
-
-  /**
-   * Constructor.
-   */
-  public SoundListRenderer ()
-  {
-    super ();
   }
 
 
@@ -113,7 +114,7 @@ public class SoundListRenderer extends JLabel
                                                   boolean isSelected,
                                                   boolean cellHasFocus )
   {
-    String s = value.toString ();
+    final String s = value.toString ();
     setText ( s );
     if ( isSelected )
     {
@@ -128,7 +129,7 @@ public class SoundListRenderer extends JLabel
         setForeground ( list.getSelectionForeground () );
       }
     }
-    else 
+    else
     {
       setBackground ( list.getBackground () );
       setForeground ( list.getForeground () );
@@ -138,5 +139,11 @@ public class SoundListRenderer extends JLabel
     setOpaque ( true );
     return this;
   }
+
+
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
 }
