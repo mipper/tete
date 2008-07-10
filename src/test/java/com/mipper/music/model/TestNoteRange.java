@@ -46,6 +46,8 @@ public class TestNoteRange extends TestCase
     assertEquals ( 9, range.getLowestNote () );
     assertEquals ( 99, range.getHighestNote () );
     range = new NoteRange ( 9, 9, null );
+    assertEquals ( 9, range.getLowestNote () );
+    assertEquals ( 9, range.getHighestNote () );
   }
   
   
@@ -57,7 +59,7 @@ public class TestNoteRange extends TestCase
     NoteRange range;
     try
     {
-      range = new NoteRange ( 19, 18, null );
+      new NoteRange ( 19, 18, null );
       fail ( "Expected constructor to throw an exception." );
     }
     catch ( NoteRangeException e )

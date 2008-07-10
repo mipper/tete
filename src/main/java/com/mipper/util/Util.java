@@ -202,13 +202,16 @@ public class Util
    * Creates all directories which don't exist in the given path.
    *
    * @param dirs path to create.
+   * 
+   * @return true if directories created, false if not.
    */
-  public static void createDirs ( String dirs )
+  public static boolean createDirs ( String dirs )
   {
     if ( null != dirs )
     {
-      new File ( dirs ).mkdirs ();
+      return new File ( dirs ).mkdirs ();
     }
+    return false;
   }
 
 
@@ -871,7 +874,10 @@ public class Util
    */
   public static int monthsBetween ( Date start, Date end )
   {
-    return Math.round ( ( ( end.getTime () - start.getTime () ) / (  1000l * 60l * 60l * 24l * 30l ) ) );
+    return ( int ) ( ( end.getTime () - start.getTime () ) 
+                     / ( 1000L * 60L * 60L * 24L * 30L ) );
+//    return Math.round ( ( ( end.getTime () - start.getTime () ) 
+//        / ( 1000L * 60L * 60L * 24L * 30L ) ) );
   }
 
 
@@ -947,10 +953,10 @@ public class Util
     final Manifest mf = new JarFile ( jar ).getManifest ();
     final StringBuffer res = readMainManifest ( mf );
     final Map<String, Attributes> map = mf.getEntries ();
-    for ( final String entryName : map.keySet () )
+    for ( final Map.Entry<String, Attributes> entry: map.entrySet () )
     {
-      res.append ( "Name: " ).append ( entryName ).append ( "\n" );
-      final Attributes attrs = map.get ( entryName );
+      res.append ( "Name: " ).append ( entry.getKey () ).append ( "\n" );
+      final Attributes attrs = entry.getValue ();
       extractAttributes ( res, attrs );
     }
     return res;

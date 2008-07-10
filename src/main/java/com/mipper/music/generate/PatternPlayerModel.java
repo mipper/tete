@@ -72,7 +72,7 @@ public class PatternPlayerModel
     _factory = new SoundFactory ();
     _player = new Player ();
     _range = new NoteRange ();
-    _direction = new Boolean ( true );
+    _direction = Boolean.valueOf ( true );
   }
 
 

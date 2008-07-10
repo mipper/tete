@@ -215,11 +215,11 @@ public class TeteFrame extends javax.swing.JFrame
   private Boolean decodeDirection ()
   {
     final int idx = cboNoteOrder.getSelectedIndex ();
-    return idx == 0 ? null : new Boolean ( idx == 1 );
+    return idx == 0 ? null : Boolean.valueOf ( idx == 1 );
   }
 
 
-  void exitApp ()
+  private void exitApp ()
   {
     if ( _looper != null )
     {

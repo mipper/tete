@@ -99,7 +99,7 @@ public enum Octave
   /**
    * Number of Intervals making up an octave.
    */
-  public static int INTERVAL_COUNT = 12;
+  public static final int INTERVAL_COUNT = 12;
 
 
   private int _value;

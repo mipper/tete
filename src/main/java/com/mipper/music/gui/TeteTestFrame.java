@@ -61,7 +61,7 @@ public class TeteTestFrame extends javax.swing.JDialog
    * @author Cliff Evans
    * @version $Revision: 1.4 $
    */
-  class Controller
+  static class Controller
   {
 
     /**

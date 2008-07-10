@@ -6,9 +6,38 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mipper</groupId>
   <artifactId>Tete</artifactId>
-  <name>Tete Ear Trainer</name>
+  <name>This Ear Trainer 'Ere</name>
+  <url>http://tete.sourceforge.net</url>
   <version>1.2.0</version>
-  <description></description>
+  <description>
+    Tete is a application for training the ear to hear the relationships between musical notes.  It can help with intervals, chords, and scales.
+  </description>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <!--version>2.2</version-->
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>com.mipper.music.gui.TeteFrame</mainClass>
+              <addClasspath>true</addClasspath>
+              <!-- options
+                   <addExtensions/>
+                   <classpathPrefix/>
+                   -->
+            </manifest>
+            <manifestEntries>
+              <url>${pom.url}</url>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
   <dependencies>
     <dependency>
       <groupId>commons-lang</groupId>

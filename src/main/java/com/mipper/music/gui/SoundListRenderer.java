@@ -118,7 +118,7 @@ public class SoundListRenderer extends JLabel
     setText ( s );
     if ( isSelected )
     {
-      if ( list instanceof JSoundList & ( ( JSoundList ) list ).getPlaying ().equals ( s ) )
+      if ( list instanceof JSoundList && ( ( JSoundList ) list ).getPlaying ().equals ( s ) )
       {
         setBackground ( ( ( JSoundList ) list ).getPlayingBackground () );
         setForeground ( ( ( JSoundList ) list ).getPlayingForeground () );
