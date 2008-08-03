@@ -214,8 +214,10 @@ public class TeteTestFrame extends javax.swing.JDialog
     createComponents ( pnlOptions );
     updateGui ();
     pack ();
-    Util.centreInParent ( parent, this );
+    Util.centreWindow ( parent, this );
   }
+  
+  
   private void btnExitActionPerformed (ActionEvent evt)
   {
     dispose ();

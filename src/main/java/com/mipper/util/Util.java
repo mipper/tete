@@ -30,8 +30,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -132,7 +134,7 @@ public class Util
    * @param parent Parent window in which to centre the other window.
    * @param w Window to centre in relation to the parent window.
    */
-  public static void centreInParent ( Window parent, Window w )
+  public static void centreWindow ( Window parent, Window w )
   {
     w.setLocation ( parent.getX () + ( parent.getWidth () - w.getWidth () ) / 2,
                     parent.getY () + ( parent.getHeight () - w.getHeight () ) / 2 );
@@ -1107,6 +1109,37 @@ final double dThisSnapshot = thisSnapshot;
   }
 
 
+  /**
+   * @param url URL from which to retrieve data.
+   * @param dest Stream to write the data to.
+   * 
+   * @throws IOException 
+   */
+  public static void getHttpFile ( final URL url, final OutputStream dest )
+    throws 
+      IOException
+  {
+    final BufferedInputStream bufIn = new BufferedInputStream ( url.openStream () );
+    try
+    {
+      final byte[] buf = new byte[4096];
+      for ( ;; )
+      {
+        final int len = bufIn.read ( buf );
+        if ( len == -1 )
+        {
+          return;
+        }
+        dest.write ( buf, 0, len );
+      }
+    }
+    finally
+    {
+      bufIn.close ();
+    }
+  }
+
+  
   /**
    * Saves the uncompressed data from the ZipInputStream to a file.
    *

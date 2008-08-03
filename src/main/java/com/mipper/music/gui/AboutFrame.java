@@ -18,7 +18,7 @@
 package com.mipper.music.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
+import java.awt.Window;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
@@ -46,7 +46,7 @@ public class AboutFrame extends JDialog
    * @param owner
    * @param title
    */
-  public AboutFrame ( Frame owner, String title )
+  public AboutFrame ( Window owner, String title )
   {
     super ( owner, title );
     initialize ();

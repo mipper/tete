@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -50,6 +51,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
@@ -80,23 +82,8 @@ import com.mipper.util.Util;
  * @author  Cliff Evans
  * @version $$Revision: 1.5 $$
  */
-public class TeteFrame extends javax.swing.JFrame
+public final class TeteFrame extends javax.swing.JFrame
 {
-
-  private class TeteWindowAdapter extends WindowAdapter
-  {
-
-    /**
-     * @see java.awt.event.WindowListener#windowClosing(java.awt.event.WindowEvent)
-     */
-    @Override
-    public void windowClosing ( WindowEvent e )
-    {
-      exitApp ();
-    }
-
-  }
-
 
   /**
    * @param args the command line arguments
@@ -143,9 +130,19 @@ public class TeteFrame extends javax.swing.JFrame
     final AboutFrame f = new AboutFrame ( this, 
                                           ResourceBundle.getBundle ( "tete" )
                                                         .getString ( "title.about" ) );
-    Util.centreWindow ( f );
+    Util.centreWindow ( this, f );
     f.setVisible ( true );
   }
+
+
+//  private void btnConfigActionPerformed ( ActionEvent evt )
+//  {
+//    final PreferencesDialog f = new PreferencesDialog ( this, 
+//                                                        ResourceBundle.getBundle ( "tete" )
+//                                                                      .getString ( "title.config" ) );
+//    Util.centreWindow ( this, f );
+//    f.setVisible ( true );
+//  }
 
 
   private void btnLoopActionPerformed (ActionEvent evt)
@@ -199,6 +196,30 @@ public class TeteFrame extends javax.swing.JFrame
     catch ( final Exception e )
     {
       throw new RuntimeException ( e );
+    }
+  }
+
+
+  private void cboSynthItemStateChanged (ItemEvent evt)
+  {
+    if ( evt.getStateChange () == ItemEvent.SELECTED )
+    {
+      _model.setSynth ( ( Synthesizer ) evt.getItem () );
+      try
+      {
+        initInstruments ();
+        cboInstrument.setSelectedItem ( _model.getInstrument () );
+      }
+      catch ( MidiUnavailableException e )
+      {
+        Logger.error ( e );
+        cboInstrument.setSelectedIndex ( 0 );
+      }
+      catch ( MidiException e )
+      {
+        Logger.error ( e );
+        cboInstrument.setSelectedIndex ( 0 );
+      }
     }
   }
 
@@ -291,7 +312,9 @@ public class TeteFrame extends javax.swing.JFrame
   private void initComponents ()
   {
     pnlPlayback = new JPanel ();
-    jPanel3 = new JPanel ();
+    pnlCombos = new JPanel ();
+    lblSynth = new JLabel ();
+    cboSynth = new JComboBox ();
     lblInstrument = new JLabel ();
     cboInstrument = new JComboBox ();
     lblBottomOctave = new JLabel ();
@@ -302,7 +325,7 @@ public class TeteFrame extends javax.swing.JFrame
     cboRootNote = new JComboBox ();
     lblNoteOrder = new JLabel ();
     cboNoteOrder = new JComboBox ();
-    jPanel2 = new JPanel ();
+    pnlSliders = new JPanel ();
     lblNoteLength = new JLabel ();
     sldNoteLength = new JSlider ();
     lblArpeggioDelay = new JLabel ();
@@ -312,6 +335,7 @@ public class TeteFrame extends javax.swing.JFrame
     btnTest = new JButton ();
     btnExit = new JButton ();
     btnAbout = new JButton ();
+//    btnConfig = new JButton ();
     pnlSounds = new JPanel ();
     pnlSoundType = new JPanel ();
     lblSoundType = new JLabel ();
@@ -323,45 +347,67 @@ public class TeteFrame extends javax.swing.JFrame
 
     // TODO: figure out how to stop a window becoming too small
     getContentPane ().setMinimumSize ( new Dimension ( 394, 554 ) );
-    addWindowListener ( new TeteWindowAdapter () );
+    addWindowListener ( new WindowAdapter ()
+                        {
+                          @Override
+                          public void windowClosing ( WindowEvent e )
+                          {
+                            exitApp ();
+                          }
+                        } );
     setDefaultCloseOperation ( WindowConstants.DO_NOTHING_ON_CLOSE );
     setTitle ( bundle.getString ( "title.application" ) );
 
     pnlPlayback.setLayout ( new GridBagLayout () );
     pnlPlayback.setBorder ( new TitledBorder ( bundle.getString ( "title.playback" ) ) );
 
-    jPanel3.setLayout ( new GridLayout ( 10, 1 ) );
+    pnlCombos.setLayout ( new GridLayout ( 0, 1 ) );
+    
+    lblSynth.setLabelFor ( cboSynth );
+    lblSynth.setText ( bundle.getString ( "label.synth" ) );
+    pnlCombos.add ( lblSynth );
+
+    cboSynth.setOpaque ( false );
+    cboSynth.addItemListener ( new ItemListener ()
+                                {
+                                  public void itemStateChanged ( ItemEvent evt )
+                                  {
+                                    cboSynthItemStateChanged ( evt );
+                                  }
+                                } );
+    pnlCombos.add ( cboSynth );
+
     lblInstrument.setLabelFor ( cboInstrument );
     lblInstrument.setText ( bundle.getString ( "label.instrument" ) );
-    jPanel3.add ( lblInstrument );
+    pnlCombos.add ( lblInstrument );
 
     cboInstrument.setOpaque ( false );
     cboInstrument.addItemListener ( new ItemListener ()
-    {
-      public void itemStateChanged ( ItemEvent evt )
-      {
-        cboInstrumentItemStateChanged ( evt );
-      }
-    } );
-    jPanel3.add ( cboInstrument );
+                                {
+                                  public void itemStateChanged ( ItemEvent evt )
+                                  {
+                                    cboInstrumentItemStateChanged ( evt );
+                                  }
+                                } );
+    pnlCombos.add ( cboInstrument );
 
     lblBottomOctave.setLabelFor ( cboBottomOctave );
     lblBottomOctave.setText ( bundle.getString ( "label.bottom-octave" ) );
-    jPanel3.add ( lblBottomOctave );
+    pnlCombos.add ( lblBottomOctave );
 
     cboBottomOctave.setPreferredSize ( new java.awt.Dimension ( 29, 17 ) );
-    jPanel3.add ( cboBottomOctave );
+    pnlCombos.add ( cboBottomOctave );
 
     lblTopOctave.setLabelFor ( cboTopOctave );
     lblTopOctave.setText ( bundle.getString ( "label.top-octave" ) );
-    jPanel3.add ( lblTopOctave );
+    pnlCombos.add ( lblTopOctave );
 
     cboTopOctave.setPreferredSize ( new java.awt.Dimension ( 29, 17 ) );
-    jPanel3.add ( cboTopOctave );
+    pnlCombos.add ( cboTopOctave );
 
     lblRootNote.setLabelFor ( cboRootNote );
     lblRootNote.setText ( bundle.getString ( "label.root-note" ) );
-    jPanel3.add ( lblRootNote );
+    pnlCombos.add ( lblRootNote );
 
     final DefaultComboBoxModel m = new DefaultComboBoxModel ( Note.values () );
     m.insertElementAt ( bundle.getString ( "label.random" ), 0 );
@@ -377,11 +423,11 @@ public class TeteFrame extends javax.swing.JFrame
         }
       }
     } );
-    jPanel3.add ( cboRootNote );
+    pnlCombos.add ( cboRootNote );
 
     lblNoteOrder.setLabelFor ( cboNoteOrder );
     lblNoteOrder.setText ( bundle.getString ( "label.direction" ) );
-    jPanel3.add ( lblNoteOrder );
+    pnlCombos.add ( lblNoteOrder );
 
     cboNoteOrder.setModel ( new javax.swing.DefaultComboBoxModel ( new String[]
        {bundle.getString ( "label.random" ),
@@ -398,7 +444,7 @@ public class TeteFrame extends javax.swing.JFrame
         }
       }
     } );
-    jPanel3.add ( cboNoteOrder );
+    pnlCombos.add ( cboNoteOrder );
 
     GridBagConstraints gridBagConstraints;
     gridBagConstraints = new java.awt.GridBagConstraints ();
@@ -406,12 +452,12 @@ public class TeteFrame extends javax.swing.JFrame
 //    gridBagConstraints.gridheight = GridBagConstraints.RELATIVE;
     gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 //    gridBagConstraints.anchor = GridBagConstraints.NORTH;
-    pnlPlayback.add ( jPanel3, gridBagConstraints );
+    pnlPlayback.add ( pnlCombos, gridBagConstraints );
 
-    jPanel2.setLayout ( new java.awt.GridLayout ( 5, 1 ) );
+    pnlSliders.setLayout ( new java.awt.GridLayout ( 5, 1 ) );
     lblNoteLength.setLabelFor ( sldNoteLength );
     lblNoteLength.setText ( bundle.getString ( "label.note-length" ) );
-    jPanel2.add ( lblNoteLength );
+    pnlSliders.add ( lblNoteLength );
 
     sldNoteLength.setMajorTickSpacing ( 8 );
     sldNoteLength.setMaximum ( 64 );
@@ -427,11 +473,11 @@ public class TeteFrame extends javax.swing.JFrame
         sldNoteLengthStateChanged ( evt );
       }
     } );
-    jPanel2.add ( sldNoteLength );
+    pnlSliders.add ( sldNoteLength );
 
     lblArpeggioDelay.setLabelFor ( sldArpeggioDelay );
     lblArpeggioDelay.setText ( bundle.getString ( "label.agpeggio-dely" ) );
-    jPanel2.add ( lblArpeggioDelay );
+    pnlSliders.add ( lblArpeggioDelay );
 
     sldArpeggioDelay.setMajorTickSpacing ( 8 );
     sldArpeggioDelay.setMaximum ( 64 );
@@ -447,7 +493,7 @@ public class TeteFrame extends javax.swing.JFrame
           sldArpeggioDelayStateChanged ( evt );
         }
       } );
-    jPanel2.add ( sldArpeggioDelay );
+    pnlSliders.add ( sldArpeggioDelay );
 
     chkCascade.setHorizontalTextPosition ( SwingConstants.LEADING  );
     chkCascade.setText ( bundle.getString ( "label.cascade" ) );
@@ -458,15 +504,15 @@ public class TeteFrame extends javax.swing.JFrame
           _model.setCascade( chkCascade.isSelected () );
         }
       } );
-    jPanel2.add ( chkCascade );
+    pnlSliders.add ( chkCascade );
 
     gridBagConstraints = new java.awt.GridBagConstraints ();
     gridBagConstraints.gridx = 0;
     gridBagConstraints.gridy = 1;
     gridBagConstraints.anchor = GridBagConstraints.NORTH;
-    pnlPlayback.add ( jPanel2, gridBagConstraints );
+    pnlPlayback.add ( pnlSliders, gridBagConstraints );
 
-    getContentPane ().add ( pnlPlayback, BorderLayout.WEST );
+//    getContentPane ().add ( pnlPlayback, BorderLayout.WEST );
 
     btnLoop.setText ( bundle.getString ( "label.play" ) );
     btnLoop.addActionListener ( new ActionListener ()
@@ -487,6 +533,16 @@ public class TeteFrame extends javax.swing.JFrame
       }
     } );
     pnlControl.add ( btnTest );
+
+//    btnConfig.setText ( bundle.getString ( "label.config" ) );
+//    btnConfig.addActionListener ( new ActionListener ()
+//    {
+//      public void actionPerformed ( ActionEvent evt )
+//      {
+//        btnConfigActionPerformed ( evt );
+//      }
+//    } );
+//    pnlControl.add ( btnConfig );
 
     btnExit.setText ( bundle.getString ( "label.exit" ) );
     btnExit.addActionListener ( new ActionListener ()
@@ -548,9 +604,42 @@ public class TeteFrame extends javax.swing.JFrame
     lstSounds.setCellRenderer ( new SoundListRenderer () );
     pnlSounds.add ( scrSounds, BorderLayout.CENTER );
 
-    getContentPane ().add ( pnlSounds, BorderLayout.CENTER );
+    JSplitPane splitPane = new JSplitPane ( JSplitPane.HORIZONTAL_SPLIT,
+                                            pnlPlayback,
+                                            pnlSounds );
+    getContentPane ().add ( splitPane, BorderLayout.CENTER );
+//    getContentPane ().add ( pnlSounds, BorderLayout.CENTER );
 
     pack ();
+  }
+
+
+  private void initSynths ()
+    throws
+      MidiUnavailableException,
+      MidiException
+  {
+    cboSynth.setModel ( new DefaultComboBoxModel ( _model.getAvailableSynths () ) );
+    cboSynth.setRenderer ( new DefaultListCellRenderer ()
+      {
+        @Override
+        public Component getListCellRendererComponent ( JList list,
+                                                        Object value,
+                                                        int index,
+                                                        boolean isSelected,
+                                                        boolean cellHasFocus )
+        {
+          final JLabel lbl = ( JLabel ) super.getListCellRendererComponent ( list,
+                                                                             value,
+                                                                             index,
+                                                                             isSelected,
+                                                                             cellHasFocus );
+          lbl.setText ( ( ( Synthesizer ) value ).getDeviceInfo ().getName () );
+          return lbl;
+        }
+        private static final long serialVersionUID = 1L;
+      }
+    );
   }
 
 
@@ -570,25 +659,26 @@ public class TeteFrame extends javax.swing.JFrame
                                                         boolean cellHasFocus )
         {
           final JLabel lbl = ( JLabel ) super.getListCellRendererComponent ( list,
-                                                                       value,
-                                                                       index,
-                                                                       isSelected,
-                                                                       cellHasFocus );
+                                                                             value,
+                                                                             index,
+                                                                             isSelected,
+                                                                             cellHasFocus );
           lbl.setText ( ( ( Instrument ) value ).getName () );
           return lbl;
         }
-        private static final long serialVersionUID = 3258695407566928183L;
+        private static final long serialVersionUID = 1L;
       }
     );
   }
-
-
+  
+  
   private void initMidi ()
     throws
       MidiUnavailableException,
       MidiException
   {
     _model = new PatternPlayerModel ();
+    initSynths ();
     initInstruments ();
     initBottomOctave ();
     initTopOctave ();
@@ -622,14 +712,8 @@ public class TeteFrame extends javax.swing.JFrame
   private void loadPreferences ()
   {
     final PreferenceManager mgr = PreferenceManager.instanceOf ();
-    try
-    {
-      cboInstrument.setSelectedItem ( _model.lookupInstrument ( mgr.getPatch () ) );
-    }
-    catch ( final MidiUnavailableException e )
-    {
-      handleException ( e );
-    }
+    cboSynth.setSelectedIndex ( lookupSynth ( mgr.getSynthName () ) );
+    cboInstrument.setSelectedItem ( _model.lookupInstrument ( mgr.getPatch () ) );
     cboBottomOctave.setSelectedIndex ( mgr.getBottomOctave () );
     cboTopOctave.setSelectedIndex ( mgr.getTopOctave () );
     cboRootNote.setSelectedIndex ( mgr.getRootNote () );
@@ -665,6 +749,19 @@ public class TeteFrame extends javax.swing.JFrame
   }
 
 
+  private int lookupSynth ( String name )
+  {
+    for ( int i = 0; i < cboSynth.getModel ().getSize (); i++ )
+    {
+      if ( name.equals ( ( ( Synthesizer ) cboSynth.getModel ().getElementAt ( i ) ).getDeviceInfo ().getName () ) )
+      {
+        return i;
+      }
+    }
+    return 0;
+  }
+  
+  
   private void loadSounds ()
   {
     final DefaultListModel lm = new DefaultListModel ();
@@ -692,6 +789,7 @@ public class TeteFrame extends javax.swing.JFrame
   private void savePreferences ()
   {
     final PreferenceManager mgr = PreferenceManager.instanceOf ();
+    mgr.setSynthName ( ( ( Synthesizer ) cboSynth.getSelectedItem () ).getDeviceInfo ().getName () );
     mgr.setInstrument ( ( Instrument ) cboInstrument.getSelectedItem () );
     mgr.setRootNote ( cboRootNote.getSelectedIndex () );
     mgr.setBottomOctave ( cboBottomOctave.getSelectedIndex () );
@@ -785,15 +883,17 @@ public class TeteFrame extends javax.swing.JFrame
   private JToggleButton btnLoop;
   private JButton btnTest;
   private JComboBox cboBottomOctave;
+  private JComboBox cboSynth;
   private JComboBox cboInstrument;
   private JComboBox cboNoteOrder;
   private JComboBox cboRootNote;
   private JComboBox cboSoundType;
   private JComboBox cboTopOctave;
-  private JPanel jPanel2;
-  private JPanel jPanel3;
+  private JPanel pnlSliders;
+  private JPanel pnlCombos;
   private JLabel lblArpeggioDelay;
   private JLabel lblBottomOctave;
+  private JLabel lblSynth;
   private JLabel lblInstrument;
   private JLabel lblNoteLength;
   private JLabel lblNoteOrder;

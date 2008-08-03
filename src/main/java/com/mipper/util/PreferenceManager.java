@@ -1,10 +1,4 @@
-/*
- * This file contains proprietary information of Rule Financial.
- * Copying or reproduction without prior written approval is prohibited.
- *
- * <b>Copyright</b> (c) 2004
- * <b>Company</b> Rule Financial
- */
+
 package com.mipper.util;
 
 import java.awt.Rectangle;
@@ -130,6 +124,15 @@ public class PreferenceManager
   }
 
 
+  /**
+   * @return Name of the Synthesizer used for playback.
+   */
+  public String getSynthName ()
+  {
+    return _root.get ( SYNTH, "" );
+  }
+  
+  
   /**
    * Retrieve the previously stored patch.
    *
@@ -266,6 +269,15 @@ public class PreferenceManager
 
 
   /**
+   * @param synth Name of the Synthesizer selected for playback.
+   */
+  public void setSynthName ( String synth )
+  {
+    _root.put ( SYNTH, synth );
+  }
+  
+  
+  /**
    * Store the currently selected instrument.
    *
    * @param inst Instrument to store.
@@ -389,6 +401,7 @@ public class PreferenceManager
 
   private static PreferenceManager _mgr;
   private static final String PREF_ROOT = "/com/mipper/music/tete";
+  private static final String SYNTH = "playback/synth";
   private static final String INSTRUMENT_BANK = "playback/instrument/bank";
   private static final String INSTRUMENT_PROGRAM = "playback/instrument/program";
   private static final String BOTTOM_OCTAVE = "playback/bottom_octave";

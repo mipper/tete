@@ -25,6 +25,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
 import javax.sound.midi.Soundbank;
+import javax.sound.midi.Synthesizer;
 
 import com.mipper.music.control.Player;
 import com.mipper.music.midi.MidiException;
@@ -91,6 +92,15 @@ public class PatternPlayerModel
 
   /**
    * @return Array of Instruments available for playback.
+   */
+  public Object[] getAvailableSynths ()
+  {
+    return _player.getAvailableSynths ().toArray ();
+  }
+
+
+  /**
+   * @return Array of Instruments available for playback.
    *
    * @throws MidiUnavailableException
    * @throws MidiException
@@ -104,6 +114,15 @@ public class PatternPlayerModel
   }
 
 
+  /**
+   * @return The Instrument currently selected for playback.
+   */
+  public Instrument getInstrument ()
+  {
+    return _player.getInstrument ();
+  }
+
+  
   /**
    * @return The direction to play the notes.
    */
@@ -151,12 +170,8 @@ public class PatternPlayerModel
 
   /**
    * @return Current Soundbank.
-   *
-   * @throws MidiUnavailableException
    */
   public Soundbank getSoundbank ()
-    throws
-      MidiUnavailableException
   {
     return _player.getSoundbank ();
   }
@@ -169,12 +184,8 @@ public class PatternPlayerModel
    * @param patch Patch to lookup
    *
    * @return The instrument that matches the patch.
-   *
-   * @throws MidiUnavailableException
    */
   public Instrument lookupInstrument ( Patch patch )
-    throws
-      MidiUnavailableException
   {
     return getSoundbank ().getInstrument ( patch );
   }
@@ -229,6 +240,15 @@ public class PatternPlayerModel
   }
 
 
+  /**
+   * @param synth Synthesizer to use for playback.
+   */
+  public void setSynth ( Synthesizer synth )
+  {
+    _player.setSynth ( synth );
+  }
+  
+  
   /**
    * @param instrument Instrument to use the play the pattern.
    */

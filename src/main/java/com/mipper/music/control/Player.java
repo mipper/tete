@@ -22,11 +22,16 @@ import java.util.List;
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
+import javax.sound.midi.Synthesizer;
 
 import com.mipper.music.midi.MidiException;
 import com.mipper.music.midi.MidiHelper;
+import com.mipper.util.Logger;
 
 
 /**
@@ -50,25 +55,27 @@ public class Player
       MidiException
   {
     super ();
-    _helper = new MidiHelper ();
-    _instrument = _helper.getAvailableInstruments ().get ( 0 );
-    // TODO: remove me
-    _helper.getAvailableSynthesizers ();
+    _sequencer = MidiSystem.getSequencer ();
+    _sequencer.open ();
+    _synth = MidiHelper.getAvailableSynthesizers ().get ( 0 );
+    _instrument = getAvailableInstruments ( _synth ).get ( 0 );
   }
 
 
   /**
    * Constructor.
-   *
+   * 
+   * @param synth Synthesizer to be used for playback.
    * @param instrument MIDI id of the instrument to use.
    */
-  public Player ( Instrument instrument )
+  public Player ( Synthesizer synth, Instrument instrument )
   {
     super ();
+    _synth = synth;
     _instrument = instrument;
   }
 
-
+  
   /**
    * Constructor.
    *
@@ -86,6 +93,15 @@ public class Player
 
 
   /**
+   * @param spread The spread to set.
+   */
+  public void setArpeggioDelay ( int spread )
+  {
+    _delay = spread;
+  }
+
+
+  /**
    * @return Returns the spread.
    */
   public int getArpeggioDelay ()
@@ -95,17 +111,44 @@ public class Player
 
 
   /**
-   * @return Instrument arrqay of all available instruments.
-   *
-   * @throws MidiUnavailableException
-   * @throws MidiException
+   * @return Synthesizer being used for playback.
    */
-  public List<Instrument> getAvailableInstruments ()
-    throws
-      MidiUnavailableException,
-      MidiException
+  public Synthesizer getSynth ()
   {
-    return _helper.getAvailableInstruments ();
+    return _synth;
+  }
+  
+  
+  /**
+   * @param synth Synthesizer to use for playback.
+   */
+  public void setSynth ( Synthesizer synth )
+  {
+    _synth = synth;
+    _instruments = null;
+    try
+    {
+      _instrument = getAvailableInstruments ( _synth ).get ( 0 );
+    }
+    catch ( MidiUnavailableException e )
+    {
+      Logger.error ( e );
+      _instrument = null;
+    }
+    catch ( MidiException e )
+    {
+      Logger.error ( e );
+      _instrument = null;
+    }
+  }
+
+  
+  /**
+   * @param bpm The tempo sequences will be played at.
+   */
+  public void setBpm ( int bpm )
+  {
+    _bpm = bpm;
   }
 
 
@@ -119,11 +162,29 @@ public class Player
 
 
   /**
+   * @param instrument The instrument to set.
+   */
+  public void setInstrument ( Instrument instrument )
+  {
+    _instrument = instrument;
+  }
+
+
+  /**
    * @return Returns the instrument.
    */
   public Instrument getInstrument ()
   {
     return _instrument;
+  }
+
+
+  /**
+   * @param noteLength The noteLength to set.
+   */
+  public void setNoteLength ( int noteLength )
+  {
+    _noteLength = noteLength;
   }
 
 
@@ -138,112 +199,10 @@ public class Player
 
   /**
    * @return Current Soundbank.
-   *
-   * @throws MidiUnavailableException
    */
   public Soundbank getSoundbank ()
-    throws
-      MidiUnavailableException
   {
-    return _helper.getCurrentSoundbank ();
-  }
-
-
-  /**
-   * @return The velocity of played notes.
-   */
-  public int getVelocity ()
-  {
-    return _velocity;
-  }
-
-
-
-  /**
-   * @return Returns the cascade setting.
-   */
-  public boolean isCascade ()
-  {
-    return _cascade;
-  }
-
-
-
-  /**
-   * Sound the specified interval.
-   *
-   * @param notes Chord to sound.
-   *
-   * @throws InvalidMidiDataException
-   */
-  public void play ( int[] notes )
-    throws
-      InvalidMidiDataException
-  {
-    _helper.playSequence ( _helper.buildChordSequence ( notes,
-                                                        _noteLength,
-                                                        _delay,
-                                                        _cascade,
-                                                        _velocity,
-                                                        _instrument ),
-                           _bpm );
-  }
-
-
-
-  /**
-   * @param spread The spread to set.
-   */
-  public void setArpeggioDelay ( int spread )
-  {
-    _delay = spread;
-  }
-
-
-
-  /**
-   * @param bpm The tempo sequences will be played at.
-   */
-  public void setBpm ( int bpm )
-  {
-    _bpm = bpm;
-  }
-
-
-
-  /**
-   * @param cascade The cascade to set.
-   */
-  public void setCascade ( boolean cascade )
-  {
-    _cascade = cascade;
-  }
-
-
-  /**
-   * @param instrument The instrument to set.
-   */
-  public void setInstrument ( Instrument instrument )
-  {
-    _instrument = instrument;
-  }
-
-
-  /**
-   * @param listener Listener to add to the meta event listeners list.
-   */
-  public void setMetaListener ( MetaEventListener listener )
-  {
-    _helper.getSequencer ().addMetaEventListener ( listener );
-  }
-
-
-  /**
-   * @param noteLength The noteLength to set.
-   */
-  public void setNoteLength ( int noteLength )
-  {
-    _noteLength = noteLength;
+    return MidiHelper.getCurrentSoundbank ( _synth );
   }
 
 
@@ -257,23 +216,138 @@ public class Player
 
 
   /**
+   * @return The velocity of played notes.
+   */
+  public int getVelocity ()
+  {
+    return _velocity;
+  }
+
+
+  /**
+   * @param cascade The cascade to set.
+   */
+  public void setCascade ( boolean cascade )
+  {
+    _cascade = cascade;
+  }
+
+
+  /**
+   * @return Returns the cascade setting.
+   */
+  public boolean isCascade ()
+  {
+    return _cascade;
+  }
+
+
+  /**
+   * @param listener Listener to add to the meta event listeners list.
+   */
+  public void setMetaListener ( MetaEventListener listener )
+  {
+    _sequencer.addMetaEventListener ( listener );
+  }
+
+
+  /**
+   * @return Instrument array of all available instruments.
+   */
+  public List<Synthesizer> getAvailableSynths ()
+  {
+    return MidiHelper.getAvailableSynthesizers ();
+  }
+
+
+  /**
+   * @return Instrument arrqay of all available instruments.
+   *
+   * @throws MidiUnavailableException
+   * @throws MidiException
+   */
+  public List<Instrument> getAvailableInstruments ()
+    throws
+      MidiUnavailableException,
+      MidiException
+  {
+    return getAvailableInstruments ( _synth );
+  }
+
+
+  /**
+   * Sound the specified interval.
+   *
+   * @param notes Chord to sound.
+   *
+   * @throws InvalidMidiDataException
+   */
+  public void play ( int[] notes )
+    throws
+      InvalidMidiDataException
+  {
+    playSequence ( MidiHelper.buildChordSequence ( notes,
+                                                _noteLength,
+                                                _delay,
+                                                _cascade,
+                                                _velocity,
+                                                _instrument ),
+                           _bpm );
+  }
+
+
+  /**
    * Stops the currently playing sequence.
    */
   public void stop ()
   {
-    _helper.stop ();
+    _sequencer.stop ();
+  }
+
+
+  /**
+   * Plays the specified Sequence.
+   *
+   * @param sequence The Sequence to play.
+   * @param bpm The tempo to play the sequence at in beats per minute.
+   *
+   * @throws InvalidMidiDataException
+   */
+  private void playSequence ( Sequence sequence, int bpm )
+    throws
+      InvalidMidiDataException
+  {
+    _sequencer.setSequence ( sequence );
+    _sequencer.setTempoInBPM ( bpm );
+    _sequencer.start ();
+  }
+
+
+  private List<Instrument> getAvailableInstruments ( Synthesizer synth )
+    throws
+      MidiUnavailableException,
+      MidiException
+  {
+    if ( _instruments == null )
+    {
+      _instruments = MidiHelper.getAvailableInstruments ( synth );
+    }
+    return _instruments;
   }
 
 
   private static final int NOTE_VELOCITY = 64;
   private static final int BPM = 60;
 
-  private MidiHelper _helper;
   private int _bpm = BPM;
   private int _velocity = NOTE_VELOCITY;
   private int _noteLength = 32;
   private int _delay = 8;
   private boolean _cascade = false;
-  private Instrument _instrument = null;
+  private Sequencer _sequencer;
+  private Synthesizer _synth;
+  private Instrument _instrument;
+  private List<Instrument> _instruments;
+
 
 }

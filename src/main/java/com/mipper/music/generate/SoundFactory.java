@@ -110,8 +110,7 @@ public class SoundFactory
     throws
       EmptyException
   {
-    final IntervalPattern ct = getRandomPattern ();
-    return generateSound ( range, ct );
+    return generateSound ( range, getRandomPattern () );
   }
 
 
@@ -176,8 +175,8 @@ public class SoundFactory
     int offset = _random.nextInt ( range.getNoteCount () );
     if ( range.getRootNote () == null )
     {
-      offset = i.ordinal () >= range.getNoteCount () ?
-               0 // Cannot pass 0 into _random.nextInt ()!
+      offset = i.ordinal () >= range.getNoteCount ()
+               ? 0 // Cannot pass 0 into _random.nextInt ()!
                : offset - i.ordinal ();
     }
     else
