@@ -18,6 +18,7 @@
 package com.mipper.music.generate;
 
 
+import java.util.List;
 import java.util.Random;
 
 import javax.sound.midi.Instrument;
@@ -93,9 +94,9 @@ public class PatternPlayerModel
   /**
    * @return Array of Instruments available for playback.
    */
-  public Object[] getAvailableSynths ()
+  public List<Synthesizer> getAvailableSynths ()
   {
-    return _player.getAvailableSynths ().toArray ();
+    return _player.getAvailableSynths ();
   }
 
 
@@ -105,12 +106,12 @@ public class PatternPlayerModel
    * @throws MidiUnavailableException
    * @throws MidiException
    */
-  public Object[] getAvailableInstruments ()
+  public List<Instrument> getLoadedInstruments ()
     throws
       MidiUnavailableException,
       MidiException
   {
-    return _player.getAvailableInstruments ().toArray ();
+    return _player.getLoadedInstruments ();
   }
 
 
@@ -246,6 +247,15 @@ public class PatternPlayerModel
   public void setSynth ( Synthesizer synth )
   {
     _player.setSynth ( synth );
+  }
+  
+  
+  /**
+   * @return Synth used for playback.
+   */
+  public Synthesizer getSynth ()
+  {
+    return _player.getSynth ();
   }
   
   

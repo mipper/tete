@@ -24,7 +24,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.ImageIcon;
@@ -244,7 +243,7 @@ public class TeteTestFrame extends javax.swing.JDialog
       try
       {
         _controller.startTest ();
-        btnStart.setText ( ResourceBundle.getBundle ( "tete" ).getString ( "label.stop" ) );
+        btnStart.setText ( GuiUtil.readProperty ( "label.stop" ) );
       }
       catch ( final Exception e )
       {
@@ -253,7 +252,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     }
     else
     {
-      btnStart.setText ( ResourceBundle.getBundle ( "tete" ).getString ( "label.start" ) );
+      btnStart.setText ( GuiUtil.readProperty ( "label.start" ) );
       icoResult.setIcon ( null );
     }
     updateGui ();
@@ -318,8 +317,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     pgsProgress = new JProgressBar ();
     icoResult = new JLabel ();
     setDefaultCloseOperation ( WindowConstants.DISPOSE_ON_CLOSE );
-    btnStart.setText ( ResourceBundle.getBundle ( "tete" )
-                                     .getString ( "label.start" ) );
+    btnStart.setText ( GuiUtil.readProperty ( "label.start" ) );
     btnStart.addActionListener ( new ActionListener ()
     {
 
@@ -329,8 +327,7 @@ public class TeteTestFrame extends javax.swing.JDialog
       }
     } );
     pnlControl.add ( btnStart );
-    btnRepeat.setText ( ResourceBundle.getBundle ( "tete" )
-                                      .getString ( "label.repeat" ) );
+    btnRepeat.setText ( GuiUtil.readProperty ( "label.repeat" ) );
     btnRepeat.addActionListener ( new ActionListener ()
     {
 
@@ -340,8 +337,7 @@ public class TeteTestFrame extends javax.swing.JDialog
       }
     } );
     pnlControl.add ( btnRepeat );
-    btnExit.setText ( ResourceBundle.getBundle ( "tete" )
-                                    .getString ( "label.close" ) );
+    btnExit.setText ( GuiUtil.readProperty ( "label.close" ) );
     btnExit.addActionListener ( new ActionListener ()
     {
 
@@ -407,9 +403,9 @@ public class TeteTestFrame extends javax.swing.JDialog
 
   private javax.swing.JPanel pnlProgress;
   private final Controller _controller;
-  private final ImageIcon _right = new ImageIcon ( getClass ().getResource ( "/img/right.gif" ) );
+  private final ImageIcon _right = new ImageIcon ( GuiUtil.getResource ( "/img/right.gif" ) );
 
 
-  private final ImageIcon _wrong = new ImageIcon ( getClass ().getResource ( "/img/wrong.gif" ) );
+  private final ImageIcon _wrong = new ImageIcon ( GuiUtil.getResource ( "/img/wrong.gif" ) );
 
 }

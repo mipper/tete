@@ -589,7 +589,13 @@ public class Util
     return StringUtils.substringAfterLast ( filename, "." );
   }
 
+  
+  public static String getFilename ( String path )
+  {
+    return new File ( path ).getName ();
+  }
 
+  
   /**
    * @return The hostname of the local host.
    */

@@ -15,8 +15,8 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package com.mipper.util;
 
+package com.mipper.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -24,173 +24,119 @@ import java.text.MessageFormat;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * Utility methods for logging.  Uses the commons logging library.
  *
+ * @version 1.1
  * @author Cliff Evans
- * @version $Revision: 1.1 $
  */
 public class Logger
 {
 
-  /**
-   * Log a message with debug level.
-   *
-   * @param msg Object to log.
-   */
-  public static void debug ( Object msg )
-  {
-    if ( _defaultLogger.isDebugEnabled () )
-    {
-      _defaultLogger.debug ( getMessage ( msg ) );
-    }
-  }
+//  /**
+//   * @param msg
+//   */
+//  public static void fatal ( Object msg )
+//  {
+//    _defaultLogger.fatal ( msg );
+//  }
+//
+//
+//  /**
+//   * Log a message with fatal level.
+//   *
+//   * @param msg Object to log.
+//   */
+//  public static void fatal ( Throwable msg )
+//  {
+//    _defaultLogger.fatal ( getMessage ( msg, true ) );
+//  }
+//
+//
+//  /**
+//   * @param msg
+//   * @param obj
+//   */
+//  public static void fatal ( String msg, Throwable obj )
+//  {
+//    _defaultLogger.fatal ( msg + CRTAB + getMessage ( obj, true ) );
+//  }
+//
+//
+//  /**
+//   * Log a message with fatal level using params as parameters to MessageFormat.
+//   *
+//   * @param msg Object to log.
+//   * @param params Parameters passed to MessageFormat.format.
+//   */
+//  public static void fatal ( String msg, Object... params )
+//  {
+//    _defaultLogger.fatal ( MessageFormat.format ( msg, params ) );
+//  }
+//
+//
+//  /**
+//   * Log an fatal level message against a specified org.slf4j.Logger.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param msg The exception to log.
+//   */
+//  public static void fatalEx ( String logger, Throwable msg )
+//  {
+//    LoggerFactory.getLogger ( logger ).fatal ( getMessage ( msg, true ) );
+//  }
+//
+//
+//  /**
+//   * Log an fatal level message against a specified org.slf4j.Logger.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param msg The message to log
+//   */
+//  public static void fatalEx ( String logger, Object msg )
+//  {
+//    LoggerFactory.getLogger ( logger ).fatal ( msg );
+//  }
+//
+//
+//  /**
+//   * Log an fatal level message against a specified org.slf4j.Logger using a parameterised
+//   * message string.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param msg The message to log
+//   * @param params Params passed into MessageFormat.format call.
+//   */
+//  public static void fatalEx ( String logger, String msg, Object... params )
+//  {
+//    LoggerFactory.getLogger ( logger ).fatal ( MessageFormat.format ( msg, params ) );
+//  }
+//
+//
+//  /**
+//   * Log an fatal level message against a specified org.slf4j.Logger using a parameterised
+//   * message string.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param e Throwable to report along with log entry.
+//   * @param msg The message to log
+//   * @param params Params passed into MessageFormat.format call.
+//   */
+//  public static void fatalEx ( String logger, Throwable e, String msg, Object... params )
+//  {
+//    LoggerFactory.getLogger ( logger ).fatal ( MessageFormat.format ( msg, params ), e );
+//  }
 
 
   /**
    * @param msg
-   * @param obj
    */
-  public static void debug ( String msg, Object obj )
+  public static void error ( String msg )
   {
-    if ( _defaultLogger.isDebugEnabled () )
-    {
-      _defaultLogger.debug ( msg + CRTAB + getMessage ( obj, true ) );
-    }
-  }
-
-
-  /**
-   * Log a parameterised message with debug level.
-   *
-   * @param msg Message to log.
-   * @param params Parameters which will be processed via MessageFormat.format
-   *                against the msg string.
-   */
-  public static void debug ( String msg, Object[] params )
-  {
-    if ( _defaultLogger.isDebugEnabled () )
-    {
-      _defaultLogger.debug ( MessageFormat.format ( msg, params ) );
-    }
-  }
-
-
-  /**
-   * Log a debug level message against a specified Logger.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   */
-  public static void debugEx ( String logger, Object msg )
-  {
-    final Log l = _factory.getInstance ( logger );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( msg );
-    }
-  }
-
-
-  /**
-   * Log a debug level message against a specified Logger using a parameterised
-   * message string.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   * @param params Params passed into MessageFormat.format call.
-   */
-  public static void debugEx ( String logger, String msg, Object[] params )
-  {
-    final Log l = _factory.getInstance ( logger );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( MessageFormat.format ( msg, params ) );
-    }
-  }
-
-
-  /**
-   * Output a message to the "output" Logger.  Useful for temporary logging
-   * during development.  The level for this Logger can have its output level
-   * set independently of the others.
-   *
-   * @param msg Object to log.
-   */
-  public static void dump ( Object msg )
-  {
-    final Log l = _factory.getInstance ( OUTPUT_LOGGER_NAME );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( getMessage ( msg ) );
-    }
-  }
-
-
-  /**
-   * @param msg
-   * @param obj
-   */
-  public static void dump ( String msg, Object obj )
-  {
-    final Log l = _factory.getInstance ( OUTPUT_LOGGER_NAME );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( msg + CRTAB + getMessage ( obj, true ) );
-    }
-  }
-
-
-  /**
-   * Log a parameterised message with trace level.
-   *
-   * @param msg Message to log.
-   * @param params Parameters which will be processed via MessageFormat.format
-   *                against the msg string.
-   */
-  public static void dump ( String msg, Object[] params )
-  {
-    final Log l = _factory.getInstance ( OUTPUT_LOGGER_NAME );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( MessageFormat.format ( msg, params ) );
-    }
-  }
-
-
-  /**
-   * @param logger
-   * @param msg
-   */
-  public static void dumpEx ( String logger, Object msg )
-  {
-    final Log l = _factory.getInstance ( OUTPUT_LOGGER_NAME + "." + logger );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( msg );
-    }
-  }
-
-
-  /**
-   * Log a trace level message against a specified Logger using a parameterised
-   * message string.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   * @param params Params passed into MessageFormat.format call.
-   */
-  public static void dumpEx ( String logger, String msg, Object[] params )
-  {
-    final Log l = _factory.getInstance ( OUTPUT_LOGGER_NAME + "." + logger );
-    if ( l.isDebugEnabled () )
-    {
-      l.debug ( MessageFormat.format ( msg, params ) );
-    }
+    _defaultLogger.error ( msg );
   }
 
 
@@ -199,17 +145,17 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void error ( Object msg )
+  public static void error ( Throwable msg )
   {
-    _defaultLogger.error ( getMessage ( msg ) );
+    _defaultLogger.error ( getMessage ( msg, true ) );
   }
 
 
   /**
-   * @param msg
    * @param obj
+   * @param msg
    */
-  public static void error ( String msg, Object obj )
+  public static void error ( Throwable obj, String msg )
   {
     _defaultLogger.error ( msg + CRTAB + getMessage ( obj, true ) );
   }
@@ -221,120 +167,216 @@ public class Logger
    * @param msg Object to log.
    * @param params Parameters passed to MessageFormat.format.
    */
-  public static void error ( String msg, Object[] params )
+  public static void error ( String msg, Object... params )
   {
     _defaultLogger.error ( MessageFormat.format ( msg, params ) );
   }
 
 
   /**
-   * Log an error level message against a specified Logger.
+   * Log a message with error level using params as parameters to MessageFormat.
    *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
+   * @param e Throwable causing the log message.
+   * @param msg Object to log.
+   * @param params Parameters passed to MessageFormat.format.
    */
-  public static void errorEx ( String logger, Object msg )
+  public static void error ( Throwable e, String msg, Object... params )
   {
-    _factory.getInstance ( logger ).error ( msg );
+    _defaultLogger.error ( MessageFormat.format ( msg, params ), e );
   }
 
 
   /**
-   * Log an error level message against a specified Logger using a parameterised
+   * Log an error level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The exception to log.
+   */
+  public static void errorEx ( String logger, Throwable msg )
+  {
+    LoggerFactory.getLogger ( logger ).error ( getMessage ( msg, true ) );
+  }
+
+
+  /**
+   * Log an error level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The message to log
+   */
+  public static void errorEx ( String logger, String msg )
+  {
+    LoggerFactory.getLogger ( logger ).error ( msg );
+  }
+
+
+  /**
+   * Log an error level message against a specified org.slf4j.Logger using a parameterised
    * message string.
    *
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void errorEx ( String logger, String msg, Object[] params )
+  public static void errorEx ( String logger, String msg, Object... params )
   {
-    _factory.getInstance ( logger ).error ( MessageFormat.format ( msg, params ) );
+    LoggerFactory.getLogger ( logger ).error ( MessageFormat.format ( msg, params ) );
   }
 
 
   /**
-   * Log a message with fatal level.
+   * Log an error level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param e Throwable to report along with log entry.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
+   */
+  public static void errorEx ( String logger, Throwable e, String msg, Object... params )
+  {
+    LoggerFactory.getLogger ( logger ).error ( MessageFormat.format ( msg, params ), e );
+  }
+
+
+  /**
+   * Log a message with warn level.
    *
    * @param msg Object to log.
    */
-  public static void fatal ( Object msg )
+  public static void warn ( String msg )
   {
-    _defaultLogger.fatal ( getMessage ( msg ) );
+    _defaultLogger.warn ( msg.toString () );
+  }
+
+
+  /**
+   * Log a message with warn level.
+   *
+   * @param msg Object to log.
+   */
+  public static void warn ( Throwable msg )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      _defaultLogger.warn ( getMessage ( msg, true ) );
+    }
+  }
+
+
+  /**
+   * @param obj
+   * @param msg
+   */
+  public static void warn ( Throwable obj, String msg )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      _defaultLogger.warn ( msg + CRTAB + getMessage ( obj, true ) );
+    }
+  }
+
+
+  /**
+   * Log a parameterised message with warn level.
+   *
+   * @param msg Message to log.
+   * @param params Parameters which will be processed via MessageFormat.format
+   *                against the msg string.
+   */
+  public static void warn ( String msg, Object... params )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      _defaultLogger.warn ( MessageFormat.format ( msg, params ) );
+    }
+  }
+
+
+  /**
+   * Log a message with warm level using params as parameters to MessageFormat.
+   *
+   * @param e Throwable causing the log message.
+   * @param msg Object to log.
+   * @param params Parameters passed to MessageFormat.format.
+   */
+  public static void warn ( Throwable e, String msg, Object... params )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      _defaultLogger.warn ( MessageFormat.format ( msg, params ), e );
+    }
+  }
+
+
+  /**
+   * Log a warn level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The message to log
+   */
+  public static void warnEx ( String logger, String msg )
+  {
+    LoggerFactory.getLogger ( logger ).warn ( msg );
+  }
+
+
+  /**
+   * Log a warn level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The exception to log.
+   */
+  public static void warnEx ( String logger, Throwable msg )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      LoggerFactory.getLogger ( logger ).warn ( getMessage ( msg, true ) );
+    }
+  }
+
+
+  /**
+   * Log a warn level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
+   */
+  public static void warnEx ( String logger, String msg, Object... params )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      LoggerFactory.getLogger ( logger ).warn ( MessageFormat.format ( msg, params ) );
+    }
+  }
+
+
+  /**
+   * Log a warn level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param e Throwable to report along with log entry.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
+   */
+  public static void warnEx ( String logger, Throwable e, String msg, Object... params )
+  {
+    if ( _defaultLogger.isWarnEnabled () )
+    {
+      LoggerFactory.getLogger ( logger ).warn ( MessageFormat.format ( msg, params ), e );
+    }
   }
 
 
   /**
    * @param msg
-   * @param obj
    */
-  public static void fatal ( String msg, Object obj )
+  public static void info ( String msg )
   {
-    _defaultLogger.fatal ( msg + CRTAB + getMessage ( obj, true ) );
-  }
-
-
-  /**
-   * Log a message with fatal level using params as parameters to MessageFormat.
-   *
-   * @param msg Object to log.
-   * @param params Parameters passed to MessageFormat.format.
-   */
-  public static void fatal ( String msg, Object[] params )
-  {
-    _defaultLogger.fatal ( MessageFormat.format ( msg, params ) );
-  }
-
-
-  /**
-   * Log an fatal level message against a specified Logger.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   */
-  public static void fatalEx ( String logger, Object msg )
-  {
-    _factory.getInstance ( logger ).fatal ( msg );
-  }
-
-
-  /**
-   * Log an fatal level message against a specified Logger using a parameterised
-   * message string.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   * @param params Params passed into MessageFormat.format call.
-   */
-  public static void fatalEx ( String logger, String msg, Object[] params )
-  {
-    _factory.getInstance ( logger ).fatal ( MessageFormat.format ( msg, params ) );
-  }
-
-
-  /**
-   * @return The default Logger.
-   */
-  public static Log getDefaultLogger ()
-  {
-    return _defaultLogger;
-  }
-
-
-  /**
-   * Returns a string of the stack trace for an exception.
-   *
-   * @param e Exception to get stackTrace for.
-   *
-   * @return The stack trace.
-   */
-  public static String getStackTrace ( Throwable e )
-  {
-    final StringWriter s = new StringWriter ( 1024 );
-    final PrintWriter w = new PrintWriter ( s );
-    e.printStackTrace ( w );
-
-    return s.toString ();
+    _defaultLogger.info ( msg );
   }
 
 
@@ -343,20 +385,20 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void info ( Object msg )
+  public static void info ( Throwable msg )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
-      _defaultLogger.info ( getMessage ( msg ) );
+      _defaultLogger.info ( getMessage ( msg, true ) );
     }
   }
 
 
   /**
-   * @param msg
    * @param obj
+   * @param msg
    */
-  public static void info ( String msg, Object obj )
+  public static void info ( Throwable obj, String msg )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
@@ -372,7 +414,7 @@ public class Logger
    * @param params Parameters which will be processed via MessageFormat.format
    *                against the msg string.
    */
-  public static void info ( String msg, Object[] params )
+  public static void info ( String msg, Object... params )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
@@ -382,32 +424,61 @@ public class Logger
 
 
   /**
-   * Log an info level message against a specified Logger.
+   * Log an info level message against a specified Logger using a parameterised
+   * message string.
    *
-   * @param logger The logger name to log the message against.
+   * @param e Throwable to report along with log entry.
    * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
    */
-  public static void infoEx ( String logger, Object msg )
+  public static void info ( Throwable e, String msg, Object... params )
   {
-    final Log l = _factory.getInstance ( logger );
-    if ( l.isInfoEnabled () )
+    if ( _defaultLogger.isInfoEnabled () )
     {
-      l.info ( msg );
+      _defaultLogger.info ( MessageFormat.format ( msg, params ), e );
     }
   }
 
 
   /**
-   * Log an info level message against a specified Logger using a parameterised
+   * Log an info level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The message to log
+   */
+  public static void infoEx ( String logger, String msg )
+  {
+    LoggerFactory.getLogger ( logger ).info ( msg );
+  }
+
+
+  /**
+   * Log an info level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The exception to log.
+   */
+  public static void infoEx ( String logger, Throwable msg )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    if ( l.isInfoEnabled () )
+    {
+      l.info ( getMessage ( msg, true ) );
+    }
+  }
+
+
+  /**
+   * Log an info level message against a specified org.slf4j.Logger using a parameterised
    * message string.
    *
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void infoEx ( String logger, String msg, Object[] params )
+  public static void infoEx ( String logger, String msg, Object... params )
   {
-    final Log l = _factory.getInstance ( logger );
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isInfoEnabled () )
     {
       l.info ( MessageFormat.format ( msg, params ) );
@@ -416,37 +487,346 @@ public class Logger
 
 
   /**
-   * @param name
-   */
-  public static void setDefaultLoggerName ( String name )
-  {
-    _defaultLogger = _factory.getInstance ( name );
-  }
-
-
-  /**
-   * Log a message with trace level.
+   * Log an info level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
    *
-   * @param msg Object to log.
+   * @param logger The logger name to log the message against.
+   * @param e Throwable to report along with log entry.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
    */
-  public static void trace ( Object msg )
+  public static void infoEx ( String logger, Throwable e, String msg, Object... params )
   {
-    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    if ( l.isInfoEnabled () )
     {
-      _defaultLogger.trace ( getMessage ( msg ) );
+      l.info ( MessageFormat.format ( msg, params ), e );
     }
   }
 
 
   /**
    * @param msg
-   * @param obj
    */
-  public static void trace ( String msg, Object obj )
+  public static void debug ( String msg )
   {
-    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+    _defaultLogger.debug ( msg );
+  }
+
+
+  /**
+   * Log a message with debug level.
+   *
+   * @param msg Object to log.
+   */
+  public static void debug ( Throwable msg )
+  {
+    if ( _defaultLogger.isDebugEnabled () )
     {
-      _defaultLogger.trace ( msg + CRTAB + getMessage ( obj, true ) );
+      _defaultLogger.debug ( getMessage ( msg, true ) );
+    }
+  }
+
+
+  /**
+   * @param obj
+   * @param msg
+   */
+  public static void debug ( Throwable obj, String msg )
+  {
+    if ( _defaultLogger.isDebugEnabled () )
+    {
+      _defaultLogger.debug ( msg + CRTAB + getMessage ( obj, true ) );
+    }
+  }
+
+
+  /**
+   * Log a parameterised message with debug level.
+   *
+   * @param msg Message to log.
+   * @param params Parameters which will be processed via MessageFormat.format
+   *                against the msg string.
+   */
+  public static void debug ( String msg, Object... params )
+  {
+    if ( _defaultLogger.isDebugEnabled () )
+    {
+      _defaultLogger.debug ( MessageFormat.format ( msg, params ) );
+    }
+  }
+
+
+  /**
+   * Log a message with error level using params as parameters to MessageFormat.
+   *
+   * @param e Throwable causing the log message.
+   * @param msg Object to log.
+   * @param params Parameters passed to MessageFormat.format.
+   */
+  public static void debug ( Throwable e, String msg, Object... params )
+  {
+    if ( _defaultLogger.isDebugEnabled () )
+    {
+      _defaultLogger.debug ( MessageFormat.format ( msg, params ), e );
+    }
+  }
+
+
+  /**
+   * Log a debug level message against a specified org.slf4j.Logger.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The message to log
+   */
+  public static void debugEx ( String logger, String msg )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( msg );
+    }
+  }
+
+
+  /**
+   * Log a debug level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param e Exception to output.
+   */
+  public static void debugEx ( String logger, Throwable e )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( getMessage ( e, true ) );
+    }
+  }
+
+
+  /**
+   * Log a debug level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
+   */
+  public static void debugEx ( String logger, String msg, Object... params )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( MessageFormat.format ( msg, params ) );
+    }
+  }
+
+
+  /**
+   * Log a debug level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param e Throwable to report along with log entry.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
+   */
+  public static void debugEx ( String logger, Throwable e, String msg, Object... params )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( MessageFormat.format ( msg, params ), e );
+    }
+  }
+
+
+//  /**
+//   * Log a message with trace level.
+//   *
+//   * @param msg String to log.
+//   */
+//  public static void trace ( String msg )
+//  {
+//    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+//    {
+//      _defaultLogger.trace ( msg );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a message with trace level.
+//   *
+//   * @param msg Object to log.
+//   */
+//  public static void trace ( Throwable msg )
+//  {
+//    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+//    {
+//      _defaultLogger.trace ( getMessage ( msg, true ) );
+//    }
+//  }
+//
+//
+//  /**
+//   * @param obj
+//   * @param msg
+//   */
+//  public static void trace ( Throwable obj, String msg )
+//  {
+//    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+//    {
+//      _defaultLogger.trace ( msg + CRTAB + getMessage ( obj, true ) );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a parameterised message with trace level.
+//   *
+//   * @param msg Message to log.
+//   * @param params Parameters which will be processed via MessageFormat.format
+//   *                against the msg string.
+//   */
+//  public static void trace ( String msg, Object... params )
+//  {
+//    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+//    {
+//      _defaultLogger.trace ( MessageFormat.format ( msg, params ) );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a trace level message against a specified org.slf4j.Logger using a parameterised
+//   * message string.
+//   *
+//   * @param e Throwable to report along with log entry.
+//   * @param msg The message to log
+//   * @param params Params passed into MessageFormat.format call.
+//   */
+//  public static void trace ( Throwable e, String msg, Object... params )
+//  {
+//    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+//    {
+//      _defaultLogger.trace ( MessageFormat.format ( msg, params ), e );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a trace level message against a specified org.slf4j.Logger.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param msg The exception to log.
+//   */
+//  public static void traceEx ( String logger, Throwable msg )
+//  {
+//    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+//    if ( isTraceEnabled ( l ) && l.isDebugEnabled () )
+//    {
+//      l.trace ( getMessage ( msg, true ) );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a trace level message against a specified org.slf4j.Logger.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param msg The message to log
+//   */
+//  public static void traceEx ( String logger, String msg )
+//  {
+//    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+//    if ( isTraceEnabled ( l ) && l.isDebugEnabled () )
+//    {
+//      l.trace ( msg );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a trace level message against a specified org.slf4j.Logger using a parameterised
+//   * message string.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param msg The message to log
+//   * @param params Params passed into MessageFormat.format call.
+//   */
+//  public static void traceEx ( String logger, String msg, Object... params )
+//  {
+//    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+//    if ( isTraceEnabled ( l ) && l.isDebugEnabled () )
+//    {
+//      l.trace ( MessageFormat.format ( msg, params ) );
+//    }
+//  }
+//
+//
+//  /**
+//   * Log a trace level message against a specified org.slf4j.Logger using a parameterised
+//   * message string.
+//   *
+//   * @param logger The logger name to log the message against.
+//   * @param e Throwable to report along with log entry.
+//   * @param msg The message to log
+//   * @param params Params passed into MessageFormat.format call.
+//   */
+//  public static void traceEx ( String logger, Throwable e, String msg, Object... params )
+//  {
+//    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+//    if ( isTraceEnabled ( l ) && l.isDebugEnabled () )
+//    {
+//      l.trace ( MessageFormat.format ( msg, params ), e );
+//    }
+//  }
+
+
+  /**
+   * Output a message to the "output" org.slf4j.Logger.  Useful for temporary logging
+   * during development.  The level for this org.slf4j.Logger can have its output level
+   * set independently of the others.
+   *
+   * @param msg String to log.
+   */
+  public static void dump ( String msg )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    l.debug ( msg );
+  }
+
+
+  /**
+   * Output a message to the "output" org.slf4j.Logger.  Useful for temporary logging
+   * during development.  The level for this org.slf4j.Logger can have its output level
+   * set independently of the others.
+   *
+   * @param msg Object to log.
+   */
+  public static void dump ( Throwable msg )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( getMessage ( msg, true ) );
+    }
+  }
+
+
+  /**
+   * @param obj
+   * @param msg
+   */
+  public static void dump ( Throwable obj, String msg )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( msg + CRTAB + getMessage ( obj, true ) );
     }
   }
 
@@ -458,153 +838,155 @@ public class Logger
    * @param params Parameters which will be processed via MessageFormat.format
    *                against the msg string.
    */
-  public static void trace ( String msg, Object[] params )
+  public static void dump ( String msg, Object... params )
   {
-    if ( isTraceEnabled ( _defaultLogger ) && _defaultLogger.isDebugEnabled () )
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    if ( l.isDebugEnabled () )
     {
-      _defaultLogger.trace ( MessageFormat.format ( msg, params ) );
+      l.debug ( MessageFormat.format ( msg, params ) );
     }
   }
 
 
   /**
-   * Log a trace level message against a specified Logger.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   */
-  public static void traceEx ( String logger, Object msg )
-  {
-    final Log l = _factory.getInstance ( logger );
-    if ( isTraceEnabled ( l ) && l.isDebugEnabled () )
-    {
-      l.trace ( msg );
-    }
-  }
-
-
-  /**
-   * Log a trace level message against a specified Logger using a parameterised
-   * message string.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   * @param params Params passed into MessageFormat.format call.
-   */
-  public static void traceEx ( String logger, String msg, Object[] params )
-  {
-    final Log l = _factory.getInstance ( logger );
-    if ( isTraceEnabled ( l ) && l.isDebugEnabled () )
-    {
-      l.trace ( MessageFormat.format ( msg, params ) );
-    }
-  }
-
-
-  /**
-   * Log a message with warn level.
-   *
-   * @param msg Object to log.
-   */
-  public static void warn ( Object msg )
-  {
-    _defaultLogger.warn ( getMessage ( msg ) );
-  }
-
-
-  /**
+   * @param logger
    * @param msg
-   * @param obj
    */
-  public static void warn ( String msg, Object obj )
+  public static void dumpEx ( String logger, Throwable msg )
   {
-    _defaultLogger.warn ( msg + CRTAB + getMessage ( obj, true ) );
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( getMessage ( msg, true ) );
+    }
   }
 
 
   /**
-   * Log a parameterised message with warn level.
-   *
-   * @param msg Message to log.
-   * @param params Parameters which will be processed via MessageFormat.format
-   *                against the msg string.
+   * @param logger
+   * @param msg
    */
-  public static void warn ( String msg, Object[] params )
+  public static void dumpEx ( String logger, String msg )
   {
-    _defaultLogger.warn ( MessageFormat.format ( msg, params ) );
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    if ( l.isDebugEnabled () )
+    {
+      l.debug ( msg );
+    }
   }
 
 
   /**
-   * Log a warn level message against a specified Logger.
-   *
-   * @param logger The logger name to log the message against.
-   * @param msg The message to log
-   */
-  public static void warnEx ( String logger, Object msg )
-  {
-    _factory.getInstance ( logger ).warn ( msg );
-  }
-
-
-  /**
-   * Log a warn level message against a specified Logger using a parameterised
+   * Log a trace level message against a specified org.slf4j.Logger using a parameterised
    * message string.
    *
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void warnEx ( String logger, String msg, Object[] params )
+  public static void dumpEx ( String logger, String msg, Object... params )
   {
-    _factory.getInstance ( logger ).warn ( MessageFormat.format ( msg, params ) );
-  }
-
-
-  private static String getMessage ( Object msg )
-  {
-    return getMessage ( msg, false );
-  }
-
-
-  private static String getMessage ( Object msg, boolean stackTrace )
-  {
-    String result;
-    if ( msg instanceof Throwable )
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    if ( l.isDebugEnabled () )
     {
-      result = getStackTrace ( ( Throwable ) msg );
-      if ( stackTrace )
-      {
-        result = StringUtils.replace ( result,
-                                       SystemUtils.LINE_SEPARATOR,
-                                       SystemUtils.LINE_SEPARATOR + "\t" );
-      }
+      l.debug ( MessageFormat.format ( msg, params ) );
     }
-    else
+  }
+
+
+  /**
+   * Log a trace level message against a specified org.slf4j.Logger using a parameterised
+   * message string.
+   *
+   * @param logger The logger name to log the message against.
+   * @param e Throwable to report along with log entry.
+   * @param msg The message to log
+   * @param params Params passed into MessageFormat.format call.
+   */
+  public static void dumpEx ( String logger, Throwable e, String msg, Object... params )
+  {
+    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    if ( l.isDebugEnabled () )
     {
-      result = null == msg ? "" : msg.toString ();
+      l.debug ( MessageFormat.format ( msg, params ), e );
+    }
+  }
+
+
+  /**
+   * @return The default org.slf4j.Logger.
+   */
+  public static org.slf4j.Logger getDefaultLogger ()
+  {
+    return _defaultLogger;
+  }
+
+
+  /**
+   * @param name
+   *
+   * @return Log instance with the given name.
+   */
+  public static org.slf4j.Logger setDefaultLoggerName ( String name )
+  {
+    return LoggerFactory.getLogger ( name );
+  }
+
+
+  /**
+   * Returns a string of the stack trace for an exception.
+   *
+   * @param e Exception to get stackTrace for.
+   *
+   * @return The stack trace.
+   */
+  public static String getStackTrace ( Throwable e )
+  {
+    StringWriter s = new StringWriter ( 1024 );
+    PrintWriter w = new PrintWriter ( s );
+    e.printStackTrace ( w );
+
+    return s.toString ();
+  }
+
+
+//  private static boolean isTraceEnabled ( org.slf4j.Logger logger )
+//  {
+//    return _localTrace && logger.isTraceEnabled ();
+//  }
+
+
+//  private static String getMessage ( Throwable msg )
+//  {
+//    return getMessage ( msg, false );
+//  }
+
+
+  private static String getMessage ( Throwable msg, boolean stackTrace )
+  {
+    String result = getStackTrace ( msg );
+    if ( stackTrace )
+    {
+      result = StringUtils.replace ( result,
+                                     SystemUtils.LINE_SEPARATOR,
+                                     SystemUtils.LINE_SEPARATOR + "\t" );
     }
     return result;
   }
 
 
-  private static boolean isTraceEnabled ( Log logger )
+  private Logger ()
   {
-    return _localTrace && logger.isTraceEnabled ();
+    super ();
   }
-  
-  
+
+
   private static final String DEFAULT_LOGGER_NAME = "log.std";
   private static final String OUTPUT_LOGGER_NAME = "log.output";
   private static final String CRTAB = SystemUtils.LINE_SEPARATOR + "\t";
-  private static LogFactory _factory = LogFactory.getFactory ();
-  private static Log _defaultLogger;
-  private static boolean _localTrace = Boolean.getBoolean ( "log.trace" );
-
-
-  static
-  {
-    setDefaultLoggerName ( DEFAULT_LOGGER_NAME );
-  }
+//  private static LoggerFactory _factory = LoggerFactory.getFactory ();
+  private static org.slf4j.Logger _defaultLogger = setDefaultLoggerName ( DEFAULT_LOGGER_NAME );
+  // To set this pass -Dlog.trace=true to the VM when running the app
+//  private static boolean _localTrace = Boolean.getBoolean ( "log.trace" );
 
 }

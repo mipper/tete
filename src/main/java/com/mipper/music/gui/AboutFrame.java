@@ -20,19 +20,25 @@ package com.mipper.music.gui;
 import java.awt.BorderLayout;
 import java.awt.Window;
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 
+import com.mipper.music.midi.MidiHelper;
+import com.mipper.util.Logger;
 import com.mipper.util.Util;
 
 
 /**
+ * About box windows.  Contains the version information read from the jar
+ * manifest and the details of the MIDI system available on the running machine.
  * 
  * @author Cliff Evans
  * @version $Revision: 1.1 $
@@ -41,10 +47,10 @@ public class AboutFrame extends JDialog
 {
 
   /**
-   * This is the default constructor
+   * Constructor
    * 
-   * @param owner
-   * @param title
+   * @param owner Owning window.
+   * @param title Title to display on window.
    */
   public AboutFrame ( Window owner, String title )
   {
@@ -53,34 +59,59 @@ public class AboutFrame extends JDialog
   }
 
 
-  /**
-   * This method initializes _bottom
-   * 
-   * @return javax.swing.JPanel
-   */
-  private JPanel get_bottom ()
+  private void initialize ()
+  {
+    setSize ( new java.awt.Dimension ( 562, 350 ) );
+    setResizable ( false );
+    setModal ( true );
+    setDefaultCloseOperation ( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
+    setContentPane ( createContentPane () );
+  }
+
+  
+  private JComponent createContentPane ()
+  {
+    if ( _contentPane == null )
+    {
+      _contentPane = new JPanel ();
+      _contentPane.setLayout ( new BorderLayout () );
+      _contentPane.add ( createLogo (), java.awt.BorderLayout.NORTH );
+      _contentPane.add ( createBottom (), java.awt.BorderLayout.SOUTH );
+      JTabbedPane tabs = new JTabbedPane ();
+      tabs.addTab ( GuiUtil.readProperty ( "label.about" ), createAboutDetails () );
+      tabs.addTab ( GuiUtil.readProperty ( "label.midi" ), createMidiDetails () );
+      _contentPane.add ( tabs, java.awt.BorderLayout.CENTER );
+    }
+    return _contentPane;
+  }
+
+
+  private JLabel createLogo ()
+  {
+    _logo = new JLabel ();
+    _logo.setText ( "" );
+    _logo.setIcon ( new ImageIcon ( GuiUtil.getResource ( "/img/tete_logo3.png" ) ) );
+    return _logo;
+  }
+
+
+  private JPanel createBottom ()
   {
     if ( _bottom == null )
     {
       _bottom = new JPanel ();
-      _bottom.add ( get_close (), null );
+      _bottom.add ( createClose (), null );
     }
     return _bottom;
   }
 
 
-  /**
-   * This method initializes _close
-   * 
-   * @return javax.swing.JButton
-   */
-  private JButton get_close ()
+  private JButton createClose ()
   {
     if ( _close == null )
     {
       _close = new JButton ();
-      _close.setText ( ResourceBundle.getBundle ( "tete" )
-                                     .getString ( "label.close" ) );
+      _close.setText ( GuiUtil.readProperty ( "label.close" ) );
       _close.addActionListener ( new java.awt.event.ActionListener ()
       {
 
@@ -94,72 +125,63 @@ public class AboutFrame extends JDialog
   }
 
 
-  /**
-   * This method initializes _details
-   * 
-   * @return javax.swing.JTextPane
-   */
-  private JTextPane get_details ()
+  private JComponent createAboutDetails ()
   {
     if ( _details == null )
     {
-      _details = new JTextPane ();
+      JTextPane txt = setupTextArea ();
       try
       {
-        _details.setText ( Util.readMainManifest ( "tete.jar" ).toString () );
-        _details.setFont ( new java.awt.Font ( "Arial", java.awt.Font.PLAIN, 12 ) );
-        _details.setBackground ( new java.awt.Color ( 238, 238, 238 ) );
-        _details.setForeground ( java.awt.Color.gray );
+        String jar = Util.getFilename ( this.getClass ().getProtectionDomain().getCodeSource().getLocation().toString () );
+        if ( jar.toLowerCase ().endsWith ( ".jar" ) )
+        {
+          txt.setText ( Util.readMainManifest ( jar ).toString () );
+        }
+        else
+        {
+          txt.setText ( "Can't find version information." );
+        }
       }
       catch ( final IOException e )
       {
-        _details.setText ( e.getMessage () );
+        txt.setText ( e.getMessage () );
       }
+      _details = new JScrollPane ( txt );
+      txt.setCaretPosition ( 0 );
     }
     return _details;
   }
 
 
-  /**
-   * This method initializes jContentPane
-   * 
-   * @return javax.swing.JPanel
-   */
-  private JPanel getJContentPane ()
+  private JComponent createMidiDetails ()
   {
-    if ( jContentPane == null )
+    if ( _midi == null )
     {
-      _logo = new JLabel ();
-      _logo.setText ( "" );
-      _logo.setIcon ( new ImageIcon ( getClass ().getResource ( "/img/tete_logo3.png" ) ) );
-      jContentPane = new JPanel ();
-      jContentPane.setLayout ( new BorderLayout () );
-      jContentPane.add ( _logo, java.awt.BorderLayout.NORTH );
-      jContentPane.add ( get_details (), java.awt.BorderLayout.CENTER );
-      jContentPane.add ( get_bottom (), java.awt.BorderLayout.SOUTH );
+      JTextPane txt = setupTextArea ();
+      _midi = new JScrollPane ( txt );
+      txt.setText ( MidiHelper.getMidiInfo ( false ) );
+      txt.setCaretPosition ( 0 );
     }
-    return jContentPane;
+    return _midi;
   }
 
 
-  /**
-   * This method initializes this
-   */
-  private void initialize ()
+  private JTextPane setupTextArea ()
   {
-    setSize ( new java.awt.Dimension ( 562, 300 ) );
-    setResizable ( false );
-    setModal ( true );
-    setDefaultCloseOperation ( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
-    setContentPane ( getJContentPane () );
+    JTextPane txt = new JTextPane ();
+    txt.setFont ( new java.awt.Font ( "Arial", java.awt.Font.PLAIN, 12 ) );
+    txt.setBackground ( new java.awt.Color ( 238, 238, 238 ) );
+    txt.setForeground ( java.awt.Color.gray );
+    return txt;
   }
 
-  
+
   private static final long serialVersionUID = 1L;
 
-  private JPanel jContentPane = null;
+  private JComponent _contentPane = null;
   private JLabel _logo = null;
-  private JTextPane _details = null;
+  private JComponent _details = null;
+  private JComponent _midi = null;
   private JPanel _bottom = null;
   private JButton _close = null;
 

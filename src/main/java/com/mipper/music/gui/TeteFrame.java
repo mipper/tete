@@ -30,13 +30,14 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Hashtable;
-import java.util.ResourceBundle;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -74,6 +75,7 @@ import com.mipper.music.model.SoundCollectionAdaptor;
 import com.mipper.util.Logger;
 import com.mipper.util.PreferenceManager;
 import com.mipper.util.Util;
+import com.sun.media.sound.SF2Soundbank;
 
 
 /**
@@ -113,12 +115,12 @@ public final class TeteFrame extends javax.swing.JFrame
     catch ( final MidiException e )
     {
       handleException ( e );
-      exitApp ();
+//      exitApp ();
     }
     catch ( final MidiUnavailableException e )
     {
       handleException ( e );
-      exitApp ();
+//      exitApp ();
     }
     Util.centreWindow ( this );
     setApplicationIcon ();
@@ -128,8 +130,7 @@ public final class TeteFrame extends javax.swing.JFrame
   private void btnAboutActionPerformed ( ActionEvent evt )
   {
     final AboutFrame f = new AboutFrame ( this, 
-                                          ResourceBundle.getBundle ( "tete" )
-                                                        .getString ( "title.about" ) );
+                                          GuiUtil.readProperty ( "title.about" ) );
     Util.centreWindow ( this, f );
     f.setVisible ( true );
   }
@@ -166,16 +167,14 @@ public final class TeteFrame extends javax.swing.JFrame
       {
         handleException ( e );
       }
-      btnLoop.setText ( ResourceBundle.getBundle ( "tete" )
-                                      .getString ( "label.stop" ) );
+      btnLoop.setText ( GuiUtil.readProperty ( "label.stop" ) );
       btnTest.setEnabled ( false );
     }
     else
     {
       _looper.stop ();
       _looper = null;
-      btnLoop.setText ( ResourceBundle.getBundle ( "tete" )
-                                      .getString ( "label.play" ) );
+      btnLoop.setText ( GuiUtil.readProperty ( "label.play" ) );
       btnTest.setEnabled ( true );
       lstSounds.clearPlaying ();
     }
@@ -188,9 +187,8 @@ public final class TeteFrame extends javax.swing.JFrame
     {
       _model.setPatterns ( lstSounds.getSelectedValues () );
       final TeteTestFrame test = new TeteTestFrame ( this,
-                                               ResourceBundle.getBundle ( "tete" )
-                                                             .getString ( "title.test" ),
-                                               _model );
+                                                     GuiUtil.readProperty ( "title.test" ),
+                                                     _model );
       test.setVisible ( true );
     }
     catch ( final Exception e )
@@ -204,11 +202,30 @@ public final class TeteFrame extends javax.swing.JFrame
   {
     if ( evt.getStateChange () == ItemEvent.SELECTED )
     {
-      _model.setSynth ( ( Synthesizer ) evt.getItem () );
+      Synthesizer synth = ( Synthesizer ) evt.getItem ();
       try
       {
-        initInstruments ();
-        cboInstrument.setSelectedItem ( _model.getInstrument () );
+//        Soundbank sb = new SF2Soundbank ( Util.getResource ( this, "Strat_Marshall.SF2" ) );
+        Soundbank sb = new SF2Soundbank ( Util.getResource ( this, "Guitar Vince.sf2" ) );
+        Logger.debug ( "cboSynthItemStateChanged Select synth: " + synth );
+        for ( Instrument i: sb.getInstruments () )
+        {
+          Logger.debug ( "cboSynthItemStateChanged Instrument: {0}", i );
+        }
+        if ( synth.isSoundbankSupported ( sb ) )
+        {
+          synth.open ();
+//          if ( synth.getDefaultSoundbank () != null )
+//          {
+//            synth.unloadAllInstruments ( synth.getDefaultSoundbank () );
+//          }
+          Logger.debug ( "Unloaded Insts: loaded {0}, avail {1}", synth.getLoadedInstruments ().length, synth.getAvailableInstruments ().length );
+          Logger.debug ( "Load All insts: " + synth.loadAllInstruments ( sb ) );
+          Logger.debug ( "Loaded Insts: {0}, available: {1}", synth.getLoadedInstruments ().length, synth.getAvailableInstruments ().length );
+          initInstruments ();
+//        cboInstrument.setSelectedItem ( _model.getInstrument () );
+        }
+        _model.setSynth ( synth );
       }
       catch ( MidiUnavailableException e )
       {
@@ -216,6 +233,16 @@ public final class TeteFrame extends javax.swing.JFrame
         cboInstrument.setSelectedIndex ( 0 );
       }
       catch ( MidiException e )
+      {
+        Logger.error ( e );
+        cboInstrument.setSelectedIndex ( 0 );
+      }
+      catch ( FileNotFoundException e )
+      {
+        Logger.error ( e );
+        cboInstrument.setSelectedIndex ( 0 );
+      }
+      catch ( IOException e )
       {
         Logger.error ( e );
         cboInstrument.setSelectedIndex ( 0 );
@@ -281,8 +308,7 @@ public final class TeteFrame extends javax.swing.JFrame
     Logger.error ( e );
     JOptionPane.showMessageDialog ( this,
                                     e.getMessage (),
-                                    ResourceBundle.getBundle ( "tete" )
-                                                  .getString ( "title.error" ),
+                                    GuiUtil.readProperty ( "title.error" ),
                                     JOptionPane.ERROR_MESSAGE );
   }
 
@@ -343,7 +369,6 @@ public final class TeteFrame extends javax.swing.JFrame
     scrSounds = new JScrollPane ();
     lstSounds = new JSoundList ();
     chkCascade = new JCheckBox ();
-    final ResourceBundle bundle = ResourceBundle.getBundle ( "tete" );
 
     // TODO: figure out how to stop a window becoming too small
     getContentPane ().setMinimumSize ( new Dimension ( 394, 554 ) );
@@ -356,15 +381,15 @@ public final class TeteFrame extends javax.swing.JFrame
                           }
                         } );
     setDefaultCloseOperation ( WindowConstants.DO_NOTHING_ON_CLOSE );
-    setTitle ( bundle.getString ( "title.application" ) );
+    setTitle ( GuiUtil.readProperty ( "title.application" ) );
 
     pnlPlayback.setLayout ( new GridBagLayout () );
-    pnlPlayback.setBorder ( new TitledBorder ( bundle.getString ( "title.playback" ) ) );
+    pnlPlayback.setBorder ( new TitledBorder ( GuiUtil.readProperty ( "title.playback" ) ) );
 
     pnlCombos.setLayout ( new GridLayout ( 0, 1 ) );
     
     lblSynth.setLabelFor ( cboSynth );
-    lblSynth.setText ( bundle.getString ( "label.synth" ) );
+    lblSynth.setText ( GuiUtil.readProperty ( "label.synth" ) );
     pnlCombos.add ( lblSynth );
 
     cboSynth.setOpaque ( false );
@@ -378,7 +403,7 @@ public final class TeteFrame extends javax.swing.JFrame
     pnlCombos.add ( cboSynth );
 
     lblInstrument.setLabelFor ( cboInstrument );
-    lblInstrument.setText ( bundle.getString ( "label.instrument" ) );
+    lblInstrument.setText ( GuiUtil.readProperty ( "label.instrument" ) );
     pnlCombos.add ( lblInstrument );
 
     cboInstrument.setOpaque ( false );
@@ -392,25 +417,25 @@ public final class TeteFrame extends javax.swing.JFrame
     pnlCombos.add ( cboInstrument );
 
     lblBottomOctave.setLabelFor ( cboBottomOctave );
-    lblBottomOctave.setText ( bundle.getString ( "label.bottom-octave" ) );
+    lblBottomOctave.setText ( GuiUtil.readProperty ( "label.bottom-octave" ) );
     pnlCombos.add ( lblBottomOctave );
 
     cboBottomOctave.setPreferredSize ( new java.awt.Dimension ( 29, 17 ) );
     pnlCombos.add ( cboBottomOctave );
 
     lblTopOctave.setLabelFor ( cboTopOctave );
-    lblTopOctave.setText ( bundle.getString ( "label.top-octave" ) );
+    lblTopOctave.setText ( GuiUtil.readProperty ( "label.top-octave" ) );
     pnlCombos.add ( lblTopOctave );
 
     cboTopOctave.setPreferredSize ( new java.awt.Dimension ( 29, 17 ) );
     pnlCombos.add ( cboTopOctave );
 
     lblRootNote.setLabelFor ( cboRootNote );
-    lblRootNote.setText ( bundle.getString ( "label.root-note" ) );
+    lblRootNote.setText ( GuiUtil.readProperty ( "label.root-note" ) );
     pnlCombos.add ( lblRootNote );
 
     final DefaultComboBoxModel m = new DefaultComboBoxModel ( Note.values () );
-    m.insertElementAt ( bundle.getString ( "label.random" ), 0 );
+    m.insertElementAt ( GuiUtil.readProperty ( "label.random" ), 0 );
     cboRootNote.setModel ( m );
     cboRootNote.setPreferredSize ( new java.awt.Dimension ( 29, 17 ) );
     cboRootNote.addItemListener ( new ItemListener ()
@@ -426,13 +451,13 @@ public final class TeteFrame extends javax.swing.JFrame
     pnlCombos.add ( cboRootNote );
 
     lblNoteOrder.setLabelFor ( cboNoteOrder );
-    lblNoteOrder.setText ( bundle.getString ( "label.direction" ) );
+    lblNoteOrder.setText ( GuiUtil.readProperty ( "label.direction" ) );
     pnlCombos.add ( lblNoteOrder );
 
     cboNoteOrder.setModel ( new javax.swing.DefaultComboBoxModel ( new String[]
-       {bundle.getString ( "label.random" ),
-        bundle.getString ( "label.ascending" ),
-        bundle.getString ( "label.descending" )} ) );
+       {GuiUtil.readProperty ( "label.random" ),
+        GuiUtil.readProperty ( "label.ascending" ),
+        GuiUtil.readProperty ( "label.descending" )} ) );
     cboNoteOrder.setSelectedIndex ( 1 );
     cboNoteOrder.addItemListener ( new ItemListener ()
     {
@@ -456,7 +481,7 @@ public final class TeteFrame extends javax.swing.JFrame
 
     pnlSliders.setLayout ( new java.awt.GridLayout ( 5, 1 ) );
     lblNoteLength.setLabelFor ( sldNoteLength );
-    lblNoteLength.setText ( bundle.getString ( "label.note-length" ) );
+    lblNoteLength.setText ( GuiUtil.readProperty ( "label.note-length" ) );
     pnlSliders.add ( lblNoteLength );
 
     sldNoteLength.setMajorTickSpacing ( 8 );
@@ -476,7 +501,7 @@ public final class TeteFrame extends javax.swing.JFrame
     pnlSliders.add ( sldNoteLength );
 
     lblArpeggioDelay.setLabelFor ( sldArpeggioDelay );
-    lblArpeggioDelay.setText ( bundle.getString ( "label.agpeggio-dely" ) );
+    lblArpeggioDelay.setText ( GuiUtil.readProperty ( "label.agpeggio-dely" ) );
     pnlSliders.add ( lblArpeggioDelay );
 
     sldArpeggioDelay.setMajorTickSpacing ( 8 );
@@ -496,7 +521,7 @@ public final class TeteFrame extends javax.swing.JFrame
     pnlSliders.add ( sldArpeggioDelay );
 
     chkCascade.setHorizontalTextPosition ( SwingConstants.LEADING  );
-    chkCascade.setText ( bundle.getString ( "label.cascade" ) );
+    chkCascade.setText ( GuiUtil.readProperty ( "label.cascade" ) );
     chkCascade.addItemListener ( new ItemListener ()
       {
         public void itemStateChanged ( ItemEvent evt )
@@ -514,7 +539,7 @@ public final class TeteFrame extends javax.swing.JFrame
 
 //    getContentPane ().add ( pnlPlayback, BorderLayout.WEST );
 
-    btnLoop.setText ( bundle.getString ( "label.play" ) );
+    btnLoop.setText ( GuiUtil.readProperty ( "label.play" ) );
     btnLoop.addActionListener ( new ActionListener ()
     {
       public void actionPerformed ( ActionEvent evt )
@@ -524,7 +549,7 @@ public final class TeteFrame extends javax.swing.JFrame
     } );
     pnlControl.add ( btnLoop );
 
-    btnTest.setText ( bundle.getString ( "label.test" ) );
+    btnTest.setText ( GuiUtil.readProperty ( "label.test" ) );
     btnTest.addActionListener ( new ActionListener ()
     {
       public void actionPerformed ( ActionEvent evt )
@@ -544,7 +569,7 @@ public final class TeteFrame extends javax.swing.JFrame
 //    } );
 //    pnlControl.add ( btnConfig );
 
-    btnExit.setText ( bundle.getString ( "label.exit" ) );
+    btnExit.setText ( GuiUtil.readProperty ( "label.exit" ) );
     btnExit.addActionListener ( new ActionListener ()
     {
 
@@ -555,7 +580,7 @@ public final class TeteFrame extends javax.swing.JFrame
     } );
     pnlControl.add ( btnExit );
 
-    btnAbout.setText ( bundle.getString ( "label.about" ) );
+    btnAbout.setText ( GuiUtil.readProperty ( "label.about" ) );
     btnAbout.addActionListener ( new ActionListener ()
     {
       public void actionPerformed ( ActionEvent evt )
@@ -568,10 +593,10 @@ public final class TeteFrame extends javax.swing.JFrame
     getContentPane ().add ( pnlControl, BorderLayout.SOUTH );
 
     pnlSounds.setLayout ( new BorderLayout ( 0, 5 ) );
-    pnlSounds.setBorder ( new TitledBorder ( bundle.getString ( "label.sounds" ) ) );
+    pnlSounds.setBorder ( new TitledBorder ( GuiUtil.readProperty ( "label.sounds" ) ) );
     pnlSoundType.setLayout ( new GridLayout ( 2, 1 ) );
     lblSoundType.setLabelFor ( cboSoundType );
-    lblSoundType.setText ( bundle.getString ( "label.type" ) );
+    lblSoundType.setText ( GuiUtil.readProperty ( "label.type" ) );
     pnlSoundType.add ( lblSoundType );
 
     cboSoundType.addItemListener ( new ItemListener ()
@@ -615,11 +640,9 @@ public final class TeteFrame extends javax.swing.JFrame
 
 
   private void initSynths ()
-    throws
-      MidiUnavailableException,
-      MidiException
   {
-    cboSynth.setModel ( new DefaultComboBoxModel ( _model.getAvailableSynths () ) );
+    cboSynth.setModel ( new DefaultComboBoxModel ( _model.getAvailableSynths ()
+                                                         .toArray () ) );
     cboSynth.setRenderer ( new DefaultListCellRenderer ()
       {
         @Override
@@ -648,7 +671,9 @@ public final class TeteFrame extends javax.swing.JFrame
       MidiUnavailableException,
       MidiException
   {
-    cboInstrument.setModel ( new DefaultComboBoxModel ( _model.getAvailableInstruments () ) );
+    Logger.debug ( "Synth: " + _model.getSynth () );
+    Logger.debug ( "Instruments:", Util.displayCollection ( _model.getLoadedInstruments () ) );
+    cboInstrument.setModel ( new DefaultComboBoxModel ( _model.getLoadedInstruments ().toArray () ) );
     cboInstrument.setRenderer ( new DefaultListCellRenderer ()
       {
         @Override
@@ -663,7 +688,10 @@ public final class TeteFrame extends javax.swing.JFrame
                                                                              index,
                                                                              isSelected,
                                                                              cellHasFocus );
-          lbl.setText ( ( ( Instrument ) value ).getName () );
+          if ( null != value )
+          {
+            lbl.setText ( ( ( Instrument ) value ).getName () );
+          }
           return lbl;
         }
         private static final long serialVersionUID = 1L;
@@ -684,7 +712,10 @@ public final class TeteFrame extends javax.swing.JFrame
     initTopOctave ();
     setRange ();
     setupSoundTypes ();
-    _model.setInstrument ( ( Instrument ) cboInstrument.getSelectedItem () );
+    if ( cboInstrument.getSelectedItem () != null )
+    {
+      _model.setInstrument ( ( Instrument ) cboInstrument.getSelectedItem () );
+    }
   }
 
 
@@ -779,7 +810,7 @@ public final class TeteFrame extends javax.swing.JFrame
   }
 
 
-  private void lstSoundsValueChanged (ListSelectionEvent evt)
+  private void lstSoundsValueChanged ( ListSelectionEvent evt )
   {
     btnLoop.setEnabled ( lstSounds.getSelectedValues ().length != 0 );
     btnTest.setEnabled ( btnLoop.isEnabled () );
@@ -827,7 +858,7 @@ public final class TeteFrame extends javax.swing.JFrame
    */
   private void setApplicationIcon ()
   {
-    final URL i = getClass ().getResource ( "/img/headphones.gif" );
+    final URL i = GuiUtil.getResource ( "/img/headphones.gif" );
     if ( i != null )
     {
       this.setIconImage ( new ImageIcon ( i ).getImage () );
@@ -856,13 +887,13 @@ public final class TeteFrame extends javax.swing.JFrame
   }
 
 
-  private void sldArpeggioDelayStateChanged (ChangeEvent evt)
+  private void sldArpeggioDelayStateChanged ( ChangeEvent evt )
   {
     _model.setArpeggioDelay ( sldArpeggioDelay.getValue () );
   }
 
 
-  private void sldNoteLengthStateChanged (ChangeEvent evt)
+  private void sldNoteLengthStateChanged ( ChangeEvent evt )
   {
     _model.setNoteLength ( sldNoteLength.getValue () );
   }
@@ -877,7 +908,7 @@ public final class TeteFrame extends javax.swing.JFrame
   }
 
 
-  private static final long serialVersionUID = 3905236849197593913L;
+  private static final long serialVersionUID = 1L;
   private JButton btnExit;
   private JButton btnAbout;
   private JToggleButton btnLoop;

@@ -55,10 +55,11 @@ public class Player
       MidiException
   {
     super ();
-    _sequencer = MidiSystem.getSequencer ();
+    _sequencer = MidiSystem.getSequencer ( false );
     _sequencer.open ();
-    _synth = MidiHelper.getAvailableSynthesizers ().get ( 0 );
-    _instrument = getAvailableInstruments ( _synth ).get ( 0 );
+//    _synth = MidiHelper.getAvailableSynthesizers ().get ( 0 );
+    setSynth ( MidiHelper.getAvailableSynthesizers ().get ( 0 ) );
+    _instrument = getAvailableInstruments ().get ( 0 );
   }
 
 
@@ -71,7 +72,7 @@ public class Player
   public Player ( Synthesizer synth, Instrument instrument )
   {
     super ();
-    _synth = synth;
+    setSynth ( synth );
     _instrument = instrument;
   }
 
@@ -125,10 +126,19 @@ public class Player
   public void setSynth ( Synthesizer synth )
   {
     _synth = synth;
-    _instruments = null;
     try
     {
-      _instrument = getAvailableInstruments ( _synth ).get ( 0 );
+      List<Instrument> insts = getLoadedInstruments ();
+      if ( null != insts && insts.size () > 0 )
+      {
+        _instrument = insts.get ( 0 );
+      }
+      else
+      {
+        _instrument = getAvailableInstruments ().get ( 0 );
+      }
+      Logger.debug ( "setSynth: " + _instrument );
+      _sequencer.getTransmitter ().setReceiver ( synth.getReceiver () );
     }
     catch ( MidiUnavailableException e )
     {
@@ -166,6 +176,7 @@ public class Player
    */
   public void setInstrument ( Instrument instrument )
   {
+    Logger.debugEx ( "midi", "Setting instrument: {0}, patch {1}", new Object[] {instrument, instrument.getPatch ()} );
     _instrument = instrument;
   }
 
@@ -261,6 +272,26 @@ public class Player
 
 
   /**
+   * @return Instrument arrqay of all loaded instruments.
+   *
+   * @throws MidiUnavailableException
+   * @throws MidiException
+   */
+  public List<Instrument> getLoadedInstruments ()
+    throws
+      MidiUnavailableException,
+      MidiException
+  {
+    List<Instrument> insts = MidiHelper.getLoadedInstruments ( _synth );
+    if ( insts == null || insts.size () == 0 )
+    {
+      insts = MidiHelper.getAvailableInstruments ( _synth );
+    }
+    return insts;
+  }
+
+
+  /**
    * @return Instrument arrqay of all available instruments.
    *
    * @throws MidiUnavailableException
@@ -271,7 +302,7 @@ public class Player
       MidiUnavailableException,
       MidiException
   {
-    return getAvailableInstruments ( _synth );
+    return MidiHelper.getAvailableInstruments ( _synth );
   }
 
 
@@ -286,13 +317,13 @@ public class Player
     throws
       InvalidMidiDataException
   {
-    playSequence ( MidiHelper.buildChordSequence ( notes,
-                                                _noteLength,
-                                                _delay,
-                                                _cascade,
-                                                _velocity,
-                                                _instrument ),
-                           _bpm );
+    playSequence ( MidiHelper.buildSequence ( notes,
+                                              _noteLength,
+                                              _delay,
+                                              _cascade,
+                                              _velocity,
+                                              _instrument ),
+                   _bpm );
   }
 
 
@@ -323,17 +354,18 @@ public class Player
   }
 
 
-  private List<Instrument> getAvailableInstruments ( Synthesizer synth )
-    throws
-      MidiUnavailableException,
-      MidiException
-  {
-    if ( _instruments == null )
-    {
-      _instruments = MidiHelper.getAvailableInstruments ( synth );
-    }
-    return _instruments;
-  }
+//  private List<Instrument> getAvailableInstruments ( Synthesizer synth )
+//    throws
+//      MidiUnavailableException,
+//      MidiException
+//  {
+//    return MidiHelper.getAvailableInstruments ( synth );
+////    if ( _instruments == null )
+////    {
+////      _instruments = MidiHelper.getAvailableInstruments ( synth );
+////    }
+////    return _instruments;
+//  }
 
 
   private static final int NOTE_VELOCITY = 64;
@@ -347,7 +379,7 @@ public class Player
   private Sequencer _sequencer;
   private Synthesizer _synth;
   private Instrument _instrument;
-  private List<Instrument> _instruments;
+//  private List<Instrument> _instruments;
 
 
 }

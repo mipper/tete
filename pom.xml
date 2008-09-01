@@ -12,27 +12,45 @@
   <description>
     Tete is a application for training the ear to hear the relationships between musical notes.  It can help with intervals, chords, and scales.
   </description>
-  
+
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <!--version>2.2</version-->
         <configuration>
           <archive>
             <manifest>
               <mainClass>com.mipper.music.gui.TeteFrame</mainClass>
               <addClasspath>true</addClasspath>
-              <!-- options
-                   <addExtensions/>
-                   <classpathPrefix/>
-                   -->
+	      <classpathPrefix>lib/</classpathPrefix>
             </manifest>
             <manifestEntries>
               <url>${pom.url}</url>
             </manifestEntries>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+           <descriptors>
+            <descriptor>src/main/assembly/bin.xml</descriptor>
+          </descriptors>
         </configuration>
       </plugin>
     </plugins>
@@ -42,17 +60,22 @@
     <dependency>
       <groupId>com.sun.media</groupId>
       <artifactId>gervill</artifactId>
-      <version>0.9</version>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.3</version>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
+    </dependency-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
