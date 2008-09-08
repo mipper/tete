@@ -134,6 +134,15 @@ public class PreferenceManager
   
   
   /**
+   * @return Name of the Soundbank used for playback.
+   */
+  public String getSoundbankFile ()
+  {
+    return _root.get ( SOUNDBANK, "" );
+  }
+  
+  
+  /**
    * Retrieve the previously stored patch.
    *
    * @return Patch representing the instrument.
@@ -278,6 +287,15 @@ public class PreferenceManager
   
   
   /**
+   * @param path Path to the soundbank to load.
+   */
+  public void setSoundbankFile ( String path )
+  {
+    _root.put ( SOUNDBANK, path );
+  }
+  
+  
+  /**
    * Store the currently selected instrument.
    *
    * @param inst Instrument to store.
@@ -402,6 +420,7 @@ public class PreferenceManager
   private static PreferenceManager _mgr;
   private static final String PREF_ROOT = "/com/mipper/music/tete";
   private static final String SYNTH = "playback/synth";
+  private static final String SOUNDBANK = "playback/soundbank";
   private static final String INSTRUMENT_BANK = "playback/instrument/bank";
   private static final String INSTRUMENT_PROGRAM = "playback/instrument/program";
   private static final String BOTTOM_OCTAVE = "playback/bottom_octave";

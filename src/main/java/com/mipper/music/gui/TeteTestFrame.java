@@ -51,6 +51,7 @@ import com.mipper.util.Util;
  * @author  Cliff Evans
  * @version $$Revision: 1.4 $$
  */
+@SuppressWarnings("synthetic-access")
 public class TeteTestFrame extends javax.swing.JDialog
 {
 
@@ -403,9 +404,9 @@ public class TeteTestFrame extends javax.swing.JDialog
 
   private javax.swing.JPanel pnlProgress;
   private final Controller _controller;
-  private final ImageIcon _right = new ImageIcon ( GuiUtil.getResource ( "/img/right.gif" ) );
+  private final ImageIcon _right = new ImageIcon ( GuiUtil.getResourceUrl ( "/img/right.gif" ) );
 
 
-  private final ImageIcon _wrong = new ImageIcon ( GuiUtil.getResource ( "/img/wrong.gif" ) );
+  private final ImageIcon _wrong = new ImageIcon ( GuiUtil.getResourceUrl ( "/img/wrong.gif" ) );
 
 }

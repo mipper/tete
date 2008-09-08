@@ -46,20 +46,6 @@ public class PatternPlayerModel
 {
 
   /**
-   * @param notes
-   */
-  private static void reverse ( int[] notes )
-  {
-    for ( int left = 0, right = notes.length - 1; left < right; left++, right-- )
-    {
-      final int temp = notes[left];
-      notes[left] = notes[right];
-      notes[right] = temp;
-    }
-  }
-
-
-  /**
    * Constructor.
    *
    * @throws MidiUnavailableException
@@ -311,6 +297,17 @@ public class PatternPlayerModel
       return _random.nextInt ( 2 ) == 1;
     }
     return _direction.booleanValue ();
+  }
+
+
+  private static void reverse ( int[] notes )
+  {
+    for ( int left = 0, right = notes.length - 1; left < right; left++, right-- )
+    {
+      final int temp = notes[left];
+      notes[left] = notes[right];
+      notes[right] = temp;
+    }
   }
 
 

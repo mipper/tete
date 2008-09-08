@@ -85,6 +85,7 @@ public class ContinuousPlayer
     _looping = true;
     _model.getPlayer ().setMetaListener ( new MetaEventListener ()
       {
+        @SuppressWarnings("synthetic-access")
         public void meta ( MetaMessage event )
         {
 //          Logger.debug ( "ContinuousPlayer.start: " + event );

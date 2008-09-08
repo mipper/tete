@@ -12,9 +12,10 @@ import java.util.ResourceBundle;
 
 
 /**
+ * Utility methods for Gui code.
+ * 
  * @author Cliff Evans
  * @version $Revision: $
- *
  */
 public class GuiUtil
 {
@@ -33,7 +34,12 @@ public class GuiUtil
   }
 
 
-  public static URL getResource ( String path )
+  /**
+   * @param path Path to the resource to get.
+   * 
+   * @return URL pointing to the specified resource.
+   */
+  public static URL getResourceUrl ( String path )
   {
     return GuiUtil.class.getResource ( path );
   }

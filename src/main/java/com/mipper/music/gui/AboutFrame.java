@@ -18,13 +18,13 @@
 package com.mipper.music.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Window;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,7 +32,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 
 import com.mipper.music.midi.MidiHelper;
-import com.mipper.util.Logger;
 import com.mipper.util.Util;
 
 
@@ -43,7 +42,9 @@ import com.mipper.util.Util;
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
-public class AboutFrame extends JDialog
+public class AboutFrame
+  extends
+    TeteDialog
 {
 
   /**
@@ -52,117 +53,72 @@ public class AboutFrame extends JDialog
    * @param owner Owning window.
    * @param title Title to display on window.
    */
-  public AboutFrame ( Window owner, String title )
+  public AboutFrame ( Frame owner, String title )
   {
     super ( owner, title );
-    initialize ();
+    initialise ( new Dimension ( 562, 350 ) );
   }
 
 
-  private void initialize ()
+  @Override
+  protected final JComponent createContentPane ()
   {
-    setSize ( new java.awt.Dimension ( 562, 350 ) );
-    setResizable ( false );
-    setModal ( true );
-    setDefaultCloseOperation ( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
-    setContentPane ( createContentPane () );
-  }
-
-  
-  private JComponent createContentPane ()
-  {
-    if ( _contentPane == null )
-    {
-      _contentPane = new JPanel ();
-      _contentPane.setLayout ( new BorderLayout () );
-      _contentPane.add ( createLogo (), java.awt.BorderLayout.NORTH );
-      _contentPane.add ( createBottom (), java.awt.BorderLayout.SOUTH );
-      JTabbedPane tabs = new JTabbedPane ();
-      tabs.addTab ( GuiUtil.readProperty ( "label.about" ), createAboutDetails () );
-      tabs.addTab ( GuiUtil.readProperty ( "label.midi" ), createMidiDetails () );
-      _contentPane.add ( tabs, java.awt.BorderLayout.CENTER );
-    }
-    return _contentPane;
+    JPanel panel = new JPanel ();
+    panel.setLayout ( new BorderLayout () );
+    panel.add ( createLogo (), java.awt.BorderLayout.NORTH );
+    panel.add ( createBottom (), java.awt.BorderLayout.SOUTH );
+    JTabbedPane tabs = new JTabbedPane ();
+    tabs.addTab ( GuiUtil.readProperty ( "label.about" ), createAboutDetails () );
+    tabs.addTab ( GuiUtil.readProperty ( "label.midi" ), createMidiDetails () );
+    panel.add ( tabs, java.awt.BorderLayout.CENTER );
+    return panel;
   }
 
 
   private JLabel createLogo ()
   {
-    _logo = new JLabel ();
-    _logo.setText ( "" );
-    _logo.setIcon ( new ImageIcon ( GuiUtil.getResource ( "/img/tete_logo3.png" ) ) );
-    return _logo;
-  }
-
-
-  private JPanel createBottom ()
-  {
-    if ( _bottom == null )
+    JLabel label = new JLabel ( "" );
+    URL url = GuiUtil.getResourceUrl ( "/img/tete_logo3.png" );
+    if ( null != url )
     {
-      _bottom = new JPanel ();
-      _bottom.add ( createClose (), null );
+      label.setIcon ( new ImageIcon ( url ) );
     }
-    return _bottom;
-  }
-
-
-  private JButton createClose ()
-  {
-    if ( _close == null )
-    {
-      _close = new JButton ();
-      _close.setText ( GuiUtil.readProperty ( "label.close" ) );
-      _close.addActionListener ( new java.awt.event.ActionListener ()
-      {
-
-        public void actionPerformed ( java.awt.event.ActionEvent e )
-        {
-          dispose ();
-        }
-      } );
-    }
-    return _close;
+    return label;
   }
 
 
   private JComponent createAboutDetails ()
   {
-    if ( _details == null )
+    JTextPane txt = setupTextArea ();
+    try
     {
-      JTextPane txt = setupTextArea ();
-      try
+      String jar = Util.getFilename ( this.getClass ().getProtectionDomain().getCodeSource().getLocation().toString () );
+      if ( jar.toLowerCase ().endsWith ( ".jar" ) )
       {
-        String jar = Util.getFilename ( this.getClass ().getProtectionDomain().getCodeSource().getLocation().toString () );
-        if ( jar.toLowerCase ().endsWith ( ".jar" ) )
-        {
-          txt.setText ( Util.readMainManifest ( jar ).toString () );
-        }
-        else
-        {
-          txt.setText ( "Can't find version information." );
-        }
+        txt.setText ( Util.readMainManifest ( jar ).toString () );
       }
-      catch ( final IOException e )
+      else
       {
-        txt.setText ( e.getMessage () );
+        txt.setText ( "Can't find version information." );
       }
-      _details = new JScrollPane ( txt );
-      txt.setCaretPosition ( 0 );
     }
-    return _details;
+    catch ( final IOException e )
+    {
+      txt.setText ( e.getMessage () );
+    }
+    JScrollPane scroll = new JScrollPane ( txt );
+    txt.setCaretPosition ( 0 );
+    return scroll;
   }
 
 
   private JComponent createMidiDetails ()
   {
-    if ( _midi == null )
-    {
-      JTextPane txt = setupTextArea ();
-      _midi = new JScrollPane ( txt );
-      txt.setText ( MidiHelper.getMidiInfo ( false ) );
-      txt.setCaretPosition ( 0 );
-    }
-    return _midi;
+    JTextPane txt = setupTextArea ();
+    JScrollPane scroll = new JScrollPane ( txt );
+    txt.setText ( MidiHelper.getMidiInfo ( false ) );
+    txt.setCaretPosition ( 0 );
+    return scroll;
   }
 
 
@@ -177,12 +133,5 @@ public class AboutFrame extends JDialog
 
 
   private static final long serialVersionUID = 1L;
-
-  private JComponent _contentPane = null;
-  private JLabel _logo = null;
-  private JComponent _details = null;
-  private JComponent _midi = null;
-  private JPanel _bottom = null;
-  private JButton _close = null;
 
 }

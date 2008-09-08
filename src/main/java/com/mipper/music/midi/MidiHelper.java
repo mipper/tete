@@ -156,7 +156,7 @@ public class MidiHelper
 //    synth.close ();
     if ( instruments == null || instruments.isEmpty () )
     {
-      Logger.warn ( "Can''t find soundbank for synthesizer {0}", synth.getDeviceInfo ().getName () );
+      Logger.info ( "No loaded instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
 //      throw new MidiException ( "The MIDI soundbank cannot be found.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
     }
     return instruments;
@@ -189,7 +189,7 @@ public class MidiHelper
 //    synth.close ();
     if ( instruments == null || instruments.isEmpty () )
     {
-      Logger.warn ( "Can''t find any instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
+      Logger.warn ( "Can''t find any available instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
       throw new MidiException ( "The MIDI soundbank cannot be found.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
     }
     return instruments;
@@ -267,7 +267,7 @@ public class MidiHelper
     throws
       MidiUnavailableException
   {
-    buf.append ( "\n" ).append ( info.getName () )
+    buf.append ( info.getName () )
        .append ( "\n\t" ).append ( info.getDescription () )
        .append ( "\n\t" ).append ( info.getVendor () )
        .append ( "\n\t" ).append ( info.getVersion () );
@@ -280,6 +280,7 @@ public class MidiHelper
     {
       dumpSeqInfo ( ( Sequencer ) dev, buf );
     }
+    buf.append ( "\n" );
   }
 
 

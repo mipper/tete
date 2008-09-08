@@ -590,6 +590,11 @@ public class Util
   }
 
   
+  /**
+   * @param path Path to a file.
+   * 
+   * @return Just the name of the file with no directory part.
+   */
   public static String getFilename ( String path )
   {
     return new File ( path ).getName ();
