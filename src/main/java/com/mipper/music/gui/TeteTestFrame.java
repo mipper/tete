@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -40,10 +39,12 @@ import javax.swing.border.EtchedBorder;
 
 import com.mipper.music.generate.EmptyException;
 import com.mipper.music.generate.PatternPlayerModel;
+import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.IntervalPattern;
 import com.mipper.music.model.Sound;
 import com.mipper.util.Logger;
 import com.mipper.util.Util;
+
 
 /**
  * Window used when running a test cycle.
@@ -73,7 +74,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     public Controller ( PatternPlayerModel config )
     {
       super ();
-      _config = config;
+      _model = config;
     }
 
 
@@ -83,7 +84,7 @@ public class TeteTestFrame extends javax.swing.JDialog
      */
     public IntervalPattern[] getAllPatterns ()
     {
-      return _config.getPatterns ();
+      return _model.getPatterns ();
     }
 
 
@@ -118,28 +119,28 @@ public class TeteTestFrame extends javax.swing.JDialog
     /**
      * Play the current Interval pattern.
      *
-     * @throws InvalidMidiDataException
+     * @throws MidiException
      */
     public void playCurrent ()
       throws
-        InvalidMidiDataException
+        MidiException
     {
-      _config.play ( _current );
+      _model.play ( _current );
     }
 
 
     /**
      * Generate a random pattern and set it as the current before playing it.
      *
-     * @throws InvalidMidiDataException
+     * @throws MidiException
      * @throws EmptyException
      */
     public void playNext ()
       throws
-        InvalidMidiDataException,
+        MidiException,
         EmptyException
     {
-      _current = _config.generateSound ();
+      _current = _model.generateSound ();
       playCurrent ();
     }
 
@@ -172,12 +173,12 @@ public class TeteTestFrame extends javax.swing.JDialog
      * Start a test.  Resets the progress tracking variables.
      *
      * @throws EmptyException
-     * @throws InvalidMidiDataException
+     * @throws MidiException
      */
     public void startTest ()
       throws
         EmptyException,
-        InvalidMidiDataException
+        MidiException
     {
       reset ();
       playNext ();
@@ -191,7 +192,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     }
 
 
-    private final PatternPlayerModel _config;
+    private final PatternPlayerModel _model;
     private Sound _current;
     private int _count = 0;
     private int _correctCount = 0;
@@ -218,19 +219,19 @@ public class TeteTestFrame extends javax.swing.JDialog
   }
   
   
-  private void btnExitActionPerformed (ActionEvent evt)
+  private void btnExitActionPerformed ( ActionEvent evt )
   {
     dispose ();
   }
 
 
-  private void btnRepeatActionPerformed (ActionEvent evt)
+  private void btnRepeatActionPerformed ( ActionEvent evt )
   {
     try
     {
       _controller.playCurrent ();
     }
-    catch ( final Exception e )
+    catch ( final MidiException e )
     {
       handleException ( e );
     }
@@ -246,7 +247,11 @@ public class TeteTestFrame extends javax.swing.JDialog
         _controller.startTest ();
         btnStart.setText ( GuiUtil.readProperty ( "label.stop" ) );
       }
-      catch ( final Exception e )
+      catch ( final MidiException e )
+      {
+        handleException ( e );
+      }
+      catch ( final EmptyException e )
       {
         handleException ( e );
       }
@@ -287,7 +292,11 @@ public class TeteTestFrame extends javax.swing.JDialog
               }
               pgsProgress.setValue ( _controller.getPercentageCorrect () );
             }
-            catch ( final Exception e )
+            catch ( final MidiException e )
+            {
+              handleException ( e );
+            }
+            catch ( final EmptyException e )
             {
               handleException ( e );
             }
@@ -362,11 +371,13 @@ public class TeteTestFrame extends javax.swing.JDialog
     pack ();
   }
 
+  
   private boolean isTestRunning ()
   {
     return btnStart.isSelected ();
   }
 
+  
   private void updateGui ()
   {
     if ( isTestRunning () )
@@ -382,6 +393,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     pgsProgress.setValue ( _controller.getPercentageCorrect () );
   }
 
+  
   private void updateOptions ( boolean value )
   {
     for ( int i = 0; i < pnlOptions.getComponentCount (); i++ )
@@ -392,21 +404,19 @@ public class TeteTestFrame extends javax.swing.JDialog
 
 
   private static final int MAX_COL = 15;
-  private static final long serialVersionUID = 3761693372708237873L;
+  private static final long serialVersionUID = 1L
+  ;
   private javax.swing.JButton btnExit;
   private javax.swing.JButton btnRepeat;
   private javax.swing.JToggleButton btnStart;
   private javax.swing.JLabel icoResult;
   private javax.swing.JProgressBar pgsProgress;
   private javax.swing.JPanel pnlControl;
-
   private javax.swing.JPanel pnlOptions;
-
   private javax.swing.JPanel pnlProgress;
+  
   private final Controller _controller;
   private final ImageIcon _right = new ImageIcon ( GuiUtil.getResourceUrl ( "/img/right.gif" ) );
-
-
   private final ImageIcon _wrong = new ImageIcon ( GuiUtil.getResourceUrl ( "/img/wrong.gif" ) );
 
 }

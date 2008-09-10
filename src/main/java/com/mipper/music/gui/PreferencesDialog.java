@@ -17,11 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -37,8 +33,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.mipper.music.generate.PatternPlayerModel;
 import com.mipper.util.Logger;
-import com.mipper.util.Util;
-import com.sun.media.sound.SF2Soundbank;
 
 
 /**
@@ -76,12 +70,18 @@ public class PreferencesDialog extends TeteDialog
   }
   
   
+  /**
+   * @return Path to the soundbank to load.
+   */
   public String getSoundbankPath ()
   {
     return txtSoundbank.getText ();
   }
   
   
+  /**
+   * @param path Path to the soundbank to load.
+   */
   public void setSoundbankPath ( String path )
   {
     txtSoundbank.setText ( path );

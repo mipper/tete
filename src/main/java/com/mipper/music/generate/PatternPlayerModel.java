@@ -18,11 +18,14 @@
 package com.mipper.music.generate;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
 import javax.sound.midi.Soundbank;
@@ -48,19 +51,24 @@ public class PatternPlayerModel
   /**
    * Constructor.
    *
-   * @throws MidiUnavailableException
    * @throws MidiException
    */
   public PatternPlayerModel ()
     throws
-      MidiUnavailableException,
       MidiException
   {
     super ();
     _factory = new SoundFactory ();
-    _player = new Player ();
     _range = new NoteRange ();
     _direction = Boolean.valueOf ( true );
+    try
+    {
+      _player = new Player ();
+    }
+    catch ( final MidiUnavailableException e )
+    {
+      throw new MidiException ( e );
+    }
   }
 
 
@@ -89,15 +97,20 @@ public class PatternPlayerModel
   /**
    * @return Array of Instruments available for playback.
    *
-   * @throws MidiUnavailableException
    * @throws MidiException
    */
   public List<Instrument> getLoadedInstruments ()
     throws
-      MidiUnavailableException,
       MidiException
   {
-    return _player.getLoadedInstruments ();
+    try
+    {
+      return _player.getLoadedInstruments ();
+    }
+    catch ( final MidiUnavailableException e )
+    {
+      throw new MidiException ( e );
+    }
   }
 
 
@@ -109,7 +122,7 @@ public class PatternPlayerModel
     return _player.getInstrument ();
   }
 
-  
+
   /**
    * @return The direction to play the notes.
    */
@@ -172,7 +185,7 @@ public class PatternPlayerModel
    *
    * @return The instrument that matches the patch.
    */
-  public Instrument lookupInstrument ( Patch patch )
+  public Instrument lookupInstrument ( final Patch patch )
   {
     return getSoundbank ().getInstrument ( patch );
   }
@@ -181,11 +194,11 @@ public class PatternPlayerModel
   /**
    * @param snd int array of notes to sound.
    *
-   * @throws InvalidMidiDataException
+   * @throws MidiException
    */
-  public void play ( Sound snd )
+  public void play ( final Sound snd )
     throws
-      InvalidMidiDataException
+      MidiException
   {
     Logger.debug ( "Playing: " + snd );
     final int[] notes = snd.getNoteValues ();
@@ -193,7 +206,14 @@ public class PatternPlayerModel
     {
       reverse ( notes );
     }
-    _player.play ( notes );
+    try
+    {
+      _player.play ( notes );
+    }
+    catch ( final InvalidMidiDataException e )
+    {
+      throw new MidiException ( e );
+    }
   }
 
 
@@ -201,7 +221,7 @@ public class PatternPlayerModel
    * @param value deley between each note of the pattern.  If this is 0 the
    *              pattern will be played as a chord.
    */
-  public void setArpeggioDelay ( int value )
+  public void setArpeggioDelay ( final int value )
   {
     _player.setArpeggioDelay ( value );
   }
@@ -211,7 +231,7 @@ public class PatternPlayerModel
    * @param value true to cascade the notes, i.e. sustain all notes until the
    *              final note has finished sounding.
    */
-  public void setCascade ( boolean value )
+  public void setCascade ( final boolean value )
   {
     _player.setCascade ( value );
   }
@@ -221,7 +241,7 @@ public class PatternPlayerModel
    * @param direction Direction to play the notes.  True is ascending, False is
    *                  decending, and null is random.
    */
-  public void setDirection ( Boolean direction )
+  public void setDirection ( final Boolean direction )
   {
     _direction = direction;
   }
@@ -230,12 +250,24 @@ public class PatternPlayerModel
   /**
    * @param synth Synthesizer to use for playback.
    */
-  public void setSynth ( Synthesizer synth )
+  public void setSynth ( final Synthesizer synth )
   {
     _player.setSynth ( synth );
   }
-  
-  
+
+
+  /**
+   * Set the synthesizer being used to a named instance, else use the first one
+   * we find.
+   *
+   * @param name Name of the synthesizer to return.
+   */
+  public void setSynth ( final String name )
+  {
+    setSynth ( lookupSynth ( name ) );
+  }
+
+
   /**
    * @return Synth used for playback.
    */
@@ -243,12 +275,48 @@ public class PatternPlayerModel
   {
     return _player.getSynth ();
   }
-  
-  
+
+
+  /**
+   * @param path File object for the soundbank file.
+   *
+   * @return true if all instruments loaded, false in some (or all) failed.
+   *
+   * @throws IOException
+   * @throws MidiException
+   */
+  public boolean loadSoundbank ( final File path )
+    throws
+      IOException,
+      MidiException
+  {
+    try
+    {
+      boolean res = false;
+      final Soundbank sb = MidiSystem.getSoundbank ( path );
+      Logger.debug ( "Got Soundbank file: {0}", sb );
+      if ( getSynth ().isSoundbankSupported ( sb ) )
+      {
+        getSynth ().open ();
+        res = getSynth ().loadAllInstruments ( sb );
+      }
+      return res;
+    }
+    catch ( final InvalidMidiDataException e )
+    {
+      throw new MidiException ( e );
+    }
+    catch ( final MidiUnavailableException e )
+    {
+      throw new MidiException ( e );
+    }
+  }
+
+
   /**
    * @param instrument Instrument to use the play the pattern.
    */
-  public void setInstrument ( Instrument instrument )
+  public void setInstrument ( final Instrument instrument )
   {
     _player.setInstrument ( instrument );
   }
@@ -257,7 +325,7 @@ public class PatternPlayerModel
   /**
    * @param value length to hold each note.
    */
-  public void setNoteLength ( int value )
+  public void setNoteLength ( final int value )
   {
     _player.setNoteLength ( value );
   }
@@ -270,7 +338,7 @@ public class PatternPlayerModel
    * @param highest Midi value of the highest note to use.
    * @param root The Note to use as the root or null if the root is random.
    */
-  public void setNoteRange ( int lowest, int highest, Note root )
+  public void setNoteRange ( final int lowest, final int highest, final Note root )
   {
     _range.setNoteRange ( lowest, highest, root );
   }
@@ -279,14 +347,28 @@ public class PatternPlayerModel
   /**
    * @param patterns Sets the list of available patterns for generation.
    */
-  public void setPatterns ( Object[] patterns )
+  public void setPatterns ( final IntervalPattern[] patterns )
   {
     _factory.clear ();
-    for ( final Object ct: patterns )
+    for ( final IntervalPattern ct: patterns )
     {
-      _factory.addPattern ( ( IntervalPattern ) ct );
+      _factory.addPattern ( ct );
     }
 
+  }
+
+
+  private Synthesizer lookupSynth ( final String name )
+  {
+    final List<Synthesizer> synths = getAvailableSynths ();
+    for ( int i = 0; i < synths.size (); i++ )
+    {
+      if ( name.equals ( synths.get ( i ).getDeviceInfo ().getName () ) )
+      {
+        return synths.get ( i );
+      }
+    }
+    return synths.get ( 0 );
   }
 
 
@@ -300,7 +382,7 @@ public class PatternPlayerModel
   }
 
 
-  private static void reverse ( int[] notes )
+  private static void reverse ( final int[] notes )
   {
     for ( int left = 0, right = notes.length - 1; left < right; left++, right-- )
     {

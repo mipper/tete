@@ -17,13 +17,13 @@
  */
 package com.mipper.music.control;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.swing.event.EventListenerList;
 
 import com.mipper.music.generate.EmptyException;
 import com.mipper.music.generate.PatternPlayerModel;
+import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.Sound;
 import com.mipper.util.Logger;
 
@@ -74,12 +74,12 @@ public class ContinuousPlayer
   /**
    * Start playing random sounds derived from the model.
    *
-   * @throws InvalidMidiDataException
+   * @throws MidiException
    * @throws EmptyException
    */
   public void start ()
     throws
-      InvalidMidiDataException,
+      MidiException,
       EmptyException
   {
     _looping = true;
@@ -129,7 +129,7 @@ public class ContinuousPlayer
 
   private void play ()
     throws
-      InvalidMidiDataException,
+      MidiException,
       EmptyException
   {
     if ( _looping )
