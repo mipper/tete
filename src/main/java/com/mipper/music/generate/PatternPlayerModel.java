@@ -184,7 +184,6 @@ public class PatternPlayerModel
    *
    * @return The instrument that matches the patch.
    * @throws MidiException
-   * @throws MidiUnavailableException
    */
   public Instrument lookupInstrument ( final Patch patch )
     throws
