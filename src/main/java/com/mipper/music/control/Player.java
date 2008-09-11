@@ -34,6 +34,7 @@ import com.mipper.music.midi.MidiHelper;
 import com.mipper.util.Logger;
 
 
+// TODO: Move this to the midi package
 /**
  * A wrapper class to make playing midi notes more simple.
  *
@@ -121,6 +122,9 @@ public class Player
   
   
   /**
+   * Sets the synthesize the player will use to playback sequences.  The
+   * instrument will be set to the first one available.
+   *
    * @param synth Synthesizer to use for playback.
    */
   public void setSynth ( Synthesizer synth )
@@ -137,7 +141,7 @@ public class Player
       {
         _instrument = getAvailableInstruments ().get ( 0 );
       }
-      Logger.debug ( "setSynth: " + _instrument );
+      Logger.debug ( "Player.setSynth selected instrument: " + _instrument );
       _sequencer.getTransmitter ().setReceiver ( synth.getReceiver () );
     }
     catch ( MidiUnavailableException e )

@@ -107,6 +107,7 @@ public class TeteFrame extends JFrame
     {
       initMidi ();
       loadPreferences ();
+      // TODO: Rename as loadIntervalPatterns
       loadSounds ();
     }
     catch ( final MidiException e )
@@ -163,23 +164,24 @@ public class TeteFrame extends JFrame
   }
 
 
-  private void btnLoopActionPerformed (final ActionEvent evt)
+  private void btnLoopActionPerformed ( final ActionEvent evt )
   {
     if ( btnLoop.isSelected () )
     {
       _model.setPatterns ( extractIntervals ( lstSounds.getSelectedValues () ) );
       _looper = new ContinuousPlayer ( _model );
       _looper.addSoundEventListener ( new SoundEventListener ()
-                            {
-                              public void soundEventOccurred ( final SoundEvent evt )
-                              {
-                                soundPlaying ( evt );
-                              }
-                            });
+                    {
+                      public void soundEventOccurred ( final SoundEvent evt )
+                      {
+                        soundPlaying ( evt );
+                      }
+                    });
       try
       {
         _looper.start ();
       }
+      // TODO: Why Exception?
       catch ( final Exception e )
       {
         handleException ( e );
@@ -235,7 +237,7 @@ public class TeteFrame extends JFrame
   }
 
 
-  private void exitApp ()
+  private void exitApp ( int code )
   {
     if ( _looper != null )
     {
@@ -245,7 +247,7 @@ public class TeteFrame extends JFrame
     {
       savePreferences ();
     }
-    System.exit ( 0 );
+    System.exit ( code );
   }
 
 
@@ -338,7 +340,7 @@ public class TeteFrame extends JFrame
                           @Override
                           public void windowClosing ( final WindowEvent e )
                           {
-                            exitApp ();
+                            exitApp ( 0 );
                           }
                         } );
     setDefaultCloseOperation ( WindowConstants.DO_NOTHING_ON_CLOSE );
@@ -517,7 +519,7 @@ public class TeteFrame extends JFrame
 
                                 public void actionPerformed ( final ActionEvent evt )
                                 {
-                                  exitApp ();
+                                  exitApp ( 0 );
                                 }
                               } );
     pnlControl.add ( btnExit );
@@ -639,6 +641,7 @@ public class TeteFrame extends JFrame
       MidiException
   {
     _model = new PatternPlayerModel ();
+    // TODO: untangle the setting up of the UI from the Midi setup
     initInstrumentCombo ();
     initBottomOctave ();
     initTopOctaveCombo ();

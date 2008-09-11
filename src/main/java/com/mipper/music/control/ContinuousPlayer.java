@@ -89,12 +89,13 @@ public class ContinuousPlayer
         public void meta ( MetaMessage event )
         {
 //          Logger.debug ( "ContinuousPlayer.start: " + event );
-          if ( event.getType () == 47 )
+          if ( event.getType () == END_OF_TRACK_MESSAGE )
           {
             try
             {
-              play ();
+              play ();  // play another random pattern
             }
+            // TODO: Why Exception?
             catch ( final Exception e )
             {
               Logger.error ( e );
@@ -117,16 +118,6 @@ public class ContinuousPlayer
   }
 
 
-  private void fireSoundEvent ( SoundEvent evt )
-  {
-    final SoundEventListener[] listeners = listenerList.getListeners ( SoundEventListener.class );
-    for ( final SoundEventListener element : listeners )
-    {
-      element.soundEventOccurred ( evt );
-    }
-  }
-
-
   private void play ()
     throws
       MidiException,
@@ -141,6 +132,18 @@ public class ContinuousPlayer
   }
 
 
+  private void fireSoundEvent ( SoundEvent evt )
+  {
+    final SoundEventListener[] listeners = listenerList.getListeners ( SoundEventListener.class );
+    for ( final SoundEventListener element : listeners )
+    {
+      element.soundEventOccurred ( evt );
+    }
+  }
+
+
+  public static final int END_OF_TRACK_MESSAGE = 47;
+  
   private final PatternPlayerModel _model;
   private boolean _looping;
   private final EventListenerList listenerList = new EventListenerList ();

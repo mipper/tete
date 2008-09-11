@@ -200,7 +200,7 @@ public class PatternPlayerModel
     throws
       MidiException
   {
-    Logger.debug ( "Playing: " + snd );
+    Logger.debugEx ( "midi.sounds", "Playing: " + snd );
     final int[] notes = snd.getNoteValues ();
     if ( !calcDirection () )
     {
@@ -299,6 +299,7 @@ public class PatternPlayerModel
       {
         getSynth ().open ();
         res = getSynth ().loadAllInstruments ( sb );
+        // TODO: Synch model's selected instrument.  Is the currently selected one still availabel?
       }
       return res;
     }
