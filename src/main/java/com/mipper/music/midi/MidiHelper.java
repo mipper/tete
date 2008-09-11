@@ -64,12 +64,12 @@ public class MidiHelper
    *
    * @throws InvalidMidiDataException
    */
-  public static Sequence buildSequence ( int[] notes,
-                                         int noteLength,
-                                         int arpeggioDelay,
-                                         boolean cascade,
-                                         int velocity,
-                                         Instrument instrument )
+  public static Sequence buildSequence ( final int[] notes,
+                                         final int noteLength,
+                                         final int arpeggioDelay,
+                                         final boolean cascade,
+                                         final int velocity,
+                                         final Instrument instrument )
     throws
       InvalidMidiDataException
   {
@@ -78,7 +78,7 @@ public class MidiHelper
     setInstrument ( track, instrument );
     for ( int i = 0; i < notes.length; i++ )
     {
-      Logger.debugEx ( "midi", "Adding note: {0} for {1}, velocity: {2}", notes[i], noteLength, velocity );
+      Logger.debugEx ( "midi.notes", "Instrument: {3} Adding note: {0} for {1}, velocity: {2}", notes[i], noteLength, velocity, instrument );
       track.add ( createNoteEvent ( ShortMessage.NOTE_ON,
                                     notes[i],
                                     velocity,
@@ -93,7 +93,7 @@ public class MidiHelper
 
 
   /**
-   * @return List of available synthesizers. 
+   * @return List of available synthesizers.
    */
   public static List<Synthesizer> getAvailableSynthesizers ()
   {
@@ -122,42 +122,26 @@ public class MidiHelper
 
 
   /**
-   * @param synth Synthisizer from which the soundbank will come.
-   * 
-   * @return Soundbank used by the synthesiser.
-   */
-  public static Soundbank getCurrentSoundbank ( Synthesizer synth )
-  {
-    return synth.getDefaultSoundbank ();
-  }
-
-
-  /**
    * Returns a list of available instruments in the MIDI system. If the JRE
    * doesn't have a soundbank installed, it looks for soundbank-min.gm in
    * the classpath.
    *
    * @param synth Synthesizer to be used for playback.
-   * 
+   *
    * @return Instrument array of all available instruments.
    *
    * @throws MidiUnavailableException
    */
-  public static List<Instrument> getLoadedInstruments ( Synthesizer synth )
+  public static List<Instrument> getLoadedInstruments ( final Synthesizer synth )
     throws
       MidiUnavailableException
   {
-    if ( !synth.isOpen () )
-    {
-      synth.open ();
-    }
-    Logger.debug ( "Getting loaded instruments from synthesizer: " + synth.getDeviceInfo ().getName () );
-    List<Instrument> instruments = Arrays.asList ( synth.getLoadedInstruments () );
-//    synth.close ();
+    synth.open ();
+    Logger.debugEx ( "midi.insts", "Getting loaded instruments from synthesizer: " + synth.getDeviceInfo ().getName () );
+    final List<Instrument> instruments = Arrays.asList ( synth.getLoadedInstruments () );
     if ( instruments == null || instruments.isEmpty () )
     {
       Logger.info ( "No loaded instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
-//      throw new MidiException ( "The MIDI soundbank cannot be found.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
     }
     return instruments;
   }
@@ -169,28 +153,24 @@ public class MidiHelper
    * the classpath.
    *
    * @param synth Synthesizer to be used for playback.
-   * 
+   *
    * @return Instrument array of all available instruments.
    *
    * @throws MidiUnavailableException
    * @throws MidiException
    */
-  public static List<Instrument> getAvailableInstruments ( Synthesizer synth )
+  public static List<Instrument> getAvailableInstruments ( final Synthesizer synth )
     throws
       MidiUnavailableException,
       MidiException
   {
-    if ( !synth.isOpen () )
-    {
-      synth.open ();
-      Logger.debug ( "Getting loaded instruments from synthesizer: " + synth.getDeviceInfo ().getName () );
-    }
-    List<Instrument> instruments = Arrays.asList ( synth.getAvailableInstruments () );
-//    synth.close ();
+    synth.open ();
+    Logger.debugEx ( "midi.insts", "Getting loaded instruments from synthesizer: " + synth.getDeviceInfo ().getName () );
+    final List<Instrument> instruments = Arrays.asList ( synth.getAvailableInstruments () );
     if ( instruments == null || instruments.isEmpty () )
     {
       Logger.warn ( "Can''t find any available instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
-      throw new MidiException ( "The MIDI soundbank cannot be found.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
+      throw new MidiException ( "Can''t find any available instruments.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
     }
     return instruments;
   }
@@ -204,7 +184,7 @@ public class MidiHelper
    *
    * @throws InvalidMidiDataException
    */
-  public static void setPatch ( Track track, Patch patch )
+  public static void setPatch ( final Track track, final Patch patch )
     throws
       InvalidMidiDataException
   {
@@ -216,31 +196,31 @@ public class MidiHelper
     track.add ( new MidiEvent ( message, 0 ) );
   }
 
-  
+
   /**
    * @param incInst true to include instruments availabe in the synthesizer.
-   * 
+   *
    * @return String detailing the MidiDevices available.
    */
-  public static String getMidiInfo ( boolean incInst )
+  public static String getMidiInfo ( final boolean incInst )
   {
-    StringBuffer buf = new StringBuffer ();
+    final StringBuffer buf = new StringBuffer ();
     try
     {
-      for ( MidiDevice.Info info: MidiSystem.getMidiDeviceInfo () )
+      for ( final MidiDevice.Info info: MidiSystem.getMidiDeviceInfo () )
       {
         dumpDeviceInfo ( info, buf, incInst );
       }
     }
-    catch ( MidiUnavailableException e )
+    catch ( final MidiUnavailableException e )
     {
       buf.append ( "Cannot get MIDI information.\n" ).append ( e );
     }
     return buf.toString ();
   }
-  
-  
-  private static void setInstrument ( Track track, Instrument instrument )
+
+
+  private static void setInstrument ( final Track track, final Instrument instrument )
     throws
       InvalidMidiDataException
   {
@@ -248,10 +228,10 @@ public class MidiHelper
   }
 
 
-  private static MidiEvent createNoteEvent ( int type,
-                                             int note,
-                                             int velocity,
-                                             int time )
+  private static MidiEvent createNoteEvent ( final int type,
+                                             final int note,
+                                             final int velocity,
+                                             final int time )
     throws
       InvalidMidiDataException
   {
@@ -261,9 +241,9 @@ public class MidiHelper
   }
 
 
-  private static void dumpDeviceInfo ( Info info,
-                                       StringBuffer buf,
-                                       boolean incInst )
+  private static void dumpDeviceInfo ( final Info info,
+                                       final StringBuffer buf,
+                                       final boolean incInst )
     throws
       MidiUnavailableException
   {
@@ -271,7 +251,7 @@ public class MidiHelper
        .append ( "\n\t" ).append ( info.getDescription () )
        .append ( "\n\t" ).append ( info.getVendor () )
        .append ( "\n\t" ).append ( info.getVersion () );
-    MidiDevice dev = MidiSystem.getMidiDevice ( info );
+    final MidiDevice dev = MidiSystem.getMidiDevice ( info );
     if ( dev instanceof Synthesizer )
     {
       dumpSynthInfo ( ( Synthesizer ) dev, buf, incInst );
@@ -284,9 +264,9 @@ public class MidiHelper
   }
 
 
-  private static void dumpSynthInfo ( Synthesizer synth, 
-                                      StringBuffer buf, 
-                                      boolean incInst )
+  private static void dumpSynthInfo ( final Synthesizer synth,
+                                      final StringBuffer buf,
+                                      final boolean incInst )
     throws
       MidiUnavailableException
   {
@@ -313,14 +293,14 @@ public class MidiHelper
       }
     }
   }
-  
-  
+
+
   /**
    * @param synth
    * @param buf
    * @throws MidiUnavailableException
    */
-  private static void dumpSeqInfo ( Sequencer synth, StringBuffer buf )
+  private static void dumpSeqInfo ( final Sequencer synth, final StringBuffer buf )
     throws
       MidiUnavailableException
   {
@@ -342,9 +322,9 @@ public class MidiHelper
       }
     }
   }
-  
-  
-  private static void dumpSoundbank ( Soundbank sb, StringBuffer buf )
+
+
+  private static void dumpSoundbank ( final Soundbank sb, final StringBuffer buf )
   {
     if ( null != sb )
     {
@@ -353,14 +333,14 @@ public class MidiHelper
          .append ( "\n\t" ).append ( sb.getDescription () )
          .append ( "\n\t" ).append ( sb.getVendor () )
          .append ( "\n\t" ).append ( sb.getVersion () );
-      for ( Instrument i: sb.getInstruments () )
+      for ( final Instrument i: sb.getInstruments () )
       {
         buf.append ( "\n\t" ).append ( i );
       }
     }
   }
 
-  
+
 //  private static void dumpInstruments ( Synthesizer synth, StringBuffer buf )
 //  {
 //    buf.append ( "\nAvailable Instruments:" );
@@ -374,8 +354,8 @@ public class MidiHelper
 //      buf.append ( "\n\t" ).append ( i );
 //    }
 //  }
-  
-  
+
+
   /**
    * Constructor.
    */

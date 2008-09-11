@@ -71,7 +71,7 @@ public class TeteTestFrame extends javax.swing.JDialog
      * @param config Contains model information to allow generation of the test
      *               interval patterns.
      */
-    public Controller ( PatternPlayerModel config )
+    public Controller ( final PatternPlayerModel config )
     {
       super ();
       _model = config;
@@ -140,6 +140,7 @@ public class TeteTestFrame extends javax.swing.JDialog
         MidiException,
         EmptyException
     {
+
       _current = _model.generateSound ();
       playCurrent ();
     }
@@ -151,7 +152,7 @@ public class TeteTestFrame extends javax.swing.JDialog
      *
      * @return true if the guess matches the current pattern, false if not.
      */
-    public boolean processGuess ( String guess )
+    public boolean processGuess ( final String guess )
     {
       boolean result;
       _count++;
@@ -207,7 +208,7 @@ public class TeteTestFrame extends javax.swing.JDialog
    * @param title
    * @param config
    */
-  public TeteTestFrame ( JFrame parent, String title, PatternPlayerModel config )
+  public TeteTestFrame ( final JFrame parent, final String title, final PatternPlayerModel config )
   {
     super ( parent, title, true );
     initComponents ();
@@ -217,15 +218,15 @@ public class TeteTestFrame extends javax.swing.JDialog
     pack ();
     Util.centreWindow ( parent, this );
   }
-  
-  
-  private void btnExitActionPerformed ( ActionEvent evt )
+
+
+  private void btnExitActionPerformed ( final ActionEvent evt )
   {
     dispose ();
   }
 
 
-  private void btnRepeatActionPerformed ( ActionEvent evt )
+  private void btnRepeatActionPerformed ( final ActionEvent evt )
   {
     try
     {
@@ -233,12 +234,12 @@ public class TeteTestFrame extends javax.swing.JDialog
     }
     catch ( final MidiException e )
     {
-      handleException ( e );
+      GuiUtil.handleException ( this, e );
     }
   }
 
 
-  private void btnStartActionPerformed (java.awt.event.ActionEvent evt)
+  private void btnStartActionPerformed (final java.awt.event.ActionEvent evt)
   {
     if ( isTestRunning () )
     {
@@ -249,11 +250,11 @@ public class TeteTestFrame extends javax.swing.JDialog
       }
       catch ( final MidiException e )
       {
-        handleException ( e );
+        GuiUtil.handleException ( this, e );
       }
       catch ( final EmptyException e )
       {
-        handleException ( e );
+        GuiUtil.handleException ( this, e );
       }
     }
     else
@@ -265,7 +266,7 @@ public class TeteTestFrame extends javax.swing.JDialog
   }
 
 
-  private void createComponents ( Container pnlOptions )
+  private void createComponents ( final Container pnlOptions )
   {
     final IntervalPattern[] patterns = _controller.getAllPatterns ();
     final int cols = patterns.length / MAX_COL + ( patterns.length % MAX_COL == 0 ? 0 : 1 );
@@ -277,7 +278,7 @@ public class TeteTestFrame extends javax.swing.JDialog
       btn.setMaximumSize ( new Dimension ( 32000, 32000 ) );
       btn.addActionListener ( new ActionListener ()
         {
-          public void actionPerformed ( ActionEvent evt )
+          public void actionPerformed ( final ActionEvent evt )
           {
             try
             {
@@ -294,22 +295,16 @@ public class TeteTestFrame extends javax.swing.JDialog
             }
             catch ( final MidiException e )
             {
-              handleException ( e );
+              GuiUtil.handleException ( null, e );
             }
             catch ( final EmptyException e )
             {
-              handleException ( e );
+              GuiUtil.handleException ( null, e );
             }
           }
         } );
       pnlOptions.add ( btn );
     }
-  }
-
-
-  private void handleException ( Exception e )
-  {
-    Logger.error ( e );
   }
 
 
@@ -331,7 +326,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     btnStart.addActionListener ( new ActionListener ()
     {
 
-      public void actionPerformed ( ActionEvent evt )
+      public void actionPerformed ( final ActionEvent evt )
       {
         btnStartActionPerformed ( evt );
       }
@@ -341,7 +336,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     btnRepeat.addActionListener ( new ActionListener ()
     {
 
-      public void actionPerformed ( ActionEvent evt )
+      public void actionPerformed ( final ActionEvent evt )
       {
         btnRepeatActionPerformed ( evt );
       }
@@ -351,7 +346,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     btnExit.addActionListener ( new ActionListener ()
     {
 
-      public void actionPerformed ( ActionEvent evt )
+      public void actionPerformed ( final ActionEvent evt )
       {
         btnExitActionPerformed ( evt );
       }
@@ -371,13 +366,13 @@ public class TeteTestFrame extends javax.swing.JDialog
     pack ();
   }
 
-  
+
   private boolean isTestRunning ()
   {
     return btnStart.isSelected ();
   }
 
-  
+
   private void updateGui ()
   {
     if ( isTestRunning () )
@@ -393,8 +388,8 @@ public class TeteTestFrame extends javax.swing.JDialog
     pgsProgress.setValue ( _controller.getPercentageCorrect () );
   }
 
-  
-  private void updateOptions ( boolean value )
+
+  private void updateOptions ( final boolean value )
   {
     for ( int i = 0; i < pnlOptions.getComponentCount (); i++ )
     {
@@ -414,7 +409,7 @@ public class TeteTestFrame extends javax.swing.JDialog
   private javax.swing.JPanel pnlControl;
   private javax.swing.JPanel pnlOptions;
   private javax.swing.JPanel pnlProgress;
-  
+
   private final Controller _controller;
   private final ImageIcon _right = new ImageIcon ( GuiUtil.getResourceUrl ( "/img/right.gif" ) );
   private final ImageIcon _wrong = new ImageIcon ( GuiUtil.getResourceUrl ( "/img/wrong.gif" ) );

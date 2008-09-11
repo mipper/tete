@@ -36,23 +36,33 @@ public class PreferenceManager
   }
 
 
-  static private Object bytes2Object ( byte raw[] )
-    throws
-      IOException,
-      ClassNotFoundException
+  static private Object bytes2Object ( final byte raw[] )
   {
     if ( raw == null )
     {
       return null;
     }
     final ByteArrayInputStream bais = new ByteArrayInputStream ( raw );
-    final ObjectInputStream ois = new ObjectInputStream ( bais );
-    final Object o = ois.readObject ();
+    ObjectInputStream ois;
+    Object o = null;
+    try
+    {
+      ois = new ObjectInputStream ( bais );
+      o = ois.readObject ();
+    }
+    catch ( final IOException e )
+    {
+      Logger.error ( e );
+    }
+    catch ( final ClassNotFoundException e )
+    {
+      Logger.error ( e );
+    }
     return o;
   }
 
 
-  static private byte[] object2Bytes ( Object o )
+  static private byte[] object2Bytes ( final Object o )
     throws
       IOException
   {
@@ -131,17 +141,17 @@ public class PreferenceManager
   {
     return _root.get ( SYNTH, "" );
   }
-  
-  
+
+
   /**
    * @return Name of the Soundbank used for playback.
    */
-  public String getSoundbankFile ()
+  public String getSoundbankPath ()
   {
     return _root.get ( SOUNDBANK, "" );
   }
-  
-  
+
+
   /**
    * Retrieve the previously stored patch.
    *
@@ -189,14 +199,8 @@ public class PreferenceManager
    * @param type Name of the pattern type.
    *
    * @return Array of indexes of the selected patterns within the type.
-   *
-   * @throws IOException
-   * @throws ClassNotFoundException
    */
-  public int[] getSelectedPatterns ( String type )
-    throws
-      IOException,
-      ClassNotFoundException
+  public int[] getSelectedPatterns ( final String type )
   {
     final byte[] b = _root.getByteArray ( String.format ( PATTERN_LIST, type ).toLowerCase (), null );
     if ( b == null )
@@ -209,14 +213,8 @@ public class PreferenceManager
 
   /**
    * @return The stored size and position rectangle for the main window.
-   *
-   * @throws IOException
-   * @throws ClassNotFoundException
    */
   public Rectangle getSizePos ()
-    throws
-      IOException,
-      ClassNotFoundException
   {
     return ( Rectangle ) bytes2Object ( _root.getByteArray ( POS_SIZE, null ) );
   }
@@ -251,7 +249,7 @@ public class PreferenceManager
    *
    * @param delay The delay to store.
    */
-  public void setArpeggioDelay ( int delay )
+  public void setArpeggioDelay ( final int delay )
   {
     _root.putInt ( ARPEGGIO_DELAY, delay );
   }
@@ -262,7 +260,7 @@ public class PreferenceManager
    *
    * @param idx Index of the bottom octave in the list of octaves.
    */
-  public void setBottomOctave ( int idx )
+  public void setBottomOctave ( final int idx )
   {
     _root.putInt ( BOTTOM_OCTAVE, idx );
   }
@@ -271,7 +269,7 @@ public class PreferenceManager
   /**
    * @param value The value of the cascade flag.
    */
-  public void setCascade ( boolean value )
+  public void setCascade ( final boolean value )
   {
     _root.putBoolean ( CASCADE, value );
   }
@@ -280,27 +278,27 @@ public class PreferenceManager
   /**
    * @param synth Name of the Synthesizer selected for playback.
    */
-  public void setSynthName ( String synth )
+  public void setSynthName ( final String synth )
   {
     _root.put ( SYNTH, synth );
   }
-  
-  
+
+
   /**
    * @param path Path to the soundbank to load.
    */
-  public void setSoundbankFile ( String path )
+  public void setSoundbankPath ( final String path )
   {
     _root.put ( SOUNDBANK, path );
   }
-  
-  
+
+
   /**
    * Store the currently selected instrument.
    *
    * @param inst Instrument to store.
    */
-  public void setInstrument ( Instrument inst )
+  public void setInstrument ( final Instrument inst )
   {
     setPatch ( inst.getPatch () );
   }
@@ -311,7 +309,7 @@ public class PreferenceManager
    *
    * @param len The length to store.
    */
-  public void setNoteLength ( int len )
+  public void setNoteLength ( final int len )
   {
     _root.putInt ( NOTE_LENGTH, len );
   }
@@ -322,7 +320,7 @@ public class PreferenceManager
    *
    * @param order Index of the order to use during playback.
    */
-  public void setNoteOrder ( int order )
+  public void setNoteOrder ( final int order )
   {
     _root.putInt ( NOTE_ORDER, order );
   }
@@ -333,7 +331,7 @@ public class PreferenceManager
    *
    * @param patch Patch to store.
    */
-  public void setPatch ( Patch patch )
+  public void setPatch ( final Patch patch )
   {
     _root.putInt ( INSTRUMENT_BANK, patch.getBank () );
     _root.putInt ( INSTRUMENT_PROGRAM, patch.getProgram () );
@@ -345,7 +343,7 @@ public class PreferenceManager
    *
    * @param idx Index of the pattern type in the list of types.
    */
-  public void setPatternType ( int idx )
+  public void setPatternType ( final int idx )
   {
     _root.putInt ( PATTERN_TYPE, idx );
   }
@@ -356,7 +354,7 @@ public class PreferenceManager
    *
    * @param idx Index of the root note in the list of notes.
    */
-  public void setRootNote ( int idx )
+  public void setRootNote ( final int idx )
   {
     _root.putInt ( NOTE_NAME, idx );
   }
@@ -370,7 +368,7 @@ public class PreferenceManager
    *
    * @throws IOException
    */
-  public void setSelectedPatterns ( String type, int[] patterns )
+  public void setSelectedPatterns ( final String type, final int[] patterns )
     throws
       IOException
   {
@@ -387,7 +385,7 @@ public class PreferenceManager
    *
    * @throws IOException
    */
-  public void setSizePos ( Rectangle r )
+  public void setSizePos ( final Rectangle r )
     throws
       IOException
   {
@@ -400,7 +398,7 @@ public class PreferenceManager
    *
    * @param idx Index of the top octave in the list of octaves.
    */
-  public void setTopOctave ( int idx )
+  public void setTopOctave ( final int idx )
   {
     _root.putInt ( TOP_OCTAVE, idx );
   }
@@ -409,7 +407,7 @@ public class PreferenceManager
   /**
    * @param evt
    */
-  public void updateValue ( ItemEvent evt )
+  public void updateValue ( final ItemEvent evt )
   {
 //    Logger.debug ( "Event: {0}={1}", new Object[] {evt.getSource ().getClass ().getName (), evt.getItem ().getClass ()} );
     _root.put ( evt.getSource ().getClass ().getName (),

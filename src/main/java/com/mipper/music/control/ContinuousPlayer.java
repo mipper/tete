@@ -23,9 +23,9 @@ import javax.swing.event.EventListenerList;
 
 import com.mipper.music.generate.EmptyException;
 import com.mipper.music.generate.PatternPlayerModel;
+import com.mipper.music.gui.GuiUtil;
 import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.Sound;
-import com.mipper.util.Logger;
 
 
 /**
@@ -42,7 +42,7 @@ public class ContinuousPlayer
    *
    * @param model PatternPlayerModel controlling what will be played.
    */
-  public ContinuousPlayer ( PatternPlayerModel model )
+  public ContinuousPlayer ( final PatternPlayerModel model )
   {
     super ();
     _model = model;
@@ -54,7 +54,7 @@ public class ContinuousPlayer
    *
    * @param listener SoundEventListener to add.
    */
-  public void addSoundEventListener ( SoundEventListener listener )
+  public void addSoundEventListener ( final SoundEventListener listener )
   {
     listenerList.add ( SoundEventListener.class, listener );
   }
@@ -65,7 +65,7 @@ public class ContinuousPlayer
    *
    * @param listener SoundEventListener to remove.
    */
-  public void removeSoundEventListener ( SoundEventListener listener )
+  public void removeSoundEventListener ( final SoundEventListener listener )
   {
     listenerList.remove ( SoundEventListener.class, listener );
   }
@@ -86,7 +86,7 @@ public class ContinuousPlayer
     _model.getPlayer ().setMetaListener ( new MetaEventListener ()
       {
         @SuppressWarnings("synthetic-access")
-        public void meta ( MetaMessage event )
+        public void meta ( final MetaMessage event )
         {
 //          Logger.debug ( "ContinuousPlayer.start: " + event );
           if ( event.getType () == END_OF_TRACK_MESSAGE )
@@ -95,11 +95,13 @@ public class ContinuousPlayer
             {
               play ();  // play another random pattern
             }
-            // TODO: Why Exception?
-            catch ( final Exception e )
+            catch ( final MidiException e )
             {
-              Logger.error ( e );
-              stop ();
+              GuiUtil.handleException ( null, e );
+            }
+            catch ( final EmptyException e )
+            {
+              GuiUtil.handleException ( null, e );
             }
           }
         }
@@ -132,7 +134,7 @@ public class ContinuousPlayer
   }
 
 
-  private void fireSoundEvent ( SoundEvent evt )
+  private void fireSoundEvent ( final SoundEvent evt )
   {
     final SoundEventListener[] listeners = listenerList.getListeners ( SoundEventListener.class );
     for ( final SoundEventListener element : listeners )
@@ -142,8 +144,9 @@ public class ContinuousPlayer
   }
 
 
+  /** MIDI code for end of a sequence */
   public static final int END_OF_TRACK_MESSAGE = 47;
-  
+
   private final PatternPlayerModel _model;
   private boolean _looping;
   private final EventListenerList listenerList = new EventListenerList ();

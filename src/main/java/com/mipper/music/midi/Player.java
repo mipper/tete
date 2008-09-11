@@ -15,8 +15,10 @@
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package com.mipper.music.control;
+package com.mipper.music.midi;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.sound.midi.Instrument;
@@ -29,12 +31,9 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
-import com.mipper.music.midi.MidiException;
-import com.mipper.music.midi.MidiHelper;
 import com.mipper.util.Logger;
 
 
-// TODO: Move this to the midi package
 /**
  * A wrapper class to make playing midi notes more simple.
  *
@@ -66,18 +65,18 @@ public class Player
 
   /**
    * Constructor.
-   * 
+   *
    * @param synth Synthesizer to be used for playback.
    * @param instrument MIDI id of the instrument to use.
    */
-  public Player ( Synthesizer synth, Instrument instrument )
+  public Player ( final Synthesizer synth, final Instrument instrument )
   {
     super ();
     setSynth ( synth );
     _instrument = instrument;
   }
 
-  
+
   /**
    * Constructor.
    *
@@ -85,7 +84,7 @@ public class Player
    * @param noteLength Length of time to hold the notes.
    * @param spread Time between the first and second notes.
    */
-  public Player ( Instrument instrument, int noteLength, int spread )
+  public Player ( final Instrument instrument, final int noteLength, final int spread )
   {
     super ();
     _instrument = instrument;
@@ -97,7 +96,7 @@ public class Player
   /**
    * @param spread The spread to set.
    */
-  public void setArpeggioDelay ( int spread )
+  public void setArpeggioDelay ( final int spread )
   {
     _delay = spread;
   }
@@ -119,20 +118,21 @@ public class Player
   {
     return _synth;
   }
-  
-  
+
+
   /**
    * Sets the synthesize the player will use to playback sequences.  The
    * instrument will be set to the first one available.
    *
    * @param synth Synthesizer to use for playback.
    */
-  public void setSynth ( Synthesizer synth )
+  public void setSynth ( final Synthesizer synth )
   {
     _synth = synth;
+    _soundbank = synth.getDefaultSoundbank ();
     try
     {
-      List<Instrument> insts = getLoadedInstruments ();
+      final List<Instrument> insts = getLoadedInstruments ();
       if ( null != insts && insts.size () > 0 )
       {
         _instrument = insts.get ( 0 );
@@ -144,23 +144,23 @@ public class Player
       Logger.debug ( "Player.setSynth selected instrument: " + _instrument );
       _sequencer.getTransmitter ().setReceiver ( synth.getReceiver () );
     }
-    catch ( MidiUnavailableException e )
+    catch ( final MidiUnavailableException e )
     {
       Logger.error ( e );
       _instrument = null;
     }
-    catch ( MidiException e )
+    catch ( final MidiException e )
     {
       Logger.error ( e );
       _instrument = null;
     }
   }
 
-  
+
   /**
    * @param bpm The tempo sequences will be played at.
    */
-  public void setBpm ( int bpm )
+  public void setBpm ( final int bpm )
   {
     _bpm = bpm;
   }
@@ -178,7 +178,7 @@ public class Player
   /**
    * @param instrument The instrument to set.
    */
-  public void setInstrument ( Instrument instrument )
+  public void setInstrument ( final Instrument instrument )
   {
     Logger.debugEx ( "midi", "Setting instrument: {0}, patch {1}", new Object[] {instrument, instrument.getPatch ()} );
     _instrument = instrument;
@@ -197,7 +197,7 @@ public class Player
   /**
    * @param noteLength The noteLength to set.
    */
-  public void setNoteLength ( int noteLength )
+  public void setNoteLength ( final int noteLength )
   {
     _noteLength = noteLength;
   }
@@ -213,18 +213,57 @@ public class Player
 
 
   /**
+   * @param path File object for the soundbank file.
+   *
+   * @return true if all instruments loaded, false in some (or all) failed.
+   *
+   * @throws IOException
+   * @throws MidiException
+   */
+  public boolean loadSoundbank ( final File path )
+    throws
+      IOException,
+      MidiException
+  {
+    try
+    {
+      boolean res = false;
+      final Soundbank sb = MidiSystem.getSoundbank ( path );
+      Logger.debug ( "Got Soundbank file: {0}", sb );
+      if ( getSynth ().isSoundbankSupported ( sb ) )
+      {
+        getSynth ().open ();
+        res = getSynth ().loadAllInstruments ( sb );
+        _soundbank = sb;
+        _instrument = getLoadedInstruments ().get ( 0 );
+        // TODO: Synch model's selected instrument.  Is the currently selected one still available?
+      }
+      return res;
+    }
+    catch ( final InvalidMidiDataException e )
+    {
+      throw new MidiException ( e );
+    }
+    catch ( final MidiUnavailableException e )
+    {
+      throw new MidiException ( e );
+    }
+  }
+
+
+  /**
    * @return Current Soundbank.
    */
   public Soundbank getSoundbank ()
   {
-    return MidiHelper.getCurrentSoundbank ( _synth );
+    return _soundbank;
   }
 
 
   /**
    * @param velocity The velocity to play notes.
    */
-  public void setVelocity ( int velocity )
+  public void setVelocity ( final int velocity )
   {
     _velocity = velocity;
   }
@@ -242,7 +281,7 @@ public class Player
   /**
    * @param cascade The cascade to set.
    */
-  public void setCascade ( boolean cascade )
+  public void setCascade ( final boolean cascade )
   {
     _cascade = cascade;
   }
@@ -260,7 +299,7 @@ public class Player
   /**
    * @param listener Listener to add to the meta event listeners list.
    */
-  public void setMetaListener ( MetaEventListener listener )
+  public void setMetaListener ( final MetaEventListener listener )
   {
     _sequencer.addMetaEventListener ( listener );
   }
@@ -317,7 +356,7 @@ public class Player
    *
    * @throws InvalidMidiDataException
    */
-  public void play ( int[] notes )
+  public void play ( final int[] notes )
     throws
       InvalidMidiDataException
   {
@@ -348,7 +387,7 @@ public class Player
    *
    * @throws InvalidMidiDataException
    */
-  private void playSequence ( Sequence sequence, int bpm )
+  private void playSequence ( final Sequence sequence, final int bpm )
     throws
       InvalidMidiDataException
   {
@@ -382,6 +421,7 @@ public class Player
   private boolean _cascade = false;
   private Sequencer _sequencer;
   private Synthesizer _synth;
+  private Soundbank _soundbank;
   private Instrument _instrument;
 //  private List<Instrument> _instruments;
 

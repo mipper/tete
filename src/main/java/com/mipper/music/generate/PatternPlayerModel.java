@@ -25,14 +25,13 @@ import java.util.Random;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
-import com.mipper.music.control.Player;
 import com.mipper.music.midi.MidiException;
+import com.mipper.music.midi.Player;
 import com.mipper.music.model.IntervalPattern;
 import com.mipper.music.model.Note;
 import com.mipper.music.model.NoteRange;
@@ -184,10 +183,27 @@ public class PatternPlayerModel
    * @param patch Patch to lookup
    *
    * @return The instrument that matches the patch.
+   * @throws MidiException
+   * @throws MidiUnavailableException
    */
   public Instrument lookupInstrument ( final Patch patch )
+    throws
+      MidiException
   {
-    return getSoundbank ().getInstrument ( patch );
+    Instrument inst = getSoundbank ().getInstrument ( patch );
+    if ( null == inst )
+    {
+      try
+      {
+        inst = _player.getLoadedInstruments ().get ( 0 );
+      }
+      catch ( final MidiUnavailableException e )
+      {
+        throw new MidiException ( e );
+      }
+    }
+    _player.setInstrument ( inst );
+    return _player.getInstrument ();
   }
 
 
@@ -200,7 +216,7 @@ public class PatternPlayerModel
     throws
       MidiException
   {
-    Logger.debugEx ( "midi.sounds", "Playing: " + snd );
+    Logger.debugEx ( "midi.sounds", "Playing: {0} with {1}, {2}", snd, _player.getSynth (), _player.getInstrument () );
     final int[] notes = snd.getNoteValues ();
     if ( !calcDirection () )
     {
@@ -290,27 +306,7 @@ public class PatternPlayerModel
       IOException,
       MidiException
   {
-    try
-    {
-      boolean res = false;
-      final Soundbank sb = MidiSystem.getSoundbank ( path );
-      Logger.debug ( "Got Soundbank file: {0}", sb );
-      if ( getSynth ().isSoundbankSupported ( sb ) )
-      {
-        getSynth ().open ();
-        res = getSynth ().loadAllInstruments ( sb );
-        // TODO: Synch model's selected instrument.  Is the currently selected one still availabel?
-      }
-      return res;
-    }
-    catch ( final InvalidMidiDataException e )
-    {
-      throw new MidiException ( e );
-    }
-    catch ( final MidiUnavailableException e )
-    {
-      throw new MidiException ( e );
-    }
+    return _player.loadSoundbank ( path );
   }
 
 
