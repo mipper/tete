@@ -130,9 +130,12 @@ public class TeteFrame extends JFrame
     final PreferencesDialog f = new PreferencesDialog ( this,
                                                         GuiUtil.readProperty ( "title.config" ),
                                                         _model,
-                                                        _mgr.getSoundbankPath () );
+                                                        _mgr.getSoundbankPath (),
+                                                        _mgr.getVelocity () );
     Util.centreWindow ( this, f );
     f.setVisible ( true );
+    _model.setVelocity ( f.getVelocity () );
+    _mgr.setVelocity ( f.getVelocity () );
     if ( StringUtils.isEmpty ( f.getSoundbankPath () ) )
     {
       _mgr.setSoundbankPath ( "" );
@@ -596,10 +599,7 @@ public class TeteFrame extends JFrame
 
 
   private void initUiComponents ()
-    throws
-      MidiException
   {
-    setupInstrumentCombo ();
     setupBottomOctaveCombo ();
     setupTopOctaveCombo ();
     setupSoundTypesCombo ();
@@ -612,12 +612,7 @@ public class TeteFrame extends JFrame
     throws
       MidiException
   {
-    _model.setSynth ( _mgr.getSynthName () );
-    if ( !StringUtils.isEmpty ( _mgr.getSoundbankPath () ) )
-    {
-      loadSoundbank ( new File ( _mgr.getSoundbankPath () ) );
-    }
-    cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
+    setSynth ();
     cboBottomOctave.setSelectedIndex ( _mgr.getBottomOctave () );
     cboTopOctave.setSelectedIndex ( _mgr.getTopOctave () );
     cboRootNote.setSelectedIndex ( _mgr.getRootNote () );
@@ -638,6 +633,22 @@ public class TeteFrame extends JFrame
     if ( null != r )
     {
       setBounds ( r );
+    }
+  }
+
+
+  private void setSynth ()
+    throws
+      MidiException
+  {
+    if ( _model.setSynth ( _mgr.getSynthName () ) )
+    {
+      if ( !StringUtils.isEmpty ( _mgr.getSoundbankPath () ) )
+      {
+        loadSoundbank ( new File ( _mgr.getSoundbankPath () ) );
+      }
+      setupInstrumentCombo ();
+      cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
     }
   }
 

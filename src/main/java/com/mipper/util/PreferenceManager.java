@@ -153,6 +153,15 @@ public class PreferenceManager
 
 
   /**
+   * @return Velocity with which to play notes.
+   */
+  public int getVelocity ()
+  {
+    return _root.getInt ( VELOCITY, 64 );
+  }
+
+
+  /**
    * Retrieve the previously stored patch.
    *
    * @return Patch representing the instrument.
@@ -327,6 +336,15 @@ public class PreferenceManager
 
 
   /**
+   * @param velocity Velocity with which to play notes.
+   */
+  public void setVelocity ( final int velocity )
+  {
+    _root.putInt ( VELOCITY, velocity );
+  }
+
+
+  /**
    * Store the patch representing the currently selected instrument.
    *
    * @param patch Patch to store.
@@ -419,6 +437,7 @@ public class PreferenceManager
   private static final String PREF_ROOT = "/com/mipper/music/tete";
   private static final String SYNTH = "playback/synth";
   private static final String SOUNDBANK = "playback/soundbank";
+  private static final String VELOCITY = "playback/velocity";
   private static final String INSTRUMENT_BANK = "playback/instrument/bank";
   private static final String INSTRUMENT_PROGRAM = "playback/instrument/program";
   private static final String BOTTOM_OCTAVE = "playback/bottom_octave";

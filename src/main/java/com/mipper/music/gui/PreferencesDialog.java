@@ -1,6 +1,6 @@
 /**
- * This file contains proprietary information of Rule Financial. 
- * Copying or reproduction without prior written approval is prohibited. 
+ * This file contains proprietary information of Rule Financial.
+ * Copying or reproduction without prior written approval is prohibited.
  *
  * <b>Copyright</b> (c)2008
  * <b>Company</b> Rule Financial Ltd
@@ -11,7 +11,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -28,8 +27,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.jdesktop.layout.GroupLayout;
 
 import com.mipper.music.generate.PatternPlayerModel;
 import com.mipper.util.Logger;
@@ -48,28 +51,32 @@ public class PreferencesDialog extends TeteDialog
    * @param title
    * @param model
    * @param sbPath Path to the soundbank to load.
+   * @param velocity Velocity to play midi notes.
    */
-  public PreferencesDialog ( Frame owner,
-                             String title,
-                             PatternPlayerModel model,
-                             String sbPath )
+  public PreferencesDialog ( final Frame owner,
+                             final String title,
+                             final PatternPlayerModel model,
+                             final String sbPath,
+                             final int velocity )
   {
     super ( owner, title );
     _model = model;
     initialise ( new Dimension ( 400, 400 ) );
     setSoundbankPath ( sbPath );
+    setVelocity ( velocity );
   }
 
 
   @Override
-  protected void initialise ( Dimension dim )
+  protected void initialise ( final Dimension dim )
   {
     super.initialise ( dim );
     initSynths ();
     cboSynth.setSelectedIndex ( lookupSynth ( _model.getSynth () ) );
+    spnVelocity.setValue ( _model.getVelocity () );
   }
-  
-  
+
+
   /**
    * @return Path to the soundbank to load.
    */
@@ -77,24 +84,42 @@ public class PreferencesDialog extends TeteDialog
   {
     return txtSoundbank.getText ();
   }
-  
-  
+
+
   /**
    * @param path Path to the soundbank to load.
    */
-  public void setSoundbankPath ( String path )
+  public void setSoundbankPath ( final String path )
   {
     txtSoundbank.setText ( path );
   }
-  
-  
+
+
+  /**
+   * @return Velocity with which to play notes.
+   */
+  public int getVelocity ()
+  {
+    return ( ( SpinnerNumberModel ) spnVelocity.getModel () ).getNumber ().intValue ();
+  }
+
+
+  /**
+   * @param velocity Velocity with which to play notes.
+   */
+  public void setVelocity ( final int velocity )
+  {
+    spnVelocity.getModel ().setValue ( velocity );
+  }
+
+
   /* (non-Javadoc)
    * @see com.mipper.music.gui.TeteDialog#createContentPane()
    */
   @Override
   protected JComponent createContentPane ()
   {
-    JPanel panel = new JPanel ();
+    final JPanel panel = new JPanel ();
     panel.setLayout ( new BorderLayout () );
     panel.add ( createBottom (), java.awt.BorderLayout.SOUTH );
     panel.add ( createMain (), java.awt.BorderLayout.NORTH );
@@ -108,28 +133,28 @@ public class PreferencesDialog extends TeteDialog
     cboSynth.setOpaque ( false );
     cboSynth.addItemListener ( new ItemListener ()
                                 {
-                                  public void itemStateChanged ( ItemEvent evt )
+                                  public void itemStateChanged ( final ItemEvent evt )
                                   {
                                     cboSynthItemStateChanged ( evt );
                                   }
                                 } );
-    
+
     lblSynth = new JLabel ( GuiUtil.readProperty ( "label.synth" ) );
     lblSynth.setLabelFor ( cboSynth );
-    
+
     txtSoundbank = new JTextField ();
     btnSoundbank = new JButton ( "..." );
     btnSoundbank.addActionListener ( new ActionListener ()
     {
-      public void actionPerformed ( ActionEvent evt )
+      public void actionPerformed ( final ActionEvent evt )
       {
-        JFileChooser chooser = new JFileChooser ();
+        final JFileChooser chooser = new JFileChooser ();
         chooser.setMultiSelectionEnabled ( false );
         chooser.setSelectedFile ( new File ( getSoundbankPath () ) );
         chooser.setFileFilter ( new FileNameExtensionFilter ( "Midi Soundbank files (sf2, dls)",
-                                                              "sf2", 
+                                                              "sf2",
                                                               "dls" ) );
-        
+
         if ( JFileChooser.APPROVE_OPTION == chooser.showOpenDialog ( btnSoundbank ) )
         {
           Logger.debug ( "Chose: {0}", chooser.getSelectedFile () );
@@ -137,31 +162,55 @@ public class PreferencesDialog extends TeteDialog
         }
       }
     } );
-    
     lblSoundbank = new JLabel ( GuiUtil.readProperty ( "label.soundbank" ) );
     lblSoundbank.setLabelFor ( txtSoundbank );
-    
+
+    spnVelocity = new JSpinner ( new SpinnerNumberModel ( 64, 0, 127, 1 ) );
+    lblVelocity = new JLabel ( GuiUtil.readProperty ( "label.velocity" ) );
+
 //    JTabbedPane tabs = new JTabbedPane ();
 //    tabs.addTab ( GuiUtil.readProperty ( "label.about" ), createAboutDetails () );
 //    tabs.addTab ( GuiUtil.readProperty ( "label.midi" ), createMidiDetails () );
 //    return tabs;
-    JPanel panel = new JPanel ();
-    panel.setLayout ( new GridLayout ( 2, 3 ) );
-    panel.add ( lblSynth );
-    panel.add ( cboSynth );
-    panel.add ( new JLabel () );
-    panel.add ( lblSoundbank );
-    panel.add ( txtSoundbank );
-    panel.add ( btnSoundbank );
+    final JPanel panel = new JPanel ();
+    final GroupLayout layout = new GroupLayout ( panel );
+    layout.setAutocreateContainerGaps ( true );
+    layout.setAutocreateGaps ( true );
+    panel.setLayout ( layout );
+
+    layout.setHorizontalGroup (
+      layout.createSequentialGroup ()
+            .add ( layout.createParallelGroup ( GroupLayout.LEADING )
+                         .add ( lblSynth )
+                         .add ( lblSoundbank )
+                         .add ( lblVelocity ) )
+            .add ( layout.createParallelGroup ( GroupLayout.LEADING )
+                         .add ( cboSynth )
+                         .add ( layout.createSequentialGroup ()
+                                      .add ( txtSoundbank )
+                                      .add ( btnSoundbank ) )
+                         .add ( spnVelocity ) ) );
+    layout.setVerticalGroup (
+      layout.createSequentialGroup ()
+            .add ( layout.createParallelGroup ( GroupLayout.BASELINE )
+                         .add ( lblSynth )
+                         .add ( cboSynth ) )
+            .add ( layout.createParallelGroup ( GroupLayout.BASELINE )
+                         .add ( lblSoundbank )
+                         .add ( txtSoundbank )
+                         .add ( btnSoundbank ) )
+            .add ( layout.createParallelGroup ( GroupLayout.BASELINE )
+                         .add ( lblVelocity )
+                         .add ( spnVelocity ) ) );
     return panel;
   }
 
 
-  private void cboSynthItemStateChanged (ItemEvent evt)
+  private void cboSynthItemStateChanged (final ItemEvent evt)
   {
     if ( evt.getStateChange () == ItemEvent.SELECTED )
     {
-      Synthesizer synth = ( Synthesizer ) evt.getItem ();
+      final Synthesizer synth = ( Synthesizer ) evt.getItem ();
 //      try
 //      {
 //        for ( Instrument i: sb.getInstruments () )
@@ -199,11 +248,11 @@ public class PreferencesDialog extends TeteDialog
     cboSynth.setRenderer ( new DefaultListCellRenderer ()
       {
         @Override
-        public Component getListCellRendererComponent ( JList list,
-                                                        Object value,
-                                                        int index,
-                                                        boolean isSelected,
-                                                        boolean cellHasFocus )
+        public Component getListCellRendererComponent ( final JList list,
+                                                        final Object value,
+                                                        final int index,
+                                                        final boolean isSelected,
+                                                        final boolean cellHasFocus )
         {
           final JLabel lbl = ( JLabel ) super.getListCellRendererComponent ( list,
                                                                              value,
@@ -218,14 +267,14 @@ public class PreferencesDialog extends TeteDialog
     );
   }
 
-  
-  private void loadSoundbank ( File file )
+
+  private void loadSoundbank ( final File file )
   {
     txtSoundbank.setText ( file.getAbsolutePath () );
   }
-  
-  
-  private int lookupSynth ( Synthesizer synth )
+
+
+  private int lookupSynth ( final Synthesizer synth )
   {
     for ( int i = 0; i < cboSynth.getModel ().getSize (); i++ )
     {
@@ -236,8 +285,8 @@ public class PreferencesDialog extends TeteDialog
     }
     return 0;
   }
-  
-  
+
+
   private static final long serialVersionUID = 1L;
 
   private JLabel lblSynth;
@@ -245,6 +294,8 @@ public class PreferencesDialog extends TeteDialog
   private JLabel lblSoundbank;
   private JTextField txtSoundbank;
   private JButton btnSoundbank;
-  private PatternPlayerModel _model;
+  private JLabel lblVelocity;
+  private JSpinner spnVelocity;
+  private final PatternPlayerModel _model;
 
 }

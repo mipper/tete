@@ -132,6 +132,15 @@ public class PatternPlayerModel
 
 
   /**
+   * @return Velocity of played note.
+   */
+  public Object getVelocity ()
+  {
+    return _player.getVelocity ();
+  }
+
+
+  /**
    * @return The factory.
    */
   public SoundFactory getFactory ()
@@ -263,11 +272,23 @@ public class PatternPlayerModel
 
 
   /**
-   * @param synth Synthesizer to use for playback.
+   * @param velocity Velocity with which to play notes.
    */
-  public void setSynth ( final Synthesizer synth )
+  public void setVelocity ( final int velocity )
   {
-    _player.setSynth ( synth );
+    _player.setVelocity ( velocity );
+  }
+
+
+  /**
+   * @param synth Synthesizer to use for playback.
+   *
+   * @return true if the synth was set, false if it was already set or there was
+   *         an error.
+   */
+  public boolean setSynth ( final Synthesizer synth )
+  {
+    return _player.setSynth ( synth );
   }
 
 
@@ -276,10 +297,13 @@ public class PatternPlayerModel
    * we find.
    *
    * @param name Name of the synthesizer to return.
+   *
+   * @return true if the synth was set, false if it was already set or there was
+   *         an error.
    */
-  public void setSynth ( final String name )
+  public boolean setSynth ( final String name )
   {
-    setSynth ( lookupSynth ( name ) );
+    return setSynth ( lookupSynth ( name ) );
   }
 
 

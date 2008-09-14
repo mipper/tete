@@ -125,35 +125,44 @@ public class Player
    * instrument will be set to the first one available.
    *
    * @param synth Synthesizer to use for playback.
+   *
+   * @return true if the synth was set, false if it was already set or there was
+   *         an error.
    */
-  public void setSynth ( final Synthesizer synth )
+  public boolean setSynth ( final Synthesizer synth )
   {
-    _synth = synth;
-    _soundbank = synth.getDefaultSoundbank ();
-    try
+    if ( !synth.equals ( _synth ) )
     {
-      final List<Instrument> insts = getLoadedInstruments ();
-      if ( null != insts && insts.size () > 0 )
+      _synth = synth;
+      try
       {
-        _instrument = insts.get ( 0 );
+        synth.open ();
+        _soundbank = synth.getDefaultSoundbank ();
+        final List<Instrument> insts = getLoadedInstruments ();
+        if ( null != insts && insts.size () > 0 )
+        {
+          _instrument = insts.get ( 0 );
+        }
+        else
+        {
+          _instrument = getAvailableInstruments ().get ( 0 );
+        }
+        Logger.debug ( "Player.setSynth selected instrument: " + _instrument );
+        _sequencer.getTransmitter ().setReceiver ( synth.getReceiver () );
+        return true;
       }
-      else
+      catch ( final MidiUnavailableException e )
       {
-        _instrument = getAvailableInstruments ().get ( 0 );
+        Logger.error ( e );
+        _instrument = null;
       }
-      Logger.debug ( "Player.setSynth selected instrument: " + _instrument );
-      _sequencer.getTransmitter ().setReceiver ( synth.getReceiver () );
+      catch ( final MidiException e )
+      {
+        Logger.error ( e );
+        _instrument = null;
+      }
     }
-    catch ( final MidiUnavailableException e )
-    {
-      Logger.error ( e );
-      _instrument = null;
-    }
-    catch ( final MidiException e )
-    {
-      Logger.error ( e );
-      _instrument = null;
-    }
+    return false;
   }
 
 
