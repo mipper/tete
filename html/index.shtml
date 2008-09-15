@@ -9,6 +9,23 @@
       <!--#include file="inc/menu.inc" -->
       <div id="main">
       
+        <h1>Latest News</h1>
+        <p>
+        Well, after a long time with nothing happening, I've finally got back to doing some
+        work on Tete.  It was kicked off with the creation of the Open JDK project, in
+        particular, Gervill.  Gervill is an open source, pure Java implementation of the
+        Java Sound API and includes a synthisizer which can use SoundFont2, Dowloadable Sounds,
+        and plain audio files for is synthesis.  It removes the need to download the MIDI
+        soundbank files from Sun.  Hurrah!  It hopefully gives you a wider and more realistic
+        set of instruments to play with while working <q>straight out of the box.</q>
+        </p>
+        <p>
+        Along the way I've refactored some code, added bits and pieces here and there and
+        generally had a clean up.  The About Box has been improved to show details of the
+        available MIDI devices that can be found on the box.  In addition I've added a config
+        screen for setting up the synthesizer for playback.
+        </p>
+        
         <h1>Background</h1>
         <p>
         Tete is an open source ear trainer.  Ear training involves learning to recognise
@@ -17,7 +34,7 @@
         </p>
         <p>
         Tete allows you to select intervals, chords, or scales and play
-        examples of the selected sounds in a random order.&nbsp; As each is
+        examples of the selected sounds in a random order.  As each is
         played it is highlighted in the list.  Once you think you can
         tell what is playing you can test yourself.  A series of
         sounds will be played, again at random, and you attempt to identify
@@ -46,7 +63,7 @@
         PC running Microsoft Windows or Linux and should also run on most Macs.
         </p>
         <p>
-        You will also require a midi soundbank file.  This does not come as standard with the JRE due to its size,
+        If you wish to use the original Sun Synthesizer you will also require a midi soundbank file.  This does not come as standard with the JRE due to its size,
         but should be included with the JDK if you have it.  It can be <a href="http://java.sun.com/products/java-media/sound/soundbanks.html">downloaded</a>
         seperately.  There are a number of versions of the file.  The larger the soundbank file is
         the better quality the playback will be.  I personally use the <a href="http://java.sun.com/products/java-media/sound/soundbank-deluxe.gm.zip">soundbank-delux.gm</a>
@@ -70,7 +87,7 @@
         <code>C:\Program Files\Java\jre1.5.0_XX\bin</code>
         </p>
         <p>
-        If none of the above works, you can use the command line: <code>java –jar tete.jar</code>
+        If none of the above works, you can use the command line: <code>java ï¿½jar tete.jar</code>
         </p>
 
         <h1>Technical Stuff</h1>

@@ -2,7 +2,6 @@
 package com.mipper.util;
 
 import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -157,7 +156,7 @@ public class PreferenceManager
    */
   public int getVelocity ()
   {
-    return _root.getInt ( VELOCITY, 64 );
+    return _root.getInt ( VELOCITY, DEFAULT_VELOCITY );
   }
 
 
@@ -422,17 +421,6 @@ public class PreferenceManager
   }
 
 
-  /**
-   * @param evt
-   */
-  public void updateValue ( final ItemEvent evt )
-  {
-//    Logger.debug ( "Event: {0}={1}", new Object[] {evt.getSource ().getClass ().getName (), evt.getItem ().getClass ()} );
-    _root.put ( evt.getSource ().getClass ().getName (),
-                evt.getItem ().toString () );
-  }
-
-
   private static PreferenceManager _mgr;
   private static final String PREF_ROOT = "/com/mipper/music/tete";
   private static final String SYNTH = "playback/synth";
@@ -450,6 +438,7 @@ public class PreferenceManager
   private static final String PATTERN_TYPE = "sounds/type";
   private static final String PATTERN_LIST = "sounds/type/%s";
   private static final String POS_SIZE = "window/pos_size";
+  private static final int DEFAULT_VELOCITY = 64;
   private static final int DEFAULT_BOTTOM_OCTAVE = 3;
   private static final int DEFAULT_TOP_OCTAVE = 6;
   private static final int DEFAULT_NOTE_LENGTH = 32;

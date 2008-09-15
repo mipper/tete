@@ -130,12 +130,10 @@ public class TeteFrame extends JFrame
     final PreferencesDialog f = new PreferencesDialog ( this,
                                                         GuiUtil.readProperty ( "title.config" ),
                                                         _model,
-                                                        _mgr.getSoundbankPath (),
-                                                        _mgr.getVelocity () );
+                                                        _mgr.getSoundbankPath () );
     Util.centreWindow ( this, f );
     f.setVisible ( true );
     _model.setVelocity ( f.getVelocity () );
-    _mgr.setVelocity ( f.getVelocity () );
     if ( StringUtils.isEmpty ( f.getSoundbankPath () ) )
     {
       _mgr.setSoundbankPath ( "" );
@@ -423,7 +421,7 @@ public class TeteFrame extends JFrame
     sldNoteLength.setPaintLabels ( true );
     sldNoteLength.setPaintTicks ( true );
     sldNoteLength.setSnapToTicks ( true );
-    sldNoteLength.setValue ( 32 );
+//    sldNoteLength.setValue ( 32 );
     sldNoteLength.addChangeListener ( new ChangeListener ()
                                   {
                                     public void stateChanged ( final ChangeEvent evt )
@@ -443,7 +441,7 @@ public class TeteFrame extends JFrame
     sldArpeggioDelay.setPaintLabels ( true );
     sldArpeggioDelay.setPaintTicks ( true );
     sldNoteLength.setSnapToTicks ( true );
-    sldArpeggioDelay.setValue ( 8 );
+//    sldArpeggioDelay.setValue ( 8 );
     sldArpeggioDelay.addChangeListener ( new ChangeListener ()
                                   {
                                     public void stateChanged ( final ChangeEvent evt )
@@ -582,6 +580,7 @@ public class TeteFrame extends JFrame
     _mgr.setArpeggioDelay ( sldArpeggioDelay.getValue () );
     _mgr.setCascade ( chkCascade.isSelected () );
     _mgr.setPatternType ( cboSoundType.getSelectedIndex () );
+    _mgr.setVelocity ( _model.getVelocity () );
     saveSounds ( getSelectedSoundType () );
     try
     {
@@ -620,6 +619,7 @@ public class TeteFrame extends JFrame
     sldArpeggioDelay.setValue ( _mgr.getArpeggioDelay () );
     chkCascade.setSelected ( _mgr.getCascade () );
     sldNoteLength.setValue ( _mgr.getNoteLength () );
+    _model.setVelocity ( _mgr.getVelocity () );
     SoundCollectionAdaptor key;
     for ( int i = 0; i < cboSoundType.getItemCount (); i++ )
     {

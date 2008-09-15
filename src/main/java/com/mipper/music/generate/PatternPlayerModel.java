@@ -134,7 +134,7 @@ public class PatternPlayerModel
   /**
    * @return Velocity of played note.
    */
-  public Object getVelocity ()
+  public int getVelocity ()
   {
     return _player.getVelocity ();
   }

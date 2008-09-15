@@ -27,9 +27,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdesktop.layout.GroupLayout;
@@ -51,19 +50,18 @@ public class PreferencesDialog extends TeteDialog
    * @param title
    * @param model
    * @param sbPath Path to the soundbank to load.
-   * @param velocity Velocity to play midi notes.
    */
   public PreferencesDialog ( final Frame owner,
                              final String title,
                              final PatternPlayerModel model,
-                             final String sbPath,
-                             final int velocity )
+                             final String sbPath )
   {
     super ( owner, title );
     _model = model;
     initialise ( new Dimension ( 400, 400 ) );
+    cboSynth.setSelectedIndex ( lookupSynth ( model.getSynth () ) );
     setSoundbankPath ( sbPath );
-    setVelocity ( velocity );
+    setVelocity ( model.getVelocity () );
   }
 
 
@@ -72,8 +70,6 @@ public class PreferencesDialog extends TeteDialog
   {
     super.initialise ( dim );
     initSynths ();
-    cboSynth.setSelectedIndex ( lookupSynth ( _model.getSynth () ) );
-    spnVelocity.setValue ( _model.getVelocity () );
   }
 
 
@@ -100,7 +96,7 @@ public class PreferencesDialog extends TeteDialog
    */
   public int getVelocity ()
   {
-    return ( ( SpinnerNumberModel ) spnVelocity.getModel () ).getNumber ().intValue ();
+    return sldVelocity.getValue ();
   }
 
 
@@ -109,7 +105,7 @@ public class PreferencesDialog extends TeteDialog
    */
   public void setVelocity ( final int velocity )
   {
-    spnVelocity.getModel ().setValue ( velocity );
+    sldVelocity.setValue ( velocity );
   }
 
 
@@ -165,7 +161,12 @@ public class PreferencesDialog extends TeteDialog
     lblSoundbank = new JLabel ( GuiUtil.readProperty ( "label.soundbank" ) );
     lblSoundbank.setLabelFor ( txtSoundbank );
 
-    spnVelocity = new JSpinner ( new SpinnerNumberModel ( 64, 0, 127, 1 ) );
+    sldVelocity = new JSlider ( 0, 127 );
+    sldVelocity.setMajorTickSpacing ( 32 );
+    sldVelocity.setMinorTickSpacing ( 8 );
+    sldVelocity.setPaintLabels ( true );
+    sldVelocity.setPaintTicks ( true );
+    sldVelocity.setSnapToTicks ( true );
     lblVelocity = new JLabel ( GuiUtil.readProperty ( "label.velocity" ) );
 
 //    JTabbedPane tabs = new JTabbedPane ();
@@ -189,7 +190,7 @@ public class PreferencesDialog extends TeteDialog
                          .add ( layout.createSequentialGroup ()
                                       .add ( txtSoundbank )
                                       .add ( btnSoundbank ) )
-                         .add ( spnVelocity ) ) );
+                         .add ( sldVelocity ) ) );
     layout.setVerticalGroup (
       layout.createSequentialGroup ()
             .add ( layout.createParallelGroup ( GroupLayout.BASELINE )
@@ -201,7 +202,7 @@ public class PreferencesDialog extends TeteDialog
                          .add ( btnSoundbank ) )
             .add ( layout.createParallelGroup ( GroupLayout.BASELINE )
                          .add ( lblVelocity )
-                         .add ( spnVelocity ) ) );
+                         .add ( sldVelocity ) ) );
     return panel;
   }
 
@@ -295,7 +296,8 @@ public class PreferencesDialog extends TeteDialog
   private JTextField txtSoundbank;
   private JButton btnSoundbank;
   private JLabel lblVelocity;
-  private JSpinner spnVelocity;
+//  private JSpinner spnVelocity;
+  private JSlider sldVelocity;
   private final PatternPlayerModel _model;
 
 }
