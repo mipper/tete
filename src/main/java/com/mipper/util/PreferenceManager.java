@@ -145,12 +145,12 @@ public class PreferenceManager
   /**
    * @return Name of the Soundbank used for playback.
    */
-  public String getSoundbankPath ()
+  public String getSoundbankPath ( final String key )
   {
-    return _root.get ( SOUNDBANK, "" );
+    return _root.get ( buildKey ( key, SOUNDBANK ), "" );
   }
 
-
+  
   /**
    * @return Velocity with which to play notes.
    */
@@ -295,9 +295,9 @@ public class PreferenceManager
   /**
    * @param path Path to the soundbank to load.
    */
-  public void setSoundbankPath ( final String path )
+  public void setSoundbankPath ( final String key, final String path )
   {
-    _root.put ( SOUNDBANK, path );
+    _root.put ( buildKey ( key, SOUNDBANK ), path );
   }
 
 
@@ -421,6 +421,12 @@ public class PreferenceManager
   }
 
 
+  private String buildKey ( String subkey, String key )
+  {
+    return subkey + KEY_SEPERATOR + key;
+  }
+
+
   private static PreferenceManager _mgr;
   private static final String PREF_ROOT = "/com/mipper/music/tete";
   private static final String SYNTH = "playback/synth";
@@ -438,6 +444,7 @@ public class PreferenceManager
   private static final String PATTERN_TYPE = "sounds/type";
   private static final String PATTERN_LIST = "sounds/type/%s";
   private static final String POS_SIZE = "window/pos_size";
+  private static final String KEY_SEPERATOR = "::";
   private static final int DEFAULT_VELOCITY = 64;
   private static final int DEFAULT_BOTTOM_OCTAVE = 3;
   private static final int DEFAULT_TOP_OCTAVE = 6;

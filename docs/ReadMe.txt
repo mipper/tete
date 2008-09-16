@@ -27,7 +27,8 @@ also run on Macs.
 Installation requirements
 =========================
 
-Tete requires that Java version 1.5 is available.  It will also require the midi
+Tete requires that Java version 1.5 is available.  If you want to use Sun's
+original synthesizer implementation, it will also require the midi
 part of the JRE to be available.  If you have this it will be found in the audio
 directory of your installed JRE: {JRE Directory}\lib\audio.  If you don't have it,
 it can be freely downloaded from Sun's website.  See link below.
@@ -41,7 +42,7 @@ Installation
 ============
 
 Installation is simply a matter of unziping the distribution file into a directory
-of your choice. On Windows you might use c:\Program Files\Tete assuming your
+of your choice. On Windows you might use C:\Program Files\Tete assuming your
 installation of Windows is on your C: drive.
 
 Running Tete

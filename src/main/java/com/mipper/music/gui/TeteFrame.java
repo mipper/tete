@@ -136,37 +136,46 @@ public class TeteFrame extends JFrame
     _model.setVelocity ( f.getVelocity () );
     if ( StringUtils.isEmpty ( f.getSoundbankPath () ) )
     {
-      _mgr.setSoundbankPath ( "" );
+      _mgr.setSoundbankPath ( getSynthClass (), "" );
     }
     else
     {
       final File sb = new File ( f.getSoundbankPath () );
-      if ( sb.getAbsolutePath () != _mgr.getSoundbankPath () )
+      if ( sb.getAbsolutePath () != _mgr.getSoundbankPath ( getSynthClass () ) )
       {
-        loadSoundbank ( sb );
-        // TODO
-        try
+        if ( loadSoundbank ( sb ) )
         {
-          cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
-        }
-        catch ( final MidiException e )
-        {
-          GuiUtil.handleException ( this, e );
+          _mgr.setSoundbankPath ( getSynthClass (), sb.getAbsolutePath () );
+          // TODO: Is this exception handling the right thing to do?
+          try
+          {
+            cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
+          }
+          catch ( final MidiException e )
+          {
+            GuiUtil.handleException ( this, e );
+          }
         }
       }
     }
   }
 
+  
+  private String getSynthClass ()
+  {
+    return _model.getSynth ().getClass ().getName ();
+  }
+  
 
-  private void loadSoundbank ( final File sb )
+  private boolean loadSoundbank ( final File sb )
   {
     try
     {
       if ( sb.exists () && _model.loadSoundbank ( sb ) )
       {
-        _mgr.setSoundbankPath ( sb.getAbsolutePath () );
         setupInstrumentCombo ();
 //        cboInstrument.setSelectedItem ( _model.getInstrument () );
+        return true;
       }
     }
     catch ( final MidiException e )
@@ -177,6 +186,7 @@ public class TeteFrame extends JFrame
     {
       GuiUtil.handleException ( this, e );
     }
+    return false;
   }
 
 
@@ -643,9 +653,10 @@ public class TeteFrame extends JFrame
   {
     if ( _model.setSynth ( _mgr.getSynthName () ) )
     {
-      if ( !StringUtils.isEmpty ( _mgr.getSoundbankPath () ) )
+      String path = _mgr.getSoundbankPath ( getSynthClass () );
+      if ( !StringUtils.isEmpty ( path ) )
       {
-        loadSoundbank ( new File ( _mgr.getSoundbankPath () ) );
+        loadSoundbank ( new File ( path ) );
       }
       setupInstrumentCombo ();
       cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
