@@ -130,15 +130,11 @@ public class TeteFrame extends JFrame
     final PreferencesDialog f = new PreferencesDialog ( this,
                                                         GuiUtil.readProperty ( "title.config" ),
                                                         _model,
-                                                        _mgr.getSoundbankPath () );
+                                                        _mgr.getSoundbankPath ( getSynthClass () ) );
     Util.centreWindow ( this, f );
     f.setVisible ( true );
     _model.setVelocity ( f.getVelocity () );
-    if ( StringUtils.isEmpty ( f.getSoundbankPath () ) )
-    {
-      _mgr.setSoundbankPath ( getSynthClass (), "" );
-    }
-    else
+    if ( !StringUtils.isEmpty ( f.getSoundbankPath () ) )
     {
       final File sb = new File ( f.getSoundbankPath () );
       if ( sb.getAbsolutePath () != _mgr.getSoundbankPath ( getSynthClass () ) )
@@ -157,15 +153,19 @@ public class TeteFrame extends JFrame
           }
         }
       }
+      else
+      {
+        _mgr.setSoundbankPath ( getSynthClass (), "" );
+      }
     }
   }
 
-  
+
   private String getSynthClass ()
   {
     return _model.getSynth ().getClass ().getName ();
   }
-  
+
 
   private boolean loadSoundbank ( final File sb )
   {
@@ -653,7 +653,7 @@ public class TeteFrame extends JFrame
   {
     if ( _model.setSynth ( _mgr.getSynthName () ) )
     {
-      String path = _mgr.getSoundbankPath ( getSynthClass () );
+      final String path = _mgr.getSoundbankPath ( getSynthClass () );
       if ( !StringUtils.isEmpty ( path ) )
       {
         loadSoundbank ( new File ( path ) );

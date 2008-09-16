@@ -242,6 +242,11 @@ public class Player
       if ( getSynth ().isSoundbankSupported ( sb ) )
       {
         getSynth ().open ();
+        for ( final Instrument i : getSynth ().getLoadedInstruments () )
+        {
+          getSynth ().unloadInstrument ( i );
+        }
+        Logger.debug ( "Instrument count: {0}", getSynth ().getLoadedInstruments ().length );
         res = getSynth ().loadAllInstruments ( sb );
         _soundbank = sb;
         _instrument = getLoadedInstruments ().get ( 0 );

@@ -143,6 +143,8 @@ public class PreferenceManager
 
 
   /**
+   * @param key String used to differentiate the soundbanks.
+   *
    * @return Name of the Soundbank used for playback.
    */
   public String getSoundbankPath ( final String key )
@@ -150,7 +152,7 @@ public class PreferenceManager
     return _root.get ( buildKey ( key, SOUNDBANK ), "" );
   }
 
-  
+
   /**
    * @return Velocity with which to play notes.
    */
@@ -293,6 +295,7 @@ public class PreferenceManager
 
 
   /**
+   * @param key String used to differentiate the soundbanks.
    * @param path Path to the soundbank to load.
    */
   public void setSoundbankPath ( final String key, final String path )
@@ -421,7 +424,7 @@ public class PreferenceManager
   }
 
 
-  private String buildKey ( String subkey, String key )
+  private String buildKey ( final String subkey, final String key )
   {
     return subkey + KEY_SEPERATOR + key;
   }
