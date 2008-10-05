@@ -17,9 +17,11 @@
         </p>
         <p>
         I'm hoping to get to work on these ideas very soon, so keep checking back if you're waiting for
-        something on the list - or jump on in, the waters lovely.
+        something on the list - or jump on in, the water's lovely.
         </p>
         <ul>
+          <li class="done">Done V1.2 Add support for Gervill, the OpenJDK implementation of the Java Sound API</li>
+          <li class="done">Done V1.2 Add support for using SoundFont2, Downloadable Sounds, and audio files for playback</li>
           <li class="done">Done V1.1 Implement the root note functionality</li>
           <li class="done">Done V1.1 Implement the root note order functionality</li>
           <li class="done">Done V1.1 Save configuration so the program starts in the same state as you last closed it</li>
@@ -28,7 +30,8 @@
           <li>Filter chord/interval types generated diatonically based on a scale type</li>
           <li>Add some help to the program</li>
           <li>Create an installation routine</li>
-          <li>Automatically get the soundbank if it's not available locally?</li>
+          <li>Automatically get the soundbank if it's not available locally.  How do you check this?</li>
+          <li>Create some batch files for sparking her up</li>
         </ul>
       </div>
       <!--#include file="inc/footer.inc" -->

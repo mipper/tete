@@ -17,6 +17,7 @@
  */
 package com.mipper.music.midi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +79,7 @@ public class MidiHelper
     setInstrument ( track, instrument );
     for ( int i = 0; i < notes.length; i++ )
     {
-      Logger.debugEx ( "midi.notes", "Instrument: {3} Adding note: {0} for {1}, velocity: {2}", notes[i], noteLength, velocity, instrument );
+//      Logger.debugEx ( "midi.notes", "Instrument: {3} Adding note: {0} for {1}, velocity: {2}", notes[i], noteLength, velocity, instrument );
       track.add ( createNoteEvent ( ShortMessage.NOTE_ON,
                                     notes[i],
                                     velocity,
@@ -104,12 +105,12 @@ public class MidiHelper
       try
       {
         final MidiDevice device = MidiSystem.getMidiDevice ( info );
-        Logger.debug ( String.format ( "MIDI device Name: %s, Class: %s", info.getName (), device.getClass ().getName () ) );
+//        Logger.debug ( String.format ( "MIDI device Name: %s, Class: %s", info.getName (), device.getClass ().getName () ) );
         if ( device instanceof Synthesizer )
         {
           final Synthesizer synth = ( Synthesizer ) device;
           synths.add ( synth );
-          Logger.debug ( String.format ( "Synthisizer Name: %s, Latency: %d, Voices: %d", info.getName(), Long.valueOf ( synth.getLatency () ), Long.valueOf ( synth.getMaxPolyphony () ) ) );
+//          Logger.debug ( String.format ( "Synthisizer Name: %s, Latency: %d, Voices: %d", info.getName(), Long.valueOf ( synth.getLatency () ), Long.valueOf ( synth.getMaxPolyphony () ) ) );
         }
       }
       catch ( final MidiUnavailableException e )
@@ -138,8 +139,8 @@ public class MidiHelper
   {
     synth.open ();
     Logger.debugEx ( "midi.insts", "Getting loaded instruments from synthesizer: " + synth.getDeviceInfo ().getName () );
-    final List<Instrument> instruments = Arrays.asList ( synth.getLoadedInstruments () );
-    if ( instruments == null || instruments.isEmpty () )
+    final List<Instrument> instruments = new ArrayList<Instrument> ( Arrays.asList ( synth.getLoadedInstruments () ) );
+    if ( instruments.isEmpty () )
     {
       Logger.info ( "No loaded instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
     }
@@ -157,22 +158,34 @@ public class MidiHelper
    * @return Instrument array of all available instruments.
    *
    * @throws MidiUnavailableException
-   * @throws MidiException
    */
   public static List<Instrument> getAvailableInstruments ( final Synthesizer synth )
     throws
-      MidiUnavailableException,
-      MidiException
+      MidiUnavailableException
   {
     synth.open ();
-    Logger.debugEx ( "midi.insts", "Getting loaded instruments from synthesizer: " + synth.getDeviceInfo ().getName () );
     final List<Instrument> instruments = Arrays.asList ( synth.getAvailableInstruments () );
     if ( instruments == null || instruments.isEmpty () )
     {
       Logger.warn ( "Can''t find any available instruments for synthesizer {0}", synth.getDeviceInfo ().getName () );
-      throw new MidiException ( "Can''t find any available instruments.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
+//      throw new SoundException ( "Can't find any available instruments.  Check that one of the soundbank files is in your JRE's lib/audio folder." );
     }
     return instruments;
+  }
+
+
+  /**
+   * @param track Track to insert instrument change to.
+   * @param instrument Instrument to change to.
+   *
+   * @throws InvalidMidiDataException
+   */
+  public static void setInstrument ( final Track track,
+                                     final Instrument instrument )
+    throws
+      InvalidMidiDataException
+  {
+    setPatch ( track, instrument.getPatch () );
   }
 
 
@@ -182,18 +195,67 @@ public class MidiHelper
    * @param track Track to add the event to.
    * @param patch Patch to use for playback.
    *
+   * @return Track object events have been added to.
+   *
    * @throws InvalidMidiDataException
    */
-  public static void setPatch ( final Track track, final Patch patch )
+  public static Track setPatch ( final Track track, final Patch patch )
+    throws
+      InvalidMidiDataException
+  {
+    changeBank ( track, patch.getBank () );
+    return changeProgram ( track, patch.getProgram () );
+  }
+
+
+  /**
+   * @param track Track to change program for.
+   * @param program Program number to change to.
+   *
+   * @return Track object events have been added to.
+   *
+   * @throws InvalidMidiDataException
+   */
+  public static Track changeProgram ( final Track track, final int program )
     throws
       InvalidMidiDataException
   {
     final ShortMessage message = new ShortMessage ();
     message.setMessage ( ShortMessage.PROGRAM_CHANGE,
                          0,
-                         patch.getProgram (),
-                         patch.getBank () );
+                         program,
+                         0 );
     track.add ( new MidiEvent ( message, 0 ) );
+    return track;
+  }
+
+
+  /**
+   * @param track Track to change program for.
+   * @param bank Bank number to change to.
+   *
+   * @return Track object events have been added to.
+   *
+   * @throws InvalidMidiDataException
+   */
+  public static Track changeBank ( final Track track, final int bank )
+    throws
+      InvalidMidiDataException
+  {
+    Logger.debugEx ( "midi", "changeBank: 0x{0}:b{1}:{2}", Integer.toHexString ( bank ), Integer.toBinaryString ( bank ), bank );
+    ShortMessage message = new ShortMessage ();
+    message.setMessage ( ShortMessage.CONTROL_CHANGE,
+                         0,
+                         0,
+                         ( bank >> 7 ) & 0x7f );
+    track.add ( new MidiEvent ( message, 0 ) );
+    message = new ShortMessage ();
+    message.setMessage ( ShortMessage.CONTROL_CHANGE,
+                         0,
+                         0x20,
+                         bank & 0x7f );
+    track.add ( new MidiEvent ( message, 0 ) );
+    return track;
   }
 
 
@@ -214,17 +276,63 @@ public class MidiHelper
     }
     catch ( final MidiUnavailableException e )
     {
-      buf.append ( "Cannot get MIDI information.\n" ).append ( e );
+      buf.append ( "Unable to get MIDI information.\n" ).append ( e );
     }
     return buf.toString ();
   }
 
 
-  private static void setInstrument ( final Track track, final Instrument instrument )
-    throws
-      InvalidMidiDataException
+  /**
+   * @param seq Sequence to convert to a string.
+   *
+   * @return String representation of the sequence.
+   */
+  public static String sequence2String ( final Sequence seq )
   {
-    setPatch ( track, instrument.getPatch () );
+    final StringBuffer buf = new StringBuffer ();
+    for ( final Track t : seq.getTracks () )
+    {
+      buf.append ( "Track " ).append ( t ).append ( "\n\t" );
+      for ( int i = 0; i < t.size (); i++ )
+      {
+        dumpEvent ( buf, t.get ( i ) );
+        buf.append ( " " );
+      }
+      buf.append ( "\n" );
+    }
+    return buf.toString ();
+  }
+
+
+  /**
+   * @param seq Sequencer whose status will be recorded.
+   * @param synth Synthesizer whose status will be recorded.
+   */
+  public static void dumpMidiStatus ( final Sequencer seq,
+                                      final Synthesizer synth )
+  {
+    Logger.debugEx ( "midi", "Seq:\t{0}\n\t{1}\nSynth:\t{2}\n\t{3}",
+                     seq.getDeviceInfo ().getName (),
+                     seq.isOpen (),
+                     synth.getDeviceInfo ().getName (),
+                     synth.isOpen () );
+  }
+
+
+  /**
+   * @param sequence Sequence to dump as a string.
+   */
+  public static void dumpSequence ( final Sequence sequence )
+  {
+    try
+    {
+      MidiSystem.write ( sequence, 1, new java.io.File ( "/tmp/sequence.midi" ) );
+      Logger.debugEx ( "midi", "Sequence:\n{0}", sequence2String ( sequence ) );
+    }
+    catch ( final IOException e )
+    {
+      Logger.error ( "Error writing MIDI file.", e );
+    }
   }
 
 
@@ -238,6 +346,17 @@ public class MidiHelper
     final ShortMessage message = new ShortMessage ();
     message.setMessage ( type, 0, note, velocity );
     return new MidiEvent ( message, time );
+  }
+
+
+  private static void dumpEvent ( final StringBuffer buf, final MidiEvent e )
+  {
+    buf.append ( "[" ).append ( e.getTick () ).append ( ":" );
+    for ( int i = 0; i < e.getMessage ().getLength (); i++ )
+    {
+      buf.append ( " " ).append ( ( e.getMessage ().getMessage ()[i] & 0xFF ) );
+    }
+    buf.append ( "]" );
   }
 
 
@@ -258,7 +377,7 @@ public class MidiHelper
     }
     if ( dev instanceof Sequencer )
     {
-      dumpSeqInfo ( ( Sequencer ) dev, buf );
+      dumpSequencerInfo ( ( Sequencer ) dev, buf );
     }
     buf.append ( "\n" );
   }
@@ -300,7 +419,7 @@ public class MidiHelper
    * @param buf
    * @throws MidiUnavailableException
    */
-  private static void dumpSeqInfo ( final Sequencer synth, final StringBuffer buf )
+  private static void dumpSequencerInfo ( final Sequencer synth, final StringBuffer buf )
     throws
       MidiUnavailableException
   {

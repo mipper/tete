@@ -1,9 +1,19 @@
-/**
- * This file contains proprietary information of Rule Financial. 
- * Copying or reproduction without prior written approval is prohibited. 
+/*
+ * Tete Ear Trainer Copyright (C) 2005-8 Cliff Evans
  *
- * <b>Copyright</b> (c)2008
- * <b>Company</b> Rule Financial Ltd
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.gui;
 
@@ -27,7 +37,7 @@ public abstract class TeteDialog extends JDialog
    * @param owner
    * @param title
    */
-  public TeteDialog ( Frame owner, String title )
+  public TeteDialog ( final Frame owner, final String title )
   {
     super ( owner, title, true );
   }
@@ -36,7 +46,7 @@ public abstract class TeteDialog extends JDialog
   /**
    * @param dim Size to create window at.
    */
-  protected void initialise ( Dimension dim )
+  protected void initialise ( final Dimension dim )
   {
     setSize ( dim );
     setDefaultCloseOperation ( javax.swing.WindowConstants.DISPOSE_ON_CLOSE );
@@ -48,8 +58,8 @@ public abstract class TeteDialog extends JDialog
    * @return JComponent to act as the main window.
    */
   protected abstract JComponent createContentPane ();
-  
-  
+
+
   /**
    * @return JPanel containing a close button.
    */
@@ -72,8 +82,8 @@ public abstract class TeteDialog extends JDialog
       _close.setText ( GuiUtil.readProperty ( "label.close" ) );
       _close.addActionListener ( new java.awt.event.ActionListener ()
       {
-  
-        public void actionPerformed ( java.awt.event.ActionEvent e )
+
+        public void actionPerformed ( final java.awt.event.ActionEvent e )
         {
           dispose ();
         }

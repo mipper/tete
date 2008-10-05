@@ -39,9 +39,9 @@ import javax.swing.border.EtchedBorder;
 
 import com.mipper.music.generate.EmptyException;
 import com.mipper.music.generate.PatternPlayerModel;
-import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.IntervalPattern;
 import com.mipper.music.model.Sound;
+import com.mipper.music.model.SoundSystemException;
 import com.mipper.util.Logger;
 import com.mipper.util.Util;
 
@@ -119,11 +119,11 @@ public class TeteTestFrame extends javax.swing.JDialog
     /**
      * Play the current Interval pattern.
      *
-     * @throws MidiException
+     * @throws SoundSystemException
      */
     public void playCurrent ()
       throws
-        MidiException
+        SoundSystemException
     {
       _model.play ( _current );
     }
@@ -132,12 +132,12 @@ public class TeteTestFrame extends javax.swing.JDialog
     /**
      * Generate a random pattern and set it as the current before playing it.
      *
-     * @throws MidiException
+     * @throws SoundSystemException
      * @throws EmptyException
      */
     public void playNext ()
       throws
-        MidiException,
+        SoundSystemException,
         EmptyException
     {
 
@@ -174,12 +174,12 @@ public class TeteTestFrame extends javax.swing.JDialog
      * Start a test.  Resets the progress tracking variables.
      *
      * @throws EmptyException
-     * @throws MidiException
+     * @throws SoundSystemException
      */
     public void startTest ()
       throws
         EmptyException,
-        MidiException
+        SoundSystemException
     {
       reset ();
       playNext ();
@@ -232,7 +232,7 @@ public class TeteTestFrame extends javax.swing.JDialog
     {
       _controller.playCurrent ();
     }
-    catch ( final MidiException e )
+    catch ( final SoundSystemException e )
     {
       GuiUtil.handleException ( this, e );
     }
@@ -248,7 +248,7 @@ public class TeteTestFrame extends javax.swing.JDialog
         _controller.startTest ();
         btnStart.setText ( GuiUtil.readProperty ( "label.stop" ) );
       }
-      catch ( final MidiException e )
+      catch ( final SoundSystemException e )
       {
         GuiUtil.handleException ( this, e );
       }
@@ -293,7 +293,7 @@ public class TeteTestFrame extends javax.swing.JDialog
               }
               pgsProgress.setValue ( _controller.getPercentageCorrect () );
             }
-            catch ( final MidiException e )
+            catch ( final SoundSystemException e )
             {
               GuiUtil.handleException ( null, e );
             }

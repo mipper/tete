@@ -13,17 +13,15 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 package com.mipper.music.model;
 
 import junit.framework.TestCase;
-import com.mipper.music.model.Interval;
-import com.mipper.music.model.IntervalPattern;
 
 
 /**
- * 
+ *
  * @author Cliff Evans
  * @version $Revision: 1.1 $
  */
@@ -35,7 +33,7 @@ public class TestIntervalPattern extends TestCase
    */
   public void testIntervalPattern ()
   {
-    IntervalPattern ip = new IntervalPattern ( "test" );
+    final IntervalPattern ip = new IntervalPattern ( "test" );
     assertEquals ( 0, ip.getIntervals ().length );
   }
 
@@ -45,26 +43,26 @@ public class TestIntervalPattern extends TestCase
    */
   public void testIntervalPatternIntervalArray ()
   {
-    IntervalPattern ip = new IntervalPattern ( "major", MAJOR );
+    final IntervalPattern ip = new IntervalPattern ( "major", MAJOR );
     testMajor ( ip.getIntervals () );
     ip.addInterval ( Interval.MINOR_3RD );
     ip.removeInterval ( Interval.MAJOR_3RD );
     testMinor ( ip.getIntervals () );
     ip.addInterval ( Interval.MINOR_3RD );
     testMinor ( ip.getIntervals () );
-    ip.setIntervals( new Interval[] {Interval.MAJOR_3RD, Interval.PERFECT_5TH, Interval.PERFECT_1ST} );
+    ip.setIntervals ( new Interval[] {Interval.MAJOR_3RD, Interval.PERFECT_5TH, Interval.PERFECT_1ST} );
     testMajor ( ip.getIntervals () );
   }
 
 
   /**
-   * 
+   *
    */
   public void testAddIntervals ()
   {
-    IntervalPattern majScale = new IntervalPattern ( "major", MAJOR_SCALE );
-    IntervalPattern maj = new IntervalPattern ( "major", MAJOR );
-    IntervalPattern min = new IntervalPattern ( "minor", MINOR );
+    final IntervalPattern majScale = new IntervalPattern ( "major", MAJOR_SCALE );
+    final IntervalPattern maj = new IntervalPattern ( "major", MAJOR );
+    final IntervalPattern min = new IntervalPattern ( "minor", MINOR );
     assertTrue ( majScale.contains ( maj ) );
     assertTrue ( !majScale.contains ( min ) );
     majScale.addIntervals( new Interval[] {Interval.MINOR_3RD, Interval.MINOR_7TH} );
@@ -75,11 +73,11 @@ public class TestIntervalPattern extends TestCase
 
 
   /**
-   * 
+   *
    */
   public void testClear ()
   {
-    IntervalPattern maj = new IntervalPattern ( "major", MAJOR_SCALE );
+    final IntervalPattern maj = new IntervalPattern ( "major", MAJOR_SCALE );
     maj.clear ();
     assertEquals ( 0, maj.getIntervals().length );
   }
@@ -88,7 +86,7 @@ public class TestIntervalPattern extends TestCase
   /**
    * @param ret
    */
-  private void testMajor ( Interval[] ret )
+  private void testMajor ( final Interval[] ret )
   {
     assertEquals ( 3, ret.length );
     assertEquals ( Interval.PERFECT_1ST, ret[0] );
@@ -100,7 +98,7 @@ public class TestIntervalPattern extends TestCase
   /**
    * @param ret
    */
-  private void testMinor ( Interval[] ret )
+  private void testMinor ( final Interval[] ret )
   {
     assertEquals ( 3, ret.length );
     assertEquals ( Interval.PERFECT_1ST, ret[0] );

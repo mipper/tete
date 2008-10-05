@@ -24,8 +24,8 @@ import javax.swing.event.EventListenerList;
 import com.mipper.music.generate.EmptyException;
 import com.mipper.music.generate.PatternPlayerModel;
 import com.mipper.music.gui.GuiUtil;
-import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.Sound;
+import com.mipper.music.model.SoundSystemException;
 
 
 /**
@@ -74,12 +74,12 @@ public class ContinuousPlayer
   /**
    * Start playing random sounds derived from the model.
    *
-   * @throws MidiException
+   * @throws SoundSystemException
    * @throws EmptyException
    */
   public void start ()
     throws
-      MidiException,
+      SoundSystemException,
       EmptyException
   {
     _looping = true;
@@ -95,7 +95,7 @@ public class ContinuousPlayer
             {
               play ();  // play another random pattern
             }
-            catch ( final MidiException e )
+            catch ( final SoundSystemException e )
             {
               GuiUtil.handleException ( null, e );
             }
@@ -122,7 +122,7 @@ public class ContinuousPlayer
 
   private void play ()
     throws
-      MidiException,
+      SoundSystemException,
       EmptyException
   {
     if ( _looping )

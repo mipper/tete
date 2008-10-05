@@ -138,7 +138,7 @@ public class PreferenceManager
    */
   public String getSynthName ()
   {
-    return _root.get ( SYNTH, "" );
+    return _root.get ( SYNTH, "Gervill" );
   }
 
 
@@ -150,6 +150,15 @@ public class PreferenceManager
   public String getSoundbankPath ( final String key )
   {
     return _root.get ( buildKey ( key, SOUNDBANK ), "" );
+  }
+
+
+  /**
+   * @return The directory we last tried to load a soundbank file from.
+   */
+  public String getLastFilePath ()
+  {
+    return _root.get ( LAST_FILE_PATH, "" );
   }
 
 
@@ -305,6 +314,16 @@ public class PreferenceManager
 
 
   /**
+   * @param path Path to the last directory we tried to load a soundbank file
+   *             from.
+   */
+  public void setLastFilePath ( final String path )
+  {
+    _root.put ( LAST_FILE_PATH, path );
+  }
+
+
+  /**
    * Store the currently selected instrument.
    *
    * @param inst Instrument to store.
@@ -434,6 +453,7 @@ public class PreferenceManager
   private static final String PREF_ROOT = "/com/mipper/music/tete";
   private static final String SYNTH = "playback/synth";
   private static final String SOUNDBANK = "playback/soundbank";
+  private static final String LAST_FILE_PATH = "playback/last_file_path";
   private static final String VELOCITY = "playback/velocity";
   private static final String INSTRUMENT_BANK = "playback/instrument/bank";
   private static final String INSTRUMENT_PROGRAM = "playback/instrument/program";
@@ -454,7 +474,7 @@ public class PreferenceManager
   private static final int DEFAULT_NOTE_LENGTH = 32;
   private static final int DEFAULT_NOTE = 1;
   private static final int DEFAULT_ARPEGGIO_DELAY = 8;
-  private static final boolean DEFAULT_CASCADE = false;
+  private static final boolean DEFAULT_CASCADE = true;
   private static final int DEFAULT_PATTERN_TYPE = 1;
   private static final int DEFAULT_NOTE_ORDER = 1;
   private final Preferences _root;

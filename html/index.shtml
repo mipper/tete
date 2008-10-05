@@ -12,9 +12,9 @@
         <h1>Latest News</h1>
         <p>
         Well, after a long time with nothing happening, I've finally got back to doing some
-        work on Tete.  It was kicked off with the creation of the Open JDK project, in
+        work on Tete.  It was kicked off by the creation of the Open JDK project, in
         particular, Gervill.  Gervill is an open source, pure Java implementation of the
-        Java Sound API and includes a synthisizer which can use SoundFont2, Dowloadable Sounds,
+        Java Sound API and includes a synthisizer which can use SoundFont2, Downloadable Sounds,
         and plain audio files for is synthesis.  It removes the need to download the MIDI
         soundbank files from Sun.  Hurrah!  It hopefully gives you a wider and more realistic
         set of instruments to play with while working <q>straight out of the box.</q>
@@ -58,13 +58,14 @@
         <h1>Installation</h1>
         <h2>Prerequisites</h2>
         <p>
-        Tete is written in Java and requires the Java Runtime Environment (JRE) version 1.5
+        Tete is written in Java and requires the Java Runtime Environment (JRE) version 1.5 or above
         from <a href="http://java.com/en/download/manual.jsp">Sun's website</a>.  It should run on any
         PC running Microsoft Windows or Linux and should also run on most Macs.
         </p>
         <p>
-        If you wish to use the original Sun Synthesizer you will also require a midi soundbank file.  This does not come as standard with the JRE due to its size,
-        but should be included with the JDK if you have it.  It can be <a href="http://java.sun.com/products/java-media/sound/soundbanks.html">downloaded</a>
+        If you wish to use the original Sun Synthesizer you will also require a midi soundbank file.
+        This doesn't come as standard with the JRE due to its size, but should be included with the
+        JDK if you have it.  It can be <a href="http://java.sun.com/products/java-media/sound/soundbanks.html">downloaded</a>
         seperately.  There are a number of versions of the file.  The larger the soundbank file is
         the better quality the playback will be.  I personally use the <a href="http://java.sun.com/products/java-media/sound/soundbank-deluxe.gm.zip">soundbank-delux.gm</a>
         file which has much better sounding instruments than the default file.  To install this file follow the
@@ -87,7 +88,7 @@
         <code>C:\Program Files\Java\jre1.5.0_XX\bin</code>
         </p>
         <p>
-        If none of the above works, you can use the command line: <code>java �jar tete.jar</code>
+        If none of the above works, you can use the command line: <code>java -jar tete.jar</code>
         </p>
 
         <h1>Technical Stuff</h1>

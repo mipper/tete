@@ -134,7 +134,7 @@ public class Logger
   /**
    * @param msg
    */
-  public static void error ( String msg )
+  public static void error ( final String msg )
   {
     _defaultLogger.error ( msg );
   }
@@ -145,7 +145,7 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void error ( Throwable msg )
+  public static void error ( final Throwable msg )
   {
     _defaultLogger.error ( getMessage ( msg, true ) );
   }
@@ -155,7 +155,7 @@ public class Logger
    * @param obj
    * @param msg
    */
-  public static void error ( Throwable obj, String msg )
+  public static void error ( final Throwable obj, final String msg )
   {
     _defaultLogger.error ( msg + CRTAB + getMessage ( obj, true ) );
   }
@@ -167,7 +167,7 @@ public class Logger
    * @param msg Object to log.
    * @param params Parameters passed to MessageFormat.format.
    */
-  public static void error ( String msg, Object... params )
+  public static void error ( final String msg, final Object... params )
   {
     _defaultLogger.error ( MessageFormat.format ( msg, params ) );
   }
@@ -180,7 +180,7 @@ public class Logger
    * @param msg Object to log.
    * @param params Parameters passed to MessageFormat.format.
    */
-  public static void error ( Throwable e, String msg, Object... params )
+  public static void error ( final Throwable e, final String msg, final Object... params )
   {
     _defaultLogger.error ( MessageFormat.format ( msg, params ), e );
   }
@@ -192,7 +192,7 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The exception to log.
    */
-  public static void errorEx ( String logger, Throwable msg )
+  public static void errorEx ( final String logger, final Throwable msg )
   {
     LoggerFactory.getLogger ( logger ).error ( getMessage ( msg, true ) );
   }
@@ -204,7 +204,7 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    */
-  public static void errorEx ( String logger, String msg )
+  public static void errorEx ( final String logger, final String msg )
   {
     LoggerFactory.getLogger ( logger ).error ( msg );
   }
@@ -218,7 +218,7 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void errorEx ( String logger, String msg, Object... params )
+  public static void errorEx ( final String logger, final String msg, final Object... params )
   {
     LoggerFactory.getLogger ( logger ).error ( MessageFormat.format ( msg, params ) );
   }
@@ -233,7 +233,7 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void errorEx ( String logger, Throwable e, String msg, Object... params )
+  public static void errorEx ( final String logger, final Throwable e, final String msg, final Object... params )
   {
     LoggerFactory.getLogger ( logger ).error ( MessageFormat.format ( msg, params ), e );
   }
@@ -244,9 +244,9 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void warn ( String msg )
+  public static void warn ( final String msg )
   {
-    _defaultLogger.warn ( msg.toString () );
+    _defaultLogger.warn ( msg );
   }
 
 
@@ -255,7 +255,7 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void warn ( Throwable msg )
+  public static void warn ( final Throwable msg )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -268,7 +268,7 @@ public class Logger
    * @param obj
    * @param msg
    */
-  public static void warn ( Throwable obj, String msg )
+  public static void warn ( final Throwable obj, final String msg )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -284,7 +284,7 @@ public class Logger
    * @param params Parameters which will be processed via MessageFormat.format
    *                against the msg string.
    */
-  public static void warn ( String msg, Object... params )
+  public static void warn ( final String msg, final Object... params )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -300,7 +300,7 @@ public class Logger
    * @param msg Object to log.
    * @param params Parameters passed to MessageFormat.format.
    */
-  public static void warn ( Throwable e, String msg, Object... params )
+  public static void warn ( final Throwable e, final String msg, final Object... params )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -315,7 +315,7 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    */
-  public static void warnEx ( String logger, String msg )
+  public static void warnEx ( final String logger, final String msg )
   {
     LoggerFactory.getLogger ( logger ).warn ( msg );
   }
@@ -327,7 +327,7 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The exception to log.
    */
-  public static void warnEx ( String logger, Throwable msg )
+  public static void warnEx ( final String logger, final Throwable msg )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -344,7 +344,7 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void warnEx ( String logger, String msg, Object... params )
+  public static void warnEx ( final String logger, final String msg, final Object... params )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -362,7 +362,7 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void warnEx ( String logger, Throwable e, String msg, Object... params )
+  public static void warnEx ( final String logger, final Throwable e, final String msg, final Object... params )
   {
     if ( _defaultLogger.isWarnEnabled () )
     {
@@ -374,7 +374,7 @@ public class Logger
   /**
    * @param msg
    */
-  public static void info ( String msg )
+  public static void info ( final String msg )
   {
     _defaultLogger.info ( msg );
   }
@@ -385,7 +385,7 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void info ( Throwable msg )
+  public static void info ( final Throwable msg )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
@@ -398,7 +398,7 @@ public class Logger
    * @param obj
    * @param msg
    */
-  public static void info ( Throwable obj, String msg )
+  public static void info ( final Throwable obj, final String msg )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
@@ -414,7 +414,7 @@ public class Logger
    * @param params Parameters which will be processed via MessageFormat.format
    *                against the msg string.
    */
-  public static void info ( String msg, Object... params )
+  public static void info ( final String msg, final Object... params )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
@@ -431,7 +431,7 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void info ( Throwable e, String msg, Object... params )
+  public static void info ( final Throwable e, final String msg, final Object... params )
   {
     if ( _defaultLogger.isInfoEnabled () )
     {
@@ -446,7 +446,7 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    */
-  public static void infoEx ( String logger, String msg )
+  public static void infoEx ( final String logger, final String msg )
   {
     LoggerFactory.getLogger ( logger ).info ( msg );
   }
@@ -458,9 +458,9 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The exception to log.
    */
-  public static void infoEx ( String logger, Throwable msg )
+  public static void infoEx ( final String logger, final Throwable msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isInfoEnabled () )
     {
       l.info ( getMessage ( msg, true ) );
@@ -476,9 +476,9 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void infoEx ( String logger, String msg, Object... params )
+  public static void infoEx ( final String logger, final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isInfoEnabled () )
     {
       l.info ( MessageFormat.format ( msg, params ) );
@@ -495,9 +495,9 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void infoEx ( String logger, Throwable e, String msg, Object... params )
+  public static void infoEx ( final String logger, final Throwable e, final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isInfoEnabled () )
     {
       l.info ( MessageFormat.format ( msg, params ), e );
@@ -508,7 +508,7 @@ public class Logger
   /**
    * @param msg
    */
-  public static void debug ( String msg )
+  public static void debug ( final String msg )
   {
     _defaultLogger.debug ( msg );
   }
@@ -519,7 +519,7 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void debug ( Throwable msg )
+  public static void debug ( final Throwable msg )
   {
     if ( _defaultLogger.isDebugEnabled () )
     {
@@ -532,7 +532,7 @@ public class Logger
    * @param obj
    * @param msg
    */
-  public static void debug ( Throwable obj, String msg )
+  public static void debug ( final Throwable obj, final String msg )
   {
     if ( _defaultLogger.isDebugEnabled () )
     {
@@ -548,7 +548,7 @@ public class Logger
    * @param params Parameters which will be processed via MessageFormat.format
    *                against the msg string.
    */
-  public static void debug ( String msg, Object... params )
+  public static void debug ( final String msg, final Object... params )
   {
     if ( _defaultLogger.isDebugEnabled () )
     {
@@ -564,7 +564,7 @@ public class Logger
    * @param msg Object to log.
    * @param params Parameters passed to MessageFormat.format.
    */
-  public static void debug ( Throwable e, String msg, Object... params )
+  public static void debug ( final Throwable e, final String msg, final Object... params )
   {
     if ( _defaultLogger.isDebugEnabled () )
     {
@@ -579,9 +579,9 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param msg The message to log
    */
-  public static void debugEx ( String logger, String msg )
+  public static void debugEx ( final String logger, final String msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( msg );
@@ -596,9 +596,9 @@ public class Logger
    * @param logger The logger name to log the message against.
    * @param e Exception to output.
    */
-  public static void debugEx ( String logger, Throwable e )
+  public static void debugEx ( final String logger, final Throwable e )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( getMessage ( e, true ) );
@@ -614,9 +614,9 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void debugEx ( String logger, String msg, Object... params )
+  public static void debugEx ( final String logger, final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( MessageFormat.format ( msg, params ) );
@@ -633,9 +633,9 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void debugEx ( String logger, Throwable e, String msg, Object... params )
+  public static void debugEx ( final String logger, final Throwable e, final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( MessageFormat.format ( msg, params ), e );
@@ -793,9 +793,9 @@ public class Logger
    *
    * @param msg String to log.
    */
-  public static void dump ( String msg )
+  public static void dump ( final String msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
     l.debug ( msg );
   }
 
@@ -807,9 +807,9 @@ public class Logger
    *
    * @param msg Object to log.
    */
-  public static void dump ( Throwable msg )
+  public static void dump ( final Throwable msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
     if ( l.isDebugEnabled () )
     {
       l.debug ( getMessage ( msg, true ) );
@@ -821,9 +821,9 @@ public class Logger
    * @param obj
    * @param msg
    */
-  public static void dump ( Throwable obj, String msg )
+  public static void dump ( final Throwable obj, final String msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
     if ( l.isDebugEnabled () )
     {
       l.debug ( msg + CRTAB + getMessage ( obj, true ) );
@@ -838,9 +838,9 @@ public class Logger
    * @param params Parameters which will be processed via MessageFormat.format
    *                against the msg string.
    */
-  public static void dump ( String msg, Object... params )
+  public static void dump ( final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME );
     if ( l.isDebugEnabled () )
     {
       l.debug ( MessageFormat.format ( msg, params ) );
@@ -852,9 +852,9 @@ public class Logger
    * @param logger
    * @param msg
    */
-  public static void dumpEx ( String logger, Throwable msg )
+  public static void dumpEx ( final String logger, final Throwable msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( getMessage ( msg, true ) );
@@ -866,9 +866,9 @@ public class Logger
    * @param logger
    * @param msg
    */
-  public static void dumpEx ( String logger, String msg )
+  public static void dumpEx ( final String logger, final String msg )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( msg );
@@ -884,9 +884,9 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void dumpEx ( String logger, String msg, Object... params )
+  public static void dumpEx ( final String logger, final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( MessageFormat.format ( msg, params ) );
@@ -903,9 +903,9 @@ public class Logger
    * @param msg The message to log
    * @param params Params passed into MessageFormat.format call.
    */
-  public static void dumpEx ( String logger, Throwable e, String msg, Object... params )
+  public static void dumpEx ( final String logger, final Throwable e, final String msg, final Object... params )
   {
-    org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
+    final org.slf4j.Logger l = LoggerFactory.getLogger ( OUTPUT_LOGGER_NAME + "." + logger );
     if ( l.isDebugEnabled () )
     {
       l.debug ( MessageFormat.format ( msg, params ), e );
@@ -927,7 +927,7 @@ public class Logger
    *
    * @return Log instance with the given name.
    */
-  public static org.slf4j.Logger setDefaultLoggerName ( String name )
+  public static org.slf4j.Logger setDefaultLoggerName ( final String name )
   {
     return LoggerFactory.getLogger ( name );
   }
@@ -940,10 +940,10 @@ public class Logger
    *
    * @return The stack trace.
    */
-  public static String getStackTrace ( Throwable e )
+  public static String getStackTrace ( final Throwable e )
   {
-    StringWriter s = new StringWriter ( 1024 );
-    PrintWriter w = new PrintWriter ( s );
+    final StringWriter s = new StringWriter ( 1024 );
+    final PrintWriter w = new PrintWriter ( s );
     e.printStackTrace ( w );
 
     return s.toString ();
@@ -962,7 +962,7 @@ public class Logger
 //  }
 
 
-  private static String getMessage ( Throwable msg, boolean stackTrace )
+  private static String getMessage ( final Throwable msg, final boolean stackTrace )
   {
     String result = getStackTrace ( msg );
     if ( stackTrace )

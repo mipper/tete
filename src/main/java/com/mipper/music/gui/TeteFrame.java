@@ -36,6 +36,8 @@ import java.net.URL;
 import java.util.Hashtable;
 
 import javax.sound.midi.Instrument;
+import javax.sound.midi.Soundbank;
+import javax.sound.midi.Synthesizer;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -66,11 +68,13 @@ import com.mipper.music.control.SoundEvent;
 import com.mipper.music.control.SoundEventListener;
 import com.mipper.music.generate.PatternPlayerModel;
 import com.mipper.music.generate.SoundTypeRepository;
-import com.mipper.music.midi.MidiException;
 import com.mipper.music.model.IntervalPattern;
 import com.mipper.music.model.Note;
 import com.mipper.music.model.Octave;
 import com.mipper.music.model.SoundCollectionAdaptor;
+import com.mipper.music.model.SoundFileException;
+import com.mipper.music.model.SoundSystemException;
+import com.mipper.util.Logger;
 import com.mipper.util.PreferenceManager;
 import com.mipper.util.Util;
 
@@ -103,195 +107,15 @@ public class TeteFrame extends JFrame
     try
     {
       createUiComponents ();
-      _model = new PatternPlayerModel ();
       initUiComponents ();
       loadPreferences ();
     }
-    catch ( final MidiException e )
+    catch ( final SoundSystemException e )
     {
       GuiUtil.handleException ( this, e );
     }
     Util.centreWindow ( this );
     setApplicationIcon ();
-  }
-
-
-  private void btnAboutActionPerformed ( final ActionEvent evt )
-  {
-    final TeteDialog f = new AboutFrame ( this,
-                                          GuiUtil.readProperty ( "title.about" ) );
-    Util.centreWindow ( this, f );
-    f.setVisible ( true );
-  }
-
-
-  private void btnConfigActionPerformed ( final ActionEvent evt )
-  {
-    final PreferencesDialog f = new PreferencesDialog ( this,
-                                                        GuiUtil.readProperty ( "title.config" ),
-                                                        _model,
-                                                        _mgr.getSoundbankPath ( getSynthClass () ) );
-    Util.centreWindow ( this, f );
-    f.setVisible ( true );
-    _model.setVelocity ( f.getVelocity () );
-    if ( !StringUtils.isEmpty ( f.getSoundbankPath () ) )
-    {
-      final File sb = new File ( f.getSoundbankPath () );
-      if ( sb.getAbsolutePath () != _mgr.getSoundbankPath ( getSynthClass () ) )
-      {
-        if ( loadSoundbank ( sb ) )
-        {
-          _mgr.setSoundbankPath ( getSynthClass (), sb.getAbsolutePath () );
-          // TODO: Is this exception handling the right thing to do?
-          try
-          {
-            cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
-          }
-          catch ( final MidiException e )
-          {
-            GuiUtil.handleException ( this, e );
-          }
-        }
-      }
-      else
-      {
-        _mgr.setSoundbankPath ( getSynthClass (), "" );
-      }
-    }
-  }
-
-
-  private String getSynthClass ()
-  {
-    return _model.getSynth ().getClass ().getName ();
-  }
-
-
-  private boolean loadSoundbank ( final File sb )
-  {
-    try
-    {
-      if ( sb.exists () && _model.loadSoundbank ( sb ) )
-      {
-        setupInstrumentCombo ();
-//        cboInstrument.setSelectedItem ( _model.getInstrument () );
-        return true;
-      }
-    }
-    catch ( final MidiException e )
-    {
-      GuiUtil.handleException ( this, e );
-    }
-    catch ( final IOException e )
-    {
-      GuiUtil.handleException ( this, e );
-    }
-    return false;
-  }
-
-
-  private void btnLoopActionPerformed ( final ActionEvent evt )
-  {
-    if ( btnLoop.isSelected () )
-    {
-      _model.setPatterns ( extractIntervals ( lstSounds.getSelectedValues () ) );
-      _looper = new ContinuousPlayer ( _model );
-      _looper.addSoundEventListener ( new SoundEventListener ()
-                    {
-                      public void soundEventOccurred ( final SoundEvent evt )
-                      {
-                        soundPlaying ( evt );
-                      }
-                    });
-      try
-      {
-        _looper.start ();
-      }
-      // TODO: Why Exception?
-      catch ( final Exception e )
-      {
-        GuiUtil.handleException ( this, e );
-      }
-      btnLoop.setText ( GuiUtil.readProperty ( "label.stop" ) );
-      btnTest.setEnabled ( false );
-    }
-    else
-    {
-      _looper.stop ();
-      _looper = null;
-      btnLoop.setText ( GuiUtil.readProperty ( "label.play" ) );
-      btnTest.setEnabled ( true );
-      lstSounds.clearPlaying ();
-    }
-  }
-
-
-  private IntervalPattern[] extractIntervals ( final Object[] objs )
-  {
-    final IntervalPattern[] intervals = new IntervalPattern[objs.length];
-    for ( int i = 0; i < objs.length; i++ )
-    {
-      intervals[i] = ( IntervalPattern ) objs[i];
-    }
-    return intervals;
-  }
-
-
-  private void btnTestActionPerformed ( final ActionEvent evt )
-  {
-    _model.setPatterns ( extractIntervals ( lstSounds.getSelectedValues () ) );
-    final TeteTestFrame test = new TeteTestFrame ( this,
-                                                   GuiUtil.readProperty ( "title.test" ),
-                                                   _model );
-    test.setVisible ( true );
-  }
-
-
-  private void cboInstrumentItemStateChanged ( final ItemEvent evt )
-  {
-    if ( evt.getStateChange () == ItemEvent.SELECTED )
-    {
-      _model.setInstrument ( ( Instrument ) evt.getItem () );
-    }
-  }
-
-
-  private Boolean decodeDirection ()
-  {
-    final int idx = cboNoteOrder.getSelectedIndex ();
-    return idx == 0 ? null : Boolean.valueOf ( idx == 1 );
-  }
-
-
-  private void exitApp ( final int code )
-  {
-    if ( _looper != null )
-    {
-      _looper.stop ();
-    }
-    if ( cboInstrument.getSelectedItem () != null )
-    {
-      savePreferences ();
-    }
-    System.exit ( code );
-  }
-
-
-  private int getOctaveRoot ( final Octave octave )
-  {
-    return Octave.INTERVAL_COUNT + octave.getOctaveNumber () * Octave.INTERVAL_COUNT;
-  }
-
-
-  private int getOctaveTop ( final Octave octave )
-  {
-    return getOctaveRoot ( octave ) + Octave.INTERVAL_COUNT - 1;
-  }
-
-
-  private SoundCollectionAdaptor getSelectedSoundType ()
-  {
-    return ( SoundCollectionAdaptor ) cboSoundType.getSelectedItem ();
   }
 
 
@@ -431,7 +255,6 @@ public class TeteFrame extends JFrame
     sldNoteLength.setPaintLabels ( true );
     sldNoteLength.setPaintTicks ( true );
     sldNoteLength.setSnapToTicks ( true );
-//    sldNoteLength.setValue ( 32 );
     sldNoteLength.addChangeListener ( new ChangeListener ()
                                   {
                                     public void stateChanged ( final ChangeEvent evt )
@@ -451,7 +274,6 @@ public class TeteFrame extends JFrame
     sldArpeggioDelay.setPaintLabels ( true );
     sldArpeggioDelay.setPaintTicks ( true );
     sldNoteLength.setSnapToTicks ( true );
-//    sldArpeggioDelay.setValue ( 8 );
     sldArpeggioDelay.addChangeListener ( new ChangeListener ()
                                   {
                                     public void stateChanged ( final ChangeEvent evt )
@@ -568,18 +390,250 @@ public class TeteFrame extends JFrame
     lstSounds.setCellRenderer ( new SoundListRenderer () );
     pnlSounds.add ( scrSounds, BorderLayout.CENTER );
 
-    final JSplitPane splitPane = new JSplitPane ( JSplitPane.HORIZONTAL_SPLIT,
-                                            pnlPlayback,
-                                            pnlSounds );
-    getContentPane ().add ( splitPane, BorderLayout.CENTER );
-
+    getContentPane ().add ( new JSplitPane ( JSplitPane.HORIZONTAL_SPLIT,
+                                             pnlPlayback,
+                                             pnlSounds ),
+                            BorderLayout.CENTER );
     pack ();
+  }
+
+
+  private void initUiComponents ()
+  {
+    setupBottomOctaveCombo ();
+    setupTopOctaveCombo ();
+    setupSoundTypesCombo ();
+    setupIntervalPatterns ();
+  }
+
+
+  private void loadPreferences ()
+    throws
+      SoundSystemException
+  {
+    _model = createModel ( _mgr.getSynthName (),
+                           _mgr.getSoundbankPath ( _mgr.getSynthName () ),
+                           _mgr.getVelocity () );
+    setupInstrumentCombo ();
+    cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
+//    setRange ();
+
+    cboBottomOctave.setSelectedIndex ( _mgr.getBottomOctave () );
+    cboTopOctave.setSelectedIndex ( _mgr.getTopOctave () );
+    cboRootNote.setSelectedIndex ( _mgr.getRootNote () );
+    cboNoteOrder.setSelectedIndex ( _mgr.getNoteOrder () );
+    sldArpeggioDelay.setValue ( _mgr.getArpeggioDelay () );
+    chkCascade.setSelected ( _mgr.getCascade () );
+    sldNoteLength.setValue ( _mgr.getNoteLength () );
+    SoundCollectionAdaptor key;
+    for ( int i = 0; i < cboSoundType.getItemCount (); i++ )
+    {
+      key = ( SoundCollectionAdaptor ) cboSoundType.getItemAt ( i );
+      _selectedSounds.put ( key.getName (), _mgr.getSelectedPatterns ( key.getName () ) );
+    }
+    key = getSelectedSoundType ();
+    lstSounds.setSelectedIndices ( _selectedSounds.get ( key.getName () ) );
+    cboSoundType.setSelectedIndex ( _mgr.getPatternType () );
+    final Rectangle r = _mgr.getSizePos ();
+    if ( null != r )
+    {
+      setBounds ( r );
+    }
+  }
+
+
+  private PatternPlayerModel createModel ( final String synth,
+                                           final String sb,
+                                           final int vel )
+    throws
+      SoundSystemException
+  {
+    PatternPlayerModel model;
+    try
+    {
+      model = new PatternPlayerModel ( synth, sb );
+    }
+    catch ( final SoundSystemException e )
+    {
+      Logger.error ( "Error loading soundbank.", e );
+      model = new PatternPlayerModel ( synth, null );
+    }
+    model.setVelocity ( vel );
+    return model;
+  }
+
+
+  private void setApplicationIcon ()
+  {
+    final URL i = GuiUtil.getResourceUrl ( "/img/headphones.gif" );
+    if ( i != null )
+    {
+      this.setIconImage ( new ImageIcon ( i ).getImage () );
+    }
+  }
+
+
+  private void btnAboutActionPerformed ( final ActionEvent evt )
+  {
+    final TeteDialog f = new AboutFrame ( this,
+                                          GuiUtil.readProperty ( "title.about" ) );
+    Util.centreWindow ( this, f );
+    f.setVisible ( true );
+  }
+
+
+  private void btnConfigActionPerformed ( final ActionEvent evt )
+  {
+    final PreferencesDialog f = new PreferencesDialog ( this,
+                                                        GuiUtil.readProperty ( "title.config" ),
+                                                        _model,
+                                                        _mgr.getLastFilePath (),
+                                                        _mgr.getSoundbankPath ( getSynthKey ( _model.getSynth () ) ) );
+    Util.centreWindow ( this, f );
+    f.setVisible ( true );
+    try
+    {
+      Soundbank sb = null;
+      final File path = new File ( f.getSoundbankPath () );
+      if ( !StringUtils.isEmpty ( f.getSoundbankPath () ) )
+      {
+        _mgr.setLastFilePath ( path.getParentFile ().getAbsolutePath () );
+        sb = PatternPlayerModel.loadSoundbank ( path.getAbsolutePath () );
+      }
+      _model.setSynth ( f.getSynth (), sb );
+      _model.setVelocity ( f.getVelocity () );
+      _mgr.setSoundbankPath ( getSynthKey ( _model.getSynth () ),
+                              sb == null ? "" : path.getAbsolutePath () );
+      setupInstrumentCombo ();
+      Instrument inst = _model.lookupInstrument ( _mgr.getPatch () );
+      if ( null == inst )
+      {
+        inst = _model.getInstruments ().get ( 0 );
+      }
+      cboInstrument.setSelectedItem ( inst );
+    }
+    catch ( final SoundFileException e )
+    {
+      _mgr.setSoundbankPath ( getSynthKey ( _model.getSynth () ), "" );
+      GuiUtil.handleException ( this, e );
+    }
+    catch ( final SoundSystemException e )
+    {
+      GuiUtil.handleException ( this, e );
+    }
+  }
+
+
+  private void btnLoopActionPerformed ( final ActionEvent evt )
+  {
+    if ( btnLoop.isSelected () )
+    {
+      _model.setPatterns ( extractIntervals ( lstSounds.getSelectedValues () ) );
+      _looper = new ContinuousPlayer ( _model );
+      _looper.addSoundEventListener ( new SoundEventListener ()
+                    {
+                      public void soundEventOccurred ( final SoundEvent evt )
+                      {
+                        soundPlaying ( evt );
+                      }
+                    });
+      try
+      {
+        _looper.start ();
+      }
+      // TODO: Why Exception?
+      catch ( final Exception e )
+      {
+        GuiUtil.handleException ( this, e );
+      }
+      btnLoop.setText ( GuiUtil.readProperty ( "label.stop" ) );
+      btnTest.setEnabled ( false );
+    }
+    else
+    {
+      _looper.stop ();
+      _looper = null;
+      btnLoop.setText ( GuiUtil.readProperty ( "label.play" ) );
+      btnTest.setEnabled ( true );
+      lstSounds.clearPlaying ();
+    }
+  }
+
+
+  private void btnTestActionPerformed ( final ActionEvent evt )
+  {
+    _model.setPatterns ( extractIntervals ( lstSounds.getSelectedValues () ) );
+    final TeteTestFrame test = new TeteTestFrame ( this,
+                                                   GuiUtil.readProperty ( "title.test" ),
+                                                   _model );
+    test.setVisible ( true );
+  }
+
+
+  private void cboInstrumentItemStateChanged ( final ItemEvent evt )
+  {
+    if ( evt.getStateChange () == ItemEvent.SELECTED )
+    {
+      _model.setInstrument ( ( Instrument ) evt.getItem () );
+    }
+  }
+
+
+  private void lstSoundsValueChanged ( final ListSelectionEvent evt )
+  {
+    btnLoop.setEnabled ( lstSounds.getSelectedValues ().length != 0 );
+    btnTest.setEnabled ( btnLoop.isEnabled () );
+  }
+
+
+  private void sldArpeggioDelayStateChanged ( final ChangeEvent evt )
+  {
+    _model.setArpeggioDelay ( sldArpeggioDelay.getValue () );
+  }
+
+
+  private void sldNoteLengthStateChanged ( final ChangeEvent evt )
+  {
+    _model.setNoteLength ( sldNoteLength.getValue () );
+  }
+
+
+  private void soundPlaying ( final SoundEvent evt )
+  {
+    lstSounds.setPlaying ( evt.getName () );
+  }
+
+
+  private Boolean decodeDirection ()
+  {
+    final int idx = cboNoteOrder.getSelectedIndex ();
+    return idx == 0 ? null : Boolean.valueOf ( idx == 1 );
+  }
+
+
+  private void exitApp ( final int code )
+  {
+    if ( _looper != null )
+    {
+      _looper.stop ();
+    }
+    if ( cboInstrument.getSelectedItem () != null )
+    {
+      savePreferences ();
+    }
+    System.exit ( code );
+  }
+
+
+  private SoundCollectionAdaptor getSelectedSoundType ()
+  {
+    return ( SoundCollectionAdaptor ) cboSoundType.getSelectedItem ();
   }
 
 
   private void savePreferences ()
   {
-    _mgr.setSynthName ( _model.getSynth ().getDeviceInfo ().getName () );
+    _mgr.setSynthName ( getSynthKey ( _model.getSynth () ) );
     _mgr.setInstrument ( ( Instrument ) cboInstrument.getSelectedItem () );
     _mgr.setRootNote ( cboRootNote.getSelectedIndex () );
     _mgr.setBottomOctave ( cboBottomOctave.getSelectedIndex () );
@@ -607,68 +661,9 @@ public class TeteFrame extends JFrame
   }
 
 
-  private void initUiComponents ()
-  {
-    setupBottomOctaveCombo ();
-    setupTopOctaveCombo ();
-    setupSoundTypesCombo ();
-    setupIntervalPatterns ();
-    setRange ();
-  }
-
-
-  private void loadPreferences ()
-    throws
-      MidiException
-  {
-    setSynth ();
-    cboBottomOctave.setSelectedIndex ( _mgr.getBottomOctave () );
-    cboTopOctave.setSelectedIndex ( _mgr.getTopOctave () );
-    cboRootNote.setSelectedIndex ( _mgr.getRootNote () );
-    cboNoteOrder.setSelectedIndex ( _mgr.getNoteOrder () );
-    sldArpeggioDelay.setValue ( _mgr.getArpeggioDelay () );
-    chkCascade.setSelected ( _mgr.getCascade () );
-    sldNoteLength.setValue ( _mgr.getNoteLength () );
-    _model.setVelocity ( _mgr.getVelocity () );
-    SoundCollectionAdaptor key;
-    for ( int i = 0; i < cboSoundType.getItemCount (); i++ )
-    {
-      key = ( SoundCollectionAdaptor ) cboSoundType.getItemAt ( i );
-      _selectedSounds.put ( key.getName (), _mgr.getSelectedPatterns ( key.getName () ) );
-    }
-    key = getSelectedSoundType ();
-    lstSounds.setSelectedIndices ( _selectedSounds.get ( key.getName () ) );
-    cboSoundType.setSelectedIndex ( _mgr.getPatternType () );
-    final Rectangle r = _mgr.getSizePos ();
-    if ( null != r )
-    {
-      setBounds ( r );
-    }
-  }
-
-
-  private void setSynth ()
-    throws
-      MidiException
-  {
-    if ( _model.setSynth ( _mgr.getSynthName () ) )
-    {
-      final String path = _mgr.getSoundbankPath ( getSynthClass () );
-      if ( !StringUtils.isEmpty ( path ) )
-      {
-        loadSoundbank ( new File ( path ) );
-      }
-      setupInstrumentCombo ();
-      cboInstrument.setSelectedItem ( _model.lookupInstrument ( _mgr.getPatch () ) );
-    }
-  }
-
-
   private void setupInstrumentCombo ()
-    throws
-      MidiException
   {
-    cboInstrument.setModel ( new DefaultComboBoxModel ( _model.getLoadedInstruments ()
+    cboInstrument.setModel ( new DefaultComboBoxModel ( _model.getInstruments ()
                                                               .toArray () ) );
     cboInstrument.setRenderer ( new DefaultListCellRenderer ()
       {
@@ -768,29 +763,26 @@ public class TeteFrame extends JFrame
   }
 
 
-  private void lstSoundsValueChanged ( final ListSelectionEvent evt )
-  {
-    btnLoop.setEnabled ( lstSounds.getSelectedValues ().length != 0 );
-    btnTest.setEnabled ( btnLoop.isEnabled () );
-  }
-
-
   private void saveSounds ( final SoundCollectionAdaptor key )
   {
     _selectedSounds.put ( key.getName (), lstSounds.getSelectedIndices () );
   }
 
 
-  /**
-   * Sets the application's icon.
-   */
-  private void setApplicationIcon ()
+  private String getSynthKey ( final Synthesizer synth )
   {
-    final URL i = GuiUtil.getResourceUrl ( "/img/headphones.gif" );
-    if ( i != null )
+    return synth.getDeviceInfo ().getName ();
+  }
+
+
+  private IntervalPattern[] extractIntervals ( final Object[] objs )
+  {
+    final IntervalPattern[] intervals = new IntervalPattern[objs.length];
+    for ( int i = 0; i < objs.length; i++ )
     {
-      this.setIconImage ( new ImageIcon ( i ).getImage () );
+      intervals[i] = ( IntervalPattern ) objs[i];
     }
+    return intervals;
   }
 
 
@@ -803,24 +795,15 @@ public class TeteFrame extends JFrame
   }
 
 
-  private void sldArpeggioDelayStateChanged ( final ChangeEvent evt )
+  private int getOctaveRoot ( final Octave octave )
   {
-    _model.setArpeggioDelay ( sldArpeggioDelay.getValue () );
+    return Octave.INTERVAL_COUNT + octave.getOctaveNumber () * Octave.INTERVAL_COUNT;
   }
 
 
-  private void sldNoteLengthStateChanged ( final ChangeEvent evt )
+  private int getOctaveTop ( final Octave octave )
   {
-    _model.setNoteLength ( sldNoteLength.getValue () );
-  }
-
-
-  /**
-   * @param evt
-   */
-  private void soundPlaying ( final SoundEvent evt )
-  {
-    lstSounds.setPlaying ( evt.getName () );
+    return getOctaveRoot ( octave ) + Octave.INTERVAL_COUNT - 1;
   }
 
 

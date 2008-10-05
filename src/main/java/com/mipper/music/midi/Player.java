@@ -17,8 +17,8 @@
  */
 package com.mipper.music.midi;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sound.midi.Instrument;
@@ -26,11 +26,13 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Patch;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
+import com.mipper.music.model.SoundFileException;
 import com.mipper.util.Logger;
 
 
@@ -44,22 +46,15 @@ public class Player
 {
 
   /**
-   * Constructor.
+   * Constructor.  Uses the default synthesizer and default soundbank.
    *
    * @throws MidiUnavailableException
-   * @throws MidiException
    */
   public Player ()
     throws
-      MidiUnavailableException,
-      MidiException
+      MidiUnavailableException
   {
-    super ();
-    _sequencer = MidiSystem.getSequencer ( false );
-    _sequencer.open ();
-//    _synth = MidiHelper.getAvailableSynthesizers ().get ( 0 );
-    setSynth ( MidiHelper.getAvailableSynthesizers ().get ( 0 ) );
-    _instrument = getAvailableInstruments ().get ( 0 );
+    this ( MidiHelper.getAvailableSynthesizers ().get ( 0 ), null );
   }
 
 
@@ -67,38 +62,34 @@ public class Player
    * Constructor.
    *
    * @param synth Synthesizer to be used for playback.
-   * @param instrument MIDI id of the instrument to use.
-   */
-  public Player ( final Synthesizer synth, final Instrument instrument )
-  {
-    super ();
-    setSynth ( synth );
-    _instrument = instrument;
-  }
-
-
-  /**
-   * Constructor.
+   * @param sb Soundbank to load into the synthesizer, null if no soundbank.
    *
-   * @param instrument MIDI id of the instrument to use.
-   * @param noteLength Length of time to hold the notes.
-   * @param spread Time between the first and second notes.
+   * @throws MidiUnavailableException
    */
-  public Player ( final Instrument instrument, final int noteLength, final int spread )
+  public Player ( final Synthesizer synth, final Soundbank sb )
+    throws
+      MidiUnavailableException
   {
     super ();
-    _instrument = instrument;
-    _noteLength = noteLength;
-    _delay = spread;
+    _sequencer = MidiSystem.getSequencer ( false );
+    _sequencer.open ();
+    try
+    {
+      setSynth ( synth, sb );
+    }
+    catch ( final SoundFileException e )
+    {
+      Logger.error ( "Error loading soundbank.", e );
+    }
   }
 
 
   /**
-   * @param spread The spread to set.
+   * @param delay The spread to set.
    */
-  public void setArpeggioDelay ( final int spread )
+  public void setArpeggioDelay ( final int delay )
   {
-    _delay = spread;
+    _delay = delay;
   }
 
 
@@ -120,49 +111,125 @@ public class Player
   }
 
 
+  // TODO: Put this back?
+//  public void setSynth ( final Synthesizer synth )
+//  {
+//    setSynth ( synth, null );
+//  }
+
+
   /**
-   * Sets the synthesize the player will use to playback sequences.  The
+   * Sets the synthesizer the player will use to playback sequences.  The
    * instrument will be set to the first one available.
    *
    * @param synth Synthesizer to use for playback.
+   * @param sb Soundbank to load into the synthesizer.
    *
-   * @return true if the synth was set, false if it was already set or there was
-   *         an error.
+   * @return true if the synth was set, false if it was already set.
+   *
+   * @throws MidiUnavailableException
+   * @throws SoundFileException Couldn't load the soundbank.  Synth is okay though.
    */
-  public boolean setSynth ( final Synthesizer synth )
+  public boolean setSynth ( final Synthesizer synth, final Soundbank sb )
+    throws
+      MidiUnavailableException,
+      SoundFileException
   {
-    if ( !synth.equals ( _synth ) )
+    Logger.debugEx ( "midi.insts", "Player.setSynth: {0}, {1}", synth, sb );
+    if ( null == _synth || !synth.getClass ().equals ( _synth.getClass () ) )
     {
       _synth = synth;
-      try
-      {
-        synth.open ();
-        _soundbank = synth.getDefaultSoundbank ();
-        final List<Instrument> insts = getLoadedInstruments ();
-        if ( null != insts && insts.size () > 0 )
-        {
-          _instrument = insts.get ( 0 );
-        }
-        else
-        {
-          _instrument = getAvailableInstruments ().get ( 0 );
-        }
-        Logger.debug ( "Player.setSynth selected instrument: " + _instrument );
-        _sequencer.getTransmitter ().setReceiver ( synth.getReceiver () );
-        return true;
-      }
-      catch ( final MidiUnavailableException e )
-      {
-        Logger.error ( e );
-        _instrument = null;
-      }
-      catch ( final MidiException e )
-      {
-        Logger.error ( e );
-        _instrument = null;
-      }
+      connectToSequencer ();
+      _synth.open ();
+      Logger.debugEx ( "midi.insts", "Player.setSynth: NEW" );
+      setSoundbank ( sb );
+      return true;
     }
+    setSoundbank ( sb );
     return false;
+  }
+
+
+  /**
+   * @return Current Soundbank.
+   */
+  public Soundbank getSoundbank ()
+  {
+    Logger.debugEx ( "midi.insts", "getSoundbank: {0}", _soundbank );
+    return _soundbank;
+  }
+
+
+  /**
+   * @param sb Soundbank to set.
+   *
+   * @throws SoundFileException
+   * @throws MidiUnavailableException
+   */
+  public void setSoundbank ( final Soundbank sb )
+    throws
+      SoundFileException,
+      MidiUnavailableException
+  {
+    getSynth ().open ();
+    Logger.debugEx ( "midi.insts", "setSoundbank: {0}, Default: {1}", sb, getSynth ().getDefaultSoundbank () );
+    final Soundbank temp = ( null == sb ? getSynth ().getDefaultSoundbank () : sb );
+    if ( getSynth ().isSoundbankSupported ( temp ) )
+    {
+      unloadAllInstruments ();
+      _soundbank = temp;
+      getSynth ().loadAllInstruments ( _soundbank );
+      setInstrument ( _soundbank.getInstruments ()[0] );
+    }
+    else
+    {
+      _instrument = getSynth ().getAvailableInstruments ()[0];
+      Logger.warn ( "Soundbank {0} not supported by synthesizer {1}", sb, getSynth () );
+      throw new SoundFileException ( "Soundbank not supported by synthesizer." );
+    }
+  }
+
+
+  /**
+   * @param instrument The instrument to set.
+   */
+  public void setInstrument ( final Instrument instrument )
+  {
+    Logger.debugEx ( "midi.insts", "Setting instrument: {0}, patch {1}", new Object[] {instrument, instrument.getPatch ()} );
+    if ( getSynth ().loadInstrument ( instrument ) )
+    {
+      _instrument = instrument;
+    }
+  }
+
+
+  /**
+   * Looks up an instrument from the synthesizer based on the specified patch.
+   *
+   * @param patch Patch to lookup.
+   */
+  public void setInstrument ( final Patch patch )
+  {
+    Logger.debugEx ( "midi.insts", "Player.setInstrument: {0}", patch );
+    Instrument inst = null;
+    final Soundbank sb = getSoundbank ();
+    if ( sb != null )
+    {
+      inst = sb.getInstrument ( patch );
+    }
+    if ( null != inst )
+    {
+      setInstrument ( inst );
+    }
+  }
+
+
+  /**
+   * @return Returns the instrument.
+   */
+  public Instrument getInstrument ()
+  {
+    return _instrument;
   }
 
 
@@ -185,25 +252,6 @@ public class Player
 
 
   /**
-   * @param instrument The instrument to set.
-   */
-  public void setInstrument ( final Instrument instrument )
-  {
-    Logger.debugEx ( "midi", "Setting instrument: {0}, patch {1}", new Object[] {instrument, instrument.getPatch ()} );
-    _instrument = instrument;
-  }
-
-
-  /**
-   * @return Returns the instrument.
-   */
-  public Instrument getInstrument ()
-  {
-    return _instrument;
-  }
-
-
-  /**
    * @param noteLength The noteLength to set.
    */
   public void setNoteLength ( final int noteLength )
@@ -222,55 +270,20 @@ public class Player
 
 
   /**
-   * @param path File object for the soundbank file.
+   * Unloads all loaded instruments from the current synthesizer.
    *
-   * @return true if all instruments loaded, false in some (or all) failed.
-   *
-   * @throws IOException
-   * @throws MidiException
+   * @throws MidiUnavailableException
    */
-  public boolean loadSoundbank ( final File path )
+  public void unloadAllInstruments ()
     throws
-      IOException,
-      MidiException
+      MidiUnavailableException
   {
-    try
+    Logger.debugEx ( "midi", "unloadAllInstruments opening synth: {0}", getSynth ().isOpen () );
+    getSynth ().open ();
+    for ( final Instrument i : getSynth ().getLoadedInstruments () )
     {
-      boolean res = false;
-      final Soundbank sb = MidiSystem.getSoundbank ( path );
-      Logger.debug ( "Got Soundbank file: {0}", sb );
-      if ( getSynth ().isSoundbankSupported ( sb ) )
-      {
-        getSynth ().open ();
-        for ( final Instrument i : getSynth ().getLoadedInstruments () )
-        {
-          getSynth ().unloadInstrument ( i );
-        }
-        Logger.debug ( "Instrument count: {0}", getSynth ().getLoadedInstruments ().length );
-        res = getSynth ().loadAllInstruments ( sb );
-        _soundbank = sb;
-        _instrument = getLoadedInstruments ().get ( 0 );
-        // TODO: Synch model's selected instrument.  Is the currently selected one still available?
-      }
-      return res;
+      getSynth ().unloadInstrument ( i );
     }
-    catch ( final InvalidMidiDataException e )
-    {
-      throw new MidiException ( e );
-    }
-    catch ( final MidiUnavailableException e )
-    {
-      throw new MidiException ( e );
-    }
-  }
-
-
-  /**
-   * @return Current Soundbank.
-   */
-  public Soundbank getSoundbank ()
-  {
-    return _soundbank;
   }
 
 
@@ -320,46 +333,29 @@ public class Player
 
 
   /**
-   * @return Instrument array of all available instruments.
-   */
-  public List<Synthesizer> getAvailableSynths ()
-  {
-    return MidiHelper.getAvailableSynthesizers ();
-  }
-
-
-  /**
-   * @return Instrument arrqay of all loaded instruments.
+   * @return Instrument array of all loaded instruments.
    *
    * @throws MidiUnavailableException
-   * @throws MidiException
    */
   public List<Instrument> getLoadedInstruments ()
     throws
-      MidiUnavailableException,
-      MidiException
+      MidiUnavailableException
   {
-    List<Instrument> insts = MidiHelper.getLoadedInstruments ( _synth );
-    if ( insts == null || insts.size () == 0 )
-    {
-      insts = MidiHelper.getAvailableInstruments ( _synth );
-    }
-    return insts;
+    return MidiHelper.getLoadedInstruments ( getSynth () );
   }
 
 
   /**
-   * @return Instrument arrqay of all available instruments.
-   *
-   * @throws MidiUnavailableException
-   * @throws MidiException
+   * @return Instrument array of all available instruments, this included all
+   *         loaded instruments.
    */
   public List<Instrument> getAvailableInstruments ()
-    throws
-      MidiUnavailableException,
-      MidiException
   {
-    return MidiHelper.getAvailableInstruments ( _synth );
+    if ( null != getSoundbank () )
+    {
+      return new ArrayList<Instrument> ( Arrays.asList ( getSoundbank ().getInstruments () ) );
+    }
+    return new ArrayList<Instrument> ( 0 );
   }
 
 
@@ -389,6 +385,7 @@ public class Player
    */
   public void stop ()
   {
+    Logger.debug ( "Stopping Player." );
     _sequencer.stop ();
   }
 
@@ -405,39 +402,30 @@ public class Player
     throws
       InvalidMidiDataException
   {
+    MidiHelper.dumpSequence ( sequence );
     _sequencer.setSequence ( sequence );
     _sequencer.setTempoInBPM ( bpm );
     _sequencer.start ();
   }
 
 
-//  private List<Instrument> getAvailableInstruments ( Synthesizer synth )
-//    throws
-//      MidiUnavailableException,
-//      MidiException
-//  {
-//    return MidiHelper.getAvailableInstruments ( synth );
-////    if ( _instruments == null )
-////    {
-////      _instruments = MidiHelper.getAvailableInstruments ( synth );
-////    }
-////    return _instruments;
-//  }
+  private void connectToSequencer ()
+    throws
+      MidiUnavailableException
+  {
+    Logger.debugEx ( "midi", "Player.connectToSequencer: {0} -> {1}", _sequencer, getSynth () );
+    _sequencer.getTransmitter ().setReceiver ( getSynth ().getReceiver () );
+  }
 
 
-  private static final int NOTE_VELOCITY = 64;
-  private static final int BPM = 60;
-
-  private int _bpm = BPM;
-  private int _velocity = NOTE_VELOCITY;
+  private int _bpm = 60;
+  private int _velocity = 64;
   private int _noteLength = 32;
   private int _delay = 8;
   private boolean _cascade = false;
-  private Sequencer _sequencer;
+  private final Sequencer _sequencer;
   private Synthesizer _synth;
   private Soundbank _soundbank;
   private Instrument _instrument;
-//  private List<Instrument> _instruments;
-
 
 }

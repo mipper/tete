@@ -25,17 +25,22 @@ import java.util.Random;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 
-import com.mipper.music.midi.MidiException;
+import org.apache.commons.lang.StringUtils;
+
+import com.mipper.music.midi.MidiHelper;
 import com.mipper.music.midi.Player;
 import com.mipper.music.model.IntervalPattern;
 import com.mipper.music.model.Note;
 import com.mipper.music.model.NoteRange;
 import com.mipper.music.model.Sound;
+import com.mipper.music.model.SoundFileException;
+import com.mipper.music.model.SoundSystemException;
 import com.mipper.util.Logger;
 
 
@@ -50,24 +55,153 @@ public class PatternPlayerModel
   /**
    * Constructor.
    *
-   * @throws MidiException
+   * @param synth Name of the synth to use.
+   * @param sb Path to the soundbank to load.
+   *
+   * @throws SoundSystemException
    */
-  public PatternPlayerModel ()
+  public PatternPlayerModel ( final String synth, final String sb )
     throws
-      MidiException
+      SoundSystemException
   {
     super ();
+    init ( synth, sb );
+  }
+
+
+  /**
+   * Constructor.
+   *
+   * @param synth Name of the synth to use.
+   *
+   * @throws SoundSystemException
+   */
+  public PatternPlayerModel ( final String synth )
+    throws
+      SoundSystemException
+  {
+    super ();
+    init ( synth, null );
+  }
+
+
+  private void init ( final String synth, final String sb )
+    throws
+      SoundSystemException
+  {
     _factory = new SoundFactory ();
     _range = new NoteRange ();
     _direction = Boolean.valueOf ( true );
     try
     {
-      _player = new Player ();
+      if ( StringUtils.isEmpty ( sb ) )
+      {
+        _player = new Player ( lookupSynth ( synth ), null );
+      }
+      else
+      {
+        _player = new Player ( lookupSynth ( synth ), loadSoundbankSafe ( sb ) );
+      }
     }
     catch ( final MidiUnavailableException e )
     {
-      throw new MidiException ( e );
+      throw new SoundSystemException ( e );
     }
+  }
+
+
+  /**
+   * @param name Name of the synth to load.
+   *
+   * @return The specified synth if it can be found, the first available synth
+   *         if it can't.
+   */
+  public static Synthesizer lookupSynth ( final String name )
+  {
+    final List<Synthesizer> synths = MidiHelper.getAvailableSynthesizers ();
+    for ( int i = 0; i < synths.size (); i++ )
+    {
+      if ( name.equals ( synths.get ( i ).getDeviceInfo ().getName () ) )
+      {
+        return synths.get ( i );
+      }
+    }
+    return synths.get ( 0 );
+  }
+
+
+//  /**
+//   * @param path Path for the soundbank file.
+//   *
+//   * @return Soundbank created from the specified path, or null if it couldn't
+//   *         be loaded.
+//   *
+//   * @throws SoundException
+//   * @throws IOException
+//   * @throws InvalidMidiDataException
+//   */
+//  public static Soundbank loadSoundbank ( final String path )
+//    throws
+//      InvalidMidiDataException,
+//      IOException,
+//      SoundException
+//  {
+//    return Player.loadSoundbank ( path );
+//  }
+
+
+  /**
+   * @param path Path to the soundbank to load.
+   *
+   * @return Soundbank loaded from the file.
+   *
+   * @throws SoundFileException Couldn't open the Soundbank file.
+   */
+  public static Soundbank loadSoundbank ( final String path )
+    throws
+      SoundFileException
+  {
+    if ( !StringUtils.isEmpty ( path ) )
+    {
+      final File sb = new File ( path );
+      if ( sb.exists () )
+      {
+        try
+        {
+          return MidiSystem.getSoundbank ( sb );
+        }
+        catch ( final InvalidMidiDataException e )
+        {
+          throw new SoundFileException ( "Invalid Soundbank file: " + path, e );
+        }
+        catch ( final IOException e )
+        {
+          throw new SoundFileException ( "Unable to open file: " + path, e );
+        }
+      }
+    }
+    throw new SoundFileException ( "File does not exist: " + path );
+  }
+
+
+  /**
+   * Loads a Soundbank if possible or returns null if not.
+   *
+   * @param path Path to the soundbank to load.
+   *
+   * @return The Soundbank or null if it could not be loaded.
+   */
+  public static Soundbank loadSoundbankSafe ( final String path )
+  {
+    try
+    {
+      return loadSoundbank ( path );
+    }
+    catch ( final SoundFileException e )
+    {
+      Logger.error ( e );
+    }
+    return null;
   }
 
 
@@ -85,31 +219,20 @@ public class PatternPlayerModel
 
 
   /**
-   * @return Array of Instruments available for playback.
+   * @return Instrument array of all available instruments.
    */
-  public List<Synthesizer> getAvailableSynths ()
+  public static List<Synthesizer> getAvailableSynths ()
   {
-    return _player.getAvailableSynths ();
+    return MidiHelper.getAvailableSynthesizers ();
   }
 
 
   /**
    * @return Array of Instruments available for playback.
-   *
-   * @throws MidiException
    */
-  public List<Instrument> getLoadedInstruments ()
-    throws
-      MidiException
+  public List<Instrument> getInstruments ()
   {
-    try
-    {
-      return _player.getLoadedInstruments ();
-    }
-    catch ( final MidiUnavailableException e )
-    {
-      throw new MidiException ( e );
-    }
+    return _player.getAvailableInstruments ();
   }
 
 
@@ -176,13 +299,13 @@ public class PatternPlayerModel
   }
 
 
-  /**
-   * @return Current Soundbank.
-   */
-  public Soundbank getSoundbank ()
-  {
-    return _player.getSoundbank ();
-  }
+//  /**
+//   * @return Current Soundbank.
+//   */
+//  public Soundbank getSoundbank ()
+//  {
+//    return _player.getSoundbank ();
+//  }
 
 
   /**
@@ -192,39 +315,24 @@ public class PatternPlayerModel
    * @param patch Patch to lookup
    *
    * @return The instrument that matches the patch.
-   * @throws MidiException
    */
   public Instrument lookupInstrument ( final Patch patch )
-    throws
-      MidiException
   {
-    Instrument inst = getSoundbank ().getInstrument ( patch );
-    if ( null == inst )
-    {
-      try
-      {
-        inst = _player.getLoadedInstruments ().get ( 0 );
-      }
-      catch ( final MidiUnavailableException e )
-      {
-        throw new MidiException ( e );
-      }
-    }
-    _player.setInstrument ( inst );
-    return _player.getInstrument ();
+    Logger.debugEx ( "midi.insts", "PPM.lookupInstrument: {0}", patch );
+    return _player.getSoundbank ().getInstrument ( patch );
   }
 
 
   /**
    * @param snd int array of notes to sound.
    *
-   * @throws MidiException
+   * @throws SoundSystemException
    */
   public void play ( final Sound snd )
     throws
-      MidiException
+      SoundSystemException
   {
-    Logger.debugEx ( "midi.sounds", "Playing: {0} with {1}, {2}", snd, _player.getSynth (), _player.getInstrument () );
+    Logger.debugEx ( "midi.notes", "Playing: {0} with {1}, {2}", snd, _player.getSynth (), _player.getInstrument () );
     final int[] notes = snd.getNoteValues ();
     if ( !calcDirection () )
     {
@@ -236,7 +344,7 @@ public class PatternPlayerModel
     }
     catch ( final InvalidMidiDataException e )
     {
-      throw new MidiException ( e );
+      throw new SoundSystemException ( e );
     }
   }
 
@@ -282,13 +390,27 @@ public class PatternPlayerModel
 
   /**
    * @param synth Synthesizer to use for playback.
+   * @param sb Soundbank to load into synth.
    *
    * @return true if the synth was set, false if it was already set or there was
    *         an error.
+   *
+   * @throws SoundFileException
+   * @throws SoundSystemException
    */
-  public boolean setSynth ( final Synthesizer synth )
+  public boolean setSynth ( final Synthesizer synth, final Soundbank sb )
+    throws
+      SoundFileException,
+      SoundSystemException
   {
-    return _player.setSynth ( synth );
+    try
+    {
+      return _player.setSynth ( synth, sb );
+    }
+    catch ( final MidiUnavailableException e )
+    {
+      throw new SoundSystemException ( e );
+    }
   }
 
 
@@ -297,13 +419,20 @@ public class PatternPlayerModel
    * we find.
    *
    * @param name Name of the synthesizer to return.
+   * @param sb Path to the soundbank file to load.
    *
    * @return true if the synth was set, false if it was already set or there was
    *         an error.
+   *
+   * @throws SoundSystemException
+   * @throws SoundFileException
    */
-  public boolean setSynth ( final String name )
+  public boolean setSynth ( final String name, final String sb )
+    throws
+      SoundSystemException,
+      SoundFileException
   {
-    return setSynth ( lookupSynth ( name ) );
+    return setSynth ( lookupSynth ( name ), loadSoundbank ( sb ) );
   }
 
 
@@ -317,19 +446,24 @@ public class PatternPlayerModel
 
 
   /**
-   * @param path File object for the soundbank file.
+   * @param sb Soundbank to load.
    *
-   * @return true if all instruments loaded, false in some (or all) failed.
-   *
-   * @throws IOException
-   * @throws MidiException
+   * @throws SoundFileException
+   * @throws SoundSystemException
    */
-  public boolean loadSoundbank ( final File path )
+  public void setSoundbank ( final Soundbank sb )
     throws
-      IOException,
-      MidiException
+      SoundFileException,
+      SoundSystemException
   {
-    return _player.loadSoundbank ( path );
+    try
+    {
+      _player.setSoundbank ( sb );
+    }
+    catch ( final MidiUnavailableException e )
+    {
+      throw new SoundSystemException ( e );
+    }
   }
 
 
@@ -378,20 +512,6 @@ public class PatternPlayerModel
   }
 
 
-  private Synthesizer lookupSynth ( final String name )
-  {
-    final List<Synthesizer> synths = getAvailableSynths ();
-    for ( int i = 0; i < synths.size (); i++ )
-    {
-      if ( name.equals ( synths.get ( i ).getDeviceInfo ().getName () ) )
-      {
-        return synths.get ( i );
-      }
-    }
-    return synths.get ( 0 );
-  }
-
-
   private boolean calcDirection ()
   {
     if ( null == _direction )
@@ -413,10 +533,10 @@ public class PatternPlayerModel
   }
 
 
-  private final SoundFactory _factory;
-  private final NoteRange _range;
+  private SoundFactory _factory;
+  private NoteRange _range;
   private Boolean _direction;
-  private final Player _player;
+  private Player _player;
   private final Random _random = new Random ();
 
 }
