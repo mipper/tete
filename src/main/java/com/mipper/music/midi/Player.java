@@ -27,6 +27,7 @@ import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
@@ -138,6 +139,7 @@ public class Player
     Logger.debugEx ( "midi.insts", "Player.setSynth: {0}, {1}", synth, sb );
     if ( null == _synth || !synth.getClass ().equals ( _synth.getClass () ) )
     {
+      // CFE: Close _synth here
       _synth = synth;
       connectToSequencer ();
       _synth.open ();
@@ -414,6 +416,13 @@ public class Player
       MidiUnavailableException
   {
     Logger.debugEx ( "midi", "Player.connectToSequencer: {0} -> {1}", _sequencer, getSynth () );
+    // CFE: Remove this
+    StringBuffer buf = new StringBuffer ();
+    for ( Receiver r : _sequencer.getReceivers () )
+    {
+      buf.append ( r.getClass ().getName () );
+    }
+    Logger.debugEx ( "midi", "Receivers: {0}", buf );
     _sequencer.getTransmitter ().setReceiver ( getSynth ().getReceiver () );
   }
 
