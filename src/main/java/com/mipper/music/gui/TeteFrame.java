@@ -505,6 +505,7 @@ public class TeteFrame extends JFrame
       _mgr.setSoundbankPath ( getSynthKey ( _model.getSynth () ),
                               sb == null ? "" : path.getAbsolutePath () );
       setupInstrumentCombo ();
+      // CFE: Shouldn't this setting of inst be in the model?
       Instrument inst = _model.lookupInstrument ( _mgr.getPatch () );
       if ( null == inst )
       {
@@ -515,6 +516,7 @@ public class TeteFrame extends JFrame
     catch ( final SoundFileException e )
     {
       _mgr.setSoundbankPath ( getSynthKey ( _model.getSynth () ), "" );
+      setupInstrumentCombo ();
       GuiUtil.handleException ( this, e );
     }
     catch ( final SoundSystemException e )
