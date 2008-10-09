@@ -27,7 +27,6 @@ import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Patch;
-import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Soundbank;
@@ -140,11 +139,23 @@ public class Player
     if ( null == _synth || !synth.getClass ().equals ( _synth.getClass () ) )
     {
       // CFE: Close _synth here
+//      if ( null != _synth )
+//      {
+//        _synth.close ();
+//      }
       _synth = synth;
       connectToSequencer ();
       _synth.open ();
       Logger.debugEx ( "midi.insts", "Player.setSynth: NEW" );
-      setSoundbank ( sb );
+      try
+      {
+        setSoundbank ( sb );
+      }
+      catch ( final SoundFileException e )
+      {
+        setSoundbank ( null );
+        throw e;
+      }
       return true;
     }
     setSoundbank ( sb );
@@ -416,14 +427,14 @@ public class Player
       MidiUnavailableException
   {
     Logger.debugEx ( "midi", "Player.connectToSequencer: {0} -> {1}", _sequencer, getSynth () );
-    // CFE: Remove this
-    StringBuffer buf = new StringBuffer ();
-    for ( Receiver r : _sequencer.getReceivers () )
+    if ( !_sequencer.getTransmitters ().isEmpty () )
     {
-      buf.append ( r.getClass ().getName () );
+      _sequencer.getTransmitters ().get ( 0 ).setReceiver ( getSynth ().getReceiver () );
     }
-    Logger.debugEx ( "midi", "Receivers: {0}", buf );
-    _sequencer.getTransmitter ().setReceiver ( getSynth ().getReceiver () );
+    else
+    {
+      _sequencer.getTransmitter ().setReceiver ( getSynth ().getReceiver () );
+    }
   }
 
 

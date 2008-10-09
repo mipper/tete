@@ -500,8 +500,8 @@ public class TeteFrame extends JFrame
         _mgr.setLastFilePath ( path.getParentFile ().getAbsolutePath () );
         sb = PatternPlayerModel.loadSoundbank ( path.getAbsolutePath () );
       }
-      _model.setSynth ( f.getSynth (), sb );
       _model.setVelocity ( f.getVelocity () );
+      _model.setSynth ( f.getSynth (), sb );
       _mgr.setSoundbankPath ( getSynthKey ( _model.getSynth () ),
                               sb == null ? "" : path.getAbsolutePath () );
       setupInstrumentCombo ();
@@ -550,6 +550,7 @@ public class TeteFrame extends JFrame
       }
       btnLoop.setText ( GuiUtil.readProperty ( "label.stop" ) );
       btnTest.setEnabled ( false );
+      btnConfig.setEnabled ( false );
     }
     else
     {
@@ -557,6 +558,7 @@ public class TeteFrame extends JFrame
       _looper = null;
       btnLoop.setText ( GuiUtil.readProperty ( "label.play" ) );
       btnTest.setEnabled ( true );
+      btnConfig.setEnabled ( true );
       lstSounds.clearPlaying ();
     }
   }
