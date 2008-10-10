@@ -4,8 +4,9 @@ Added support for the OpenJDK Gervill synthesizer.
     - has a built in 'emergency' soundbank removing the need to download
       soundbanks from Sun.
     - handles SoundFont2, Downloadable Sounds, and plain audio format samples.
-
 Added midi device information to the about box.
+Various refactoring to make the code more maintainable.
+
 ********************************************************************************
 Release Notes for Version 1.1
 

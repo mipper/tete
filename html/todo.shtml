@@ -22,6 +22,7 @@
         <ul>
           <li class="done">Done V1.2 Add support for Gervill, the OpenJDK implementation of the Java Sound API</li>
           <li class="done">Done V1.2 Add support for using SoundFont2, Downloadable Sounds, and audio files for playback</li>
+          <li class="done">Done V1.2 Remove need to download Midi soundbanks from Sun</li>
           <li class="done">Done V1.1 Implement the root note functionality</li>
           <li class="done">Done V1.1 Implement the root note order functionality</li>
           <li class="done">Done V1.1 Save configuration so the program starts in the same state as you last closed it</li>

@@ -67,7 +67,8 @@
         This doesn't come as standard with the JRE due to its size, but should be included with the
         JDK if you have it.  It can be <a href="http://java.sun.com/products/java-media/sound/soundbanks.html">downloaded</a>
         seperately.  There are a number of versions of the file.  The larger the soundbank file is
-        the better quality the playback will be.  I personally use the <a href="http://java.sun.com/products/java-media/sound/soundbank-deluxe.gm.zip">soundbank-delux.gm</a>
+        the better quality the playback will be.  I personally use the
+        <a href="http://java.sun.com/products/java-media/sound/soundbank-deluxe.gm.zip">soundbank-delux.gm</a>
         file which has much better sounding instruments than the default file.  To install this file follow the
         instructions on Sun's site.
         </p>
