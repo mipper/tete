@@ -32,7 +32,7 @@ public class SoundFileException extends SoundException
    */
   public SoundFileException ()
   {
-    // TODO Auto-generated constructor stub
+    super ();
   }
 
 
@@ -42,7 +42,6 @@ public class SoundFileException extends SoundException
   public SoundFileException ( final String message )
   {
     super ( message );
-    // TODO Auto-generated constructor stub
   }
 
 
@@ -53,7 +52,6 @@ public class SoundFileException extends SoundException
   public SoundFileException ( final String message, final Throwable cause )
   {
     super ( message, cause );
-    // TODO Auto-generated constructor stub
   }
 
 
@@ -63,7 +61,6 @@ public class SoundFileException extends SoundException
   public SoundFileException ( final Throwable cause )
   {
     super ( cause );
-    // TODO Auto-generated constructor stub
   }
 
 

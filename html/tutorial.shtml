@@ -26,6 +26,18 @@
           </p>
         </div>
         <div class="liblink">
+          <img alt="Configuration Options" title="Configuration Options" src="img/config.png" />
+          <p>
+          You can configure the synthesizer to be used to playback your sounds.  The default Gervill synth
+          supports SoundFont2, Downloadable Sounds, and a number of audio formats as sources of
+          samples.  You can find loads of these types on the net or record your own and get the a sound
+          that closely matches your chosen instrument.
+          </p>
+          <p>
+          The velocity setting controls how hard the notes are played.
+          </p>
+        </div>
+        <div class="liblink">
           <img alt="Playing patterns in Tete" title="Playing patterns in Tete" src="img/playing.png" />
           <p>
           You can choose to only hear some of the patterns available by selecting from the list.  You
@@ -46,6 +58,12 @@
           Once you're confident about recognising the list of patterns you've selected you can test
           yourself to see how well you're doing.  Tete will select and play a random sequence of
           pattern types form those you have selected and ask you to identify them.
+          </p>
+        </div>
+        <div class="liblink">
+          <img alt="Intervals in Tete" title="Intervals in Tete" src="img/intervals.png" />
+          <p>
+          You can work with intervals.
           </p>
         </div>
         <div class="liblink">

@@ -543,7 +543,6 @@ public class TeteFrame extends JFrame
       {
         _looper.start ();
       }
-      // TODO: Why Exception?
       catch ( final Exception e )
       {
         GuiUtil.handleException ( this, e );
@@ -586,7 +585,7 @@ public class TeteFrame extends JFrame
   private void lstSoundsValueChanged ( final ListSelectionEvent evt )
   {
     btnLoop.setEnabled ( lstSounds.getSelectedValues ().length != 0 );
-    btnTest.setEnabled ( btnLoop.isEnabled () );
+    btnTest.setEnabled ( lstSounds.getSelectedValues ().length > 1 );
   }
 
 

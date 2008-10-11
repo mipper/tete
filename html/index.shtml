@@ -13,11 +13,26 @@
         <p>
         Well, after a long time with nothing happening, I've finally got back to doing some
         work on Tete.  It was kicked off by the creation of the Open JDK project, in
-        particular, Gervill.  Gervill is an open source, pure Java implementation of the
-        Java Sound API and includes a synthisizer which can use SoundFont2, Downloadable Sounds,
-        and plain audio files for is synthesis.  It removes the need to download the MIDI
-        soundbank files from Sun.  Hurrah!  It hopefully gives you a wider and more realistic
-        set of instruments to play with while working <q>straight out of the box.</q>
+        particular, Gervill which is now the detault synthesizer.  Gervill is an open source,
+        pure Java implementation of the Java Sound API and includes a synthisizer which can use
+        SoundFont2, Downloadable Sounds, and plain audio files for is synthesis.  It removes
+        the need to download the MIDI soundbank files from Sun.  Hurrah!  It hopefully gives
+        you a wider and more realistic set of instruments to play with while working
+        <q>straight out of the box.</q>
+        </p>
+        <p>
+        You can find compatible soundbank files around the net.  Some examples are:
+        <ul>
+          <li>
+            <a href="http://www.sf2midi.com/soundfonts/file-detail/guitar-strat_marshall-by-nassib-sf2-3989.html">A Strat played through an overdirven Marshall</a>
+          </li>
+          <li>
+            <a href="http://soundfonts.homemusician.net/reed_soundfonts/alto_sax_jan.html">An alto sax</a>
+          </li>
+          <li>
+            <a href="http://soundfonts.homemusician.net/piano_soundfonts/german8.html">A harpsichord</a>
+          </li>
+        </ul>
         </p>
         <p>
         Along the way I've refactored some code, added bits and pieces here and there and

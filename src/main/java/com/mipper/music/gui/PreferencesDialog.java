@@ -194,10 +194,10 @@ public class PreferencesDialog extends TeteDialog
               {
                 chooser.setSelectedFile ( new File ( getSoundbankPath () ) );
               }
+              chooser.setFileFilter ( new FileNameExtensionFilter ( "Audio files (wav, au, aif, cfg, pat)",
+                                                                    "pat", "cfg", "wav", "au", "aif" ) );
               chooser.setFileFilter ( new FileNameExtensionFilter ( "Midi Soundbank files (sf2, dls)",
-                                                                    "sf2",
-                                                                    "dls" ) );
-
+                                                                    "sf2", "dls" ) );
               if ( JFileChooser.APPROVE_OPTION == chooser.showOpenDialog ( btnSoundbank ) )
               {
                 Logger.debug ( "Chose: {0}", chooser.getSelectedFile () );
