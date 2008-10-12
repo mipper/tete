@@ -50,7 +50,7 @@ public class SoundTypeRepository
    *
    * @param soundType Sound type to add to the repository.
    */
-  public void addSoundType ( IntervalPatternRepository soundType )
+  public void addSoundType ( final IntervalPatternRepository soundType )
   {
     if ( _repository.containsKey ( soundType.getName () ) )
     {
@@ -76,7 +76,7 @@ public class SoundTypeRepository
    *
    * @throws NotFoundException
    */
-  public IntervalPatternRepository getPatterns ( String name )
+  public IntervalPatternRepository getPatterns ( final String name )
     throws
       NotFoundException
   {
@@ -276,10 +276,10 @@ public class SoundTypeRepository
     final IntervalPatternRepository intervals = new IntervalPatternRepository ( "Intervals" );
     for ( final Interval i: Interval.values () )
     {
-      if ( i.ordinal () > Interval.PERFECT_8TH.ordinal () )
-      {
-        break;
-      }
+//      if ( i.ordinal () > Interval.PERFECT_8TH.ordinal () )
+//      {
+//        break;
+//      }
       intervals.registerPattern ( new IntervalPattern ( i.getLongName (),
                                                         new Interval[] {Interval.PERFECT_1ST, i} ) );
     }

@@ -76,7 +76,7 @@ public enum Interval
   /** */
   MAJOR_14 ( "M7", null, "Major 7th", null ),
   /** */
-  PERFECT_16TH ( "P8", null, "Octave", null );
+  PERFECT_16TH ( "P8", null, "Double Octave", null );
 
 
 
@@ -94,16 +94,16 @@ public enum Interval
    *
    * @return The interval with the specified ordinal value.
    */
-  public static Interval getInterval ( int value )
+  public static Interval getInterval ( final int value )
   {
     return Interval.values ()[value];
   }
 
 
-  private Interval ( String shortName,
-                     String altShortName,
-                     String longName,
-                     String altLongName )
+  private Interval ( final String shortName,
+                     final String altShortName,
+                     final String longName,
+                     final String altLongName )
   {
     _shortName = shortName;
     _alternativeShortName = altShortName;

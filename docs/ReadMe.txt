@@ -5,7 +5,7 @@ This is the second version of the Tete ear trainer.  I haven't had time to put
 together a lot of documentation, but you can find a tutorial on the website
 http://tete.sourceforge.net/tutorial.shtml.  The web site is also the place to
 look for more up to date information than found here.  The site will be updated
-regardless of wether there's a release or not.  I hope over time to rectify this
+regardless of whether there's a release or not.  I hope over time to rectify this
 lack of documentation by adding some online help but pressures of work and
 trying to having a life etc. may mean this takes some time to achieve.
 
