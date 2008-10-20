@@ -1,3 +1,8 @@
+Release Notes for Version 1.2.1
+
+Added 2nd Octave into the intervals list
+
+
 Release Notes for Version 1.2
 
 Added support for the OpenJDK Gervill synthesizer.
