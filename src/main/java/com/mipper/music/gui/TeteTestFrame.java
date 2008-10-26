@@ -50,7 +50,7 @@ import com.mipper.util.Util;
  * Window used when running a test cycle.
  *
  * @author  Cliff Evans
- * @version $$Revision: 1.4 $$
+ * @version $Id$
  */
 @SuppressWarnings("synthetic-access")
 public class TeteTestFrame extends javax.swing.JDialog

@@ -22,7 +22,7 @@ package com.mipper.music.model;
  * Interface which supplies actual MIDI note values to play a sound.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public interface Sound
 {

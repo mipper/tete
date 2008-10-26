@@ -50,7 +50,7 @@ import com.mipper.util.Logger;
 
 /**
  * @author Cliff Evans
- * @version $Revision: $
+ * @version $Id$
  */
 @SuppressWarnings("synthetic-access")
 public class PreferencesDialog extends TeteDialog

@@ -44,7 +44,7 @@ import com.mipper.util.Logger;
  * Class implementing methods to ease playing of sounds via midi.
  *
  * @author Cliff Evans
- * @version $Revision: 1.4 $
+ * @version $Id$
  */
 public class MidiHelper
 {

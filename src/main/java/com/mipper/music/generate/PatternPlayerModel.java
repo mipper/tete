@@ -47,7 +47,7 @@ import com.mipper.util.Logger;
 /**
  *
  * @author Cliff Evans
- * @version $$Revision: 1.3 $$
+ * @version $Id$
  */
 public class PatternPlayerModel
 {

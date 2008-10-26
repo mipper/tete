@@ -19,7 +19,7 @@ package com.mipper.music.model;
 
 /**
  * @author Cliff Evans
- * @version $Revision: $
+ * @version $Id$
  *
  */
 public class SoundException extends Exception

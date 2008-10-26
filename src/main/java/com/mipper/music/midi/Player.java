@@ -41,7 +41,7 @@ import com.mipper.util.Logger;
  * A wrapper class to make playing midi notes more simple.
  *
  * @author Cliff Evans
- * @version $Revision: 1.3 $
+ * @version $Id$
  */
 public class Player
 {
@@ -417,8 +417,8 @@ public class Player
   {
     Logger.debugEx ( "midi", "Player.connectToSequencer: {0} -> {1}", _sequencer, getSynth () );
     // CFE: Remove this
-    StringBuffer buf = new StringBuffer ();
-    for ( Receiver r : _sequencer.getReceivers () )
+    final StringBuffer buf = new StringBuffer ();
+    for ( final Receiver r : _sequencer.getReceivers () )
     {
       buf.append ( r.getClass ().getName () );
     }

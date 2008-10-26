@@ -30,7 +30,7 @@ import com.mipper.util.Logger;
  * Utility methods for Gui code.
  *
  * @author Cliff Evans
- * @version $Revision: $
+ * @version $Id$
  */
 public class GuiUtil
 {

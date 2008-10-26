@@ -26,7 +26,7 @@ import java.util.Collection;
  * entries for the list.
  *
  * @author Cliff Evans
- * @version $$Revision: 1.1 $$
+ * @version $Id$
  */
 public interface SoundCollectionAdaptor
 {

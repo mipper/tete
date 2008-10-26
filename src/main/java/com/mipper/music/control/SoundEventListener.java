@@ -24,7 +24,7 @@ import java.util.EventListener;
  * Event listner for SoundEvents.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public interface SoundEventListener extends EventListener
 {

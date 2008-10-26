@@ -26,7 +26,7 @@ import com.mipper.music.model.NoteRangeException;
 /**
  * 
  * @author Cliff Evans
- * @version $Revision: 1.2 $
+ * @version $Id$
  */
 public class TestNoteRange extends TestCase
 {

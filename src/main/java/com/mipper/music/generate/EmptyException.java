@@ -21,7 +21,7 @@ package com.mipper.music.generate;
 /**
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class EmptyException extends Exception
 {

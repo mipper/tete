@@ -22,7 +22,7 @@ package com.mipper.music.model;
  * Enumeration of the MIDI octaves.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public enum Octave
 {

@@ -21,7 +21,7 @@ package com.mipper.music.model;
 /**
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class NoteRangeException extends RuntimeException
 {

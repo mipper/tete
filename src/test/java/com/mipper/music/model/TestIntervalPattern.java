@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 /**
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class TestIntervalPattern extends TestCase
 {

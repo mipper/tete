@@ -22,7 +22,7 @@ package com.mipper.music.model;
  * Enumerated type representing an interval between two notes.
  *
  * @author Cliff Evans
- * @version $Revision: 1.4 $
+ * @version $Id$
  */
 public enum Interval
 {

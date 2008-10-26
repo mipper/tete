@@ -17,7 +17,7 @@ import javax.sound.midi.Patch;
 /**
  *
  * @author Cliff Evans
- * @version $Revision: 1.2 $
+ * @version $Id$
  */
 public class PreferenceManager
 {

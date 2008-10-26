@@ -23,7 +23,7 @@ package com.mipper.music.model;
  * of a range along with any specified root note.
  *
  * @author Cliff Evans
- * @version $Revision: 1.2 $
+ * @version $Id$
  */
 public class NoteRange
 {

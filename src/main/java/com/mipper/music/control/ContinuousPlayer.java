@@ -32,7 +32,7 @@ import com.mipper.music.model.SoundSystemException;
  * Plays a sequence of sounds derived from the model until told to stop.
  *
  * @author Cliff Evans
- * @version $Revision: 1.3 $
+ * @version $Id$
  */
 public class ContinuousPlayer
 {

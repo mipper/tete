@@ -40,7 +40,7 @@ import com.mipper.util.Util;
  * manifest and the details of the MIDI system available on the running machine.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class AboutFrame
   extends

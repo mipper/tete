@@ -59,7 +59,7 @@ import org.apache.commons.lang.StringUtils;
  * Utility methods.
  *
  * @author Cliff Evans
- * @version $Revision: 1.3 $
+ * @version $Id$
  */
 public class Util
 {

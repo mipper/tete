@@ -22,7 +22,7 @@ package com.mipper.music.model;
  * The file given is invalid.
  *
  * @author Cliff Evans
- * @version $Revision: $
+ * @version $Id$
  */
 public class SoundFileException extends SoundException
 {

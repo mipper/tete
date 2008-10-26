@@ -30,7 +30,7 @@ import javax.swing.ListCellRenderer;
  * the selected or unselected cells.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class SoundListRenderer extends JLabel
   implements

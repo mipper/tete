@@ -28,7 +28,7 @@ import com.mipper.music.model.SoundCollectionAdaptor;
 /**
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class IntervalPatternRepository
   implements

@@ -28,7 +28,7 @@ import com.mipper.music.model.Sound;
  * is an object which can actually be sounded.
  *
  * @author Cliff Evans
- * @version $Revision: 1.3 $
+ * @version $Id$
  */
 public class Playable
   implements

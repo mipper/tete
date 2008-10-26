@@ -32,7 +32,7 @@ import com.mipper.music.model.Sound;
  * a note range.
  *
  * @author Cliff Evans
- * @version $Revision: 1.4 $
+ * @version $Id$
  */
 public class SoundFactory
 {

@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 
 /**
  * @author Cliff Evans
- * @version $Revision: $
+ * @version $Id$
  */
 public abstract class TeteDialog extends JDialog
 {

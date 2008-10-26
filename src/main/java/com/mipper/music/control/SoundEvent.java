@@ -24,7 +24,7 @@ import java.util.EventObject;
  * Event fired when a sound is played.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class SoundEvent extends EventObject
 {

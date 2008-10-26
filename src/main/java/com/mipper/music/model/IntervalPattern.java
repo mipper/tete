@@ -24,7 +24,7 @@ import java.util.Arrays;
  * Class representing a collection of intervals.
  *
  * @author Cliff Evans
- * @version $Revision: 1.3 $
+ * @version $Id$
  */
 public class IntervalPattern
 {

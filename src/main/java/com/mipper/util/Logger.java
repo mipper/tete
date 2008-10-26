@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods for logging.  Uses the commons logging library.
  *
- * @version 1.1
+ * @version $Id$
  * @author Cliff Evans
  */
 public class Logger

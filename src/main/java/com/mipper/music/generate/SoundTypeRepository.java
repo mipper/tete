@@ -29,7 +29,7 @@ import com.mipper.music.model.IntervalPattern;
  * and Scales.
  *
  * @author Cliff Evans
- * @version $Revision: 1.8 $
+ * @version $Id$
  */
 public class SoundTypeRepository
 {

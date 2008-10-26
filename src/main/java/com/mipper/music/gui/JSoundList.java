@@ -29,7 +29,7 @@ import javax.swing.ListModel;
  * colour than unselected and selected items.
  *
  * @author Cliff Evans
- * @version $Revision: 1.1 $
+ * @version $Id$
  */
 public class JSoundList extends JList
 {

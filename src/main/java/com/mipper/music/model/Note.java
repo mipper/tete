@@ -22,7 +22,7 @@ package com.mipper.music.model;
  * Enum representing a named musical note.
  *
  * @author Cliff Evans
- * @version $Revision: 1.2 $
+ * @version $Id$
  */
 public enum Note
 {
