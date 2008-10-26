@@ -83,7 +83,7 @@ import com.mipper.util.Util;
  * Main window for Tete.  Allows selection of sounds and configuration.
  *
  * @author  Cliff Evans
- * @version $$Revision: 1.5 $$
+ * @version $Revision$
  */
 @SuppressWarnings("synthetic-access")
 public class TeteFrame extends JFrame
