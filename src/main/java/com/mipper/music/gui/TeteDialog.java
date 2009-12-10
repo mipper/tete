@@ -93,6 +93,7 @@ public abstract class TeteDialog extends JDialog
   }
 
 
+  private static final long serialVersionUID = 1L;
   private JPanel _bottom = null;
   private JButton _close = null;
 

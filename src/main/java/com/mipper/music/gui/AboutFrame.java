@@ -32,6 +32,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
 
 import com.mipper.music.midi.MidiHelper;
+import com.mipper.util.Logger;
 import com.mipper.util.Util;
 
 
@@ -92,7 +93,11 @@ public class AboutFrame
     final JTextPane txt = setupTextArea ();
     try
     {
-      final String jar = Util.getFilename ( this.getClass ().getProtectionDomain().getCodeSource().getLocation().toString () );
+      final String jar = Util.getFilename ( getClass ().getProtectionDomain ()
+                                                       .getCodeSource ()
+                                                       .getLocation ()
+                                                       .toString () );
+      Logger.debug ( "Looking in {0}", jar );
       if ( jar.toLowerCase ().endsWith ( ".jar" ) )
       {
         txt.setText ( Util.readMainManifest ( jar ).toString () );
