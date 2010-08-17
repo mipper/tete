@@ -3,14 +3,16 @@
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/maven-v4_0_0.xsd">
+                      
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mipper</groupId>
   <artifactId>Tete</artifactId>
   <name>This Ear Trainer 'Ere</name>
   <url>http://tete.sourceforge.net</url>
-  <version>1.2.1</version>
+  <version>1.3</version>
   <description>
-    Tete is a application for training the ear to hear the relationships between musical notes.  It can help with intervals, chords, and scales.
+    Tete is a application for training the ear to hear the relationships between
+    musical notes.  It can help with intervals, chords, and scales.
   </description>
 
   <build>
@@ -84,7 +86,7 @@
   
   <dependencies>
     <dependency>
-      <groupId>com.sun.media</groupId>
+      <groupId>net.sourceforge.rasmusdsp</groupId>
       <artifactId>gervill</artifactId>
       <version>1.0</version>
     </dependency>
