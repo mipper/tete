@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Tete: Tutorial</title>
+    <!--#include file="inc/header.inc" -->
+  </head>
+  <body>
+    <div id="container">
+      <!--#include file="inc/menu.inc" -->
+      <div id="main">
+        <h1>Tutorial</h1>
+        <p>Here are some hints on how to get started...</p>
+        <div class="liblink">
+          <img alt="Tete's main screen" title="Tete's main screen" src="img/main.png" />
+          <p>
+          This is the main screen of Tete.  You can see down the left hand side the playback
+          configuration.  This controls the instrument used to play the notes, the length of the
+          sounded note and the delay to use to arpeggiate the note pattern.  It also controls
+          the octave range used to play the notes.  The octaves are identified by their midi number
+          which is less than intuitive, the octave containing middle C is highlighted.
+          </p>
+          <p>
+          On the left you can see the selection controls.  Here you can select the type of pattern
+          from intervals, chords, or scales.  You can also select within the pattern type to filter
+          the type pattern that is played or appears in the tests.
+          </p>
+        </div>
+        <div class="liblink">
+          <img alt="Configuration Options" title="Configuration Options" src="img/config.png" />
+          <p>
+          You can configure the synthesizer to be used to playback your sounds.  The default Gervill synth
+          supports SoundFont2, Downloadable Sounds, and a number of audio formats as sources of
+          samples.  You can find loads of these types on the net or record your own and get the a sound
+          that closely matches your chosen instrument.
+          </p>
+          <p>
+          The velocity setting controls how hard the notes are played.
+          </p>
+        </div>
+        <div class="liblink">
+          <img alt="Playing patterns in Tete" title="Playing patterns in Tete" src="img/playing.png" />
+          <p>
+          You can choose to only hear some of the patterns available by selecting from the list.  You
+          do this by clicking while holding the control and shift key in the normal Windows manner.
+          </p>
+          <p>
+          Tete will randomly play a sequence of patterns from those you have selected.  As each pattern
+          is played it is highlighted to show you which one is being played.
+          </p>
+          <p>
+          A good exercise in this mode is to set the arpeggio delay to a high value and then play your
+          chosen patterns.  Once the pattern to be played has been highlighted and the root note played
+          sing the next note out loud and see if you can get the correct next note.
+        </div>
+        <div class="liblink">
+          <img alt="Running a test in Tete" title="Running a test in Tete" src="img/test.png" />
+          <p>
+          Once you're confident about recognising the list of patterns you've selected you can test
+          yourself to see how well you're doing.  Tete will select and play a random sequence of
+          pattern types form those you have selected and ask you to identify them.
+          </p>
+        </div>
+        <div class="liblink">
+          <img alt="Intervals in Tete" title="Intervals in Tete" src="img/intervals.png" />
+          <p>
+          You can work with intervals.
+          </p>
+        </div>
+        <div class="liblink">
+          <img alt="Chords in Tete" title="Chords in Tete" src="img/chords.png" />
+          <p>
+          You can choose from a large number of chord types.  When I get around to adding more the
+          list will get even longer.
+          </p>
+        </div>
+        <div class="liblink">
+          <img alt="Scales in Tete" title="Scales in Tete" src="img/scales.png" />
+          <p>
+          There are also a number of different scales to learn.
+          </p>
+        </div>
+      </div>
+      <!--#include file="inc/footer.inc" -->
+    </div>
+  </body>
+</html>

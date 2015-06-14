@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Tete: Todo</title>
+    <!--#include file="inc/header.inc" -->
+  </head>
+  <body>
+    <div id="container">
+      <!--#include file="inc/menu.inc" -->
+      <div id="main">
+        <h1>Todo</h1>
+        <p>
+        I wrote Tete in my limited spare time to do exactly what I needed it to do at the time.  Since
+        then I've thought of ways to improve and extend the program.  Some of these ideas are listed here, in no
+        particular order.  Feel free to comment on these, or suggest additional improvements on the
+        <a href="http://sourceforge.net/tracker/?group_id=147629&atid=770351">sourceforge forums.</a>
+        </p>
+        <p>
+        I'm hoping to get to work on these ideas very soon, so keep checking back if you're waiting for
+        something on the list - or jump on in, the water's lovely.
+        </p>
+        <ul>
+          <li class="done">Done V1.2 Add support for Gervill, the OpenJDK implementation of the Java Sound API</li>
+          <li class="done">Done V1.2 Add support for using SoundFont2, Downloadable Sounds, and audio files for playback</li>
+          <li class="done">Done V1.2 Remove need to download Midi soundbanks from Sun</li>
+          <li class="done">Done V1.1 Implement the root note functionality</li>
+          <li class="done">Done V1.1 Implement the root note order functionality</li>
+          <li class="done">Done V1.1 Save configuration so the program starts in the same state as you last closed it</li>
+          <li class="done">Done V1.1 Add more chord and scale types</li>
+          <li>Save test results and do some analysis/progress tracking</li>
+          <li>Filter chord/interval types generated diatonically based on a scale type</li>
+          <li>Add some help to the program</li>
+          <li>Create an installation routine</li>
+          <li>Automatically get the soundbank if it's not available locally.  How do you check this?</li>
+          <li>Create some batch files for sparking her up</li>
+        </ul>
+      </div>
+      <!--#include file="inc/footer.inc" -->
+    </div>
+  </body>
+</html>

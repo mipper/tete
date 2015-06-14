@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Tete: Links</title>
+    <!--#include file="inc/header.inc" -->
+  </head>
+  <body>
+    <div id="container">
+      <!--#include file="inc/menu.inc" -->
+      <div id="main">
+        <h1>Links</h1>
+        <div class="liblink">
+          <a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=0&amp;t=56"><img border="0" alt="Get Firefox!" title="Get Firefox!" src="http://sfx-images.mozilla.org/affiliates/Buttons/180x60/take.gif"/></a>
+          <p>This site is best view in Firefox, a standards based browser which can deal with trasparent images like my logo.  If
+          you see a nasty looking grey blob at the top of each screen, try <a href="http://www.mozilla.org/products/firefox/" >downloading</a> Firefox and see how it should look!</p>
+        </div>
+        <h2>Tete uses the following libraries and services.</h2>
+        <div class="liblink">
+          <a href="http://jakarta.apache.org/commons/lang/"><img src="http://jakarta.apache.org/commons/lang/images/logo.png" alt="Jakarta Commons Lang" /></a>
+          <p>Commons Lang provides a host of helper utilities for the java.lang API, notably String manipulation methods, basic numerical methods, object reflection, creation and serialization, and System properties. Additionally it contains an inheritable enum type, an exception structure that supports multiple types of nested-Exceptions, basic enhancements to java.util.Date and a series of utlities dedicated to help with building methods, such as hashCode, toString and equals.</p>
+        </div>
+        <div class="liblink">
+          <a href="http://jakarta.apache.org/commons/logging/"><img src="http://jakarta.apache.org/commons/logging/images/logo.png" alt="Jakarta Commons Logging" /></a>
+          <p>Commons Logging is an ultra-thin bridge between different logging libraries. Commons components may use the Logging API to remove compile-time and run-time dependencies on any particular logging package, and contributors may write Log implementations for the library of their choice.</p>
+        </div>
+        <div class="liblink">
+          <a href="http://logging.apache.org/log4j/docs/index.html"><img src="http://logging.apache.org/log4j/docs/images/logo.jpg" alt="Jakarta Commons Logging" /></a>
+          <p>With log4j it is possible to enable logging at runtime without modifying the application binary. The log4j package is designed so that these statements can remain in shipped code without incurring a heavy performance cost. Logging behavior can be controlled by editing a configuration file, without touching the application binary.</p>
+        </div>
+        <div class="liblink">
+          <a href="http://www.junit.org/"><img src="http://www.junit.org/images/junitlogo.gif" alt="JUnit" /></a>
+          <p>JUnit is a regression testing framework written by Erich Gamma and Kent Beck. It is used by the developer who implements unit tests in Java.</p>
+        </div>
+        <div class="liblink">
+          <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=147629&amp;type=5" width="210" height="62" alt="SourceForge.net Logo" /></a>
+          <p>The world's largest development and download repository of Open Source code and applications, providing free services to Open Source developers.</p>
+        </div>
+      </div>
+      <!--#include file="inc/footer.inc" -->
+    </div>
+  </body>
+</html>
